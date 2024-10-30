@@ -23,6 +23,7 @@ export default $config({
       imageOptimization: {
         memory: '512 MB'
       },
+      cachePolicy: 'e8dedd57-e582-49b0-9f72-c956bd2d12ec',
       environment: {
         NEXT_PUBLIC_COUPANG_PARTNERS_API_ACCESS_KEY:
           process.env.NEXT_PUBLIC_COUPANG_PARTNERS_API_ACCESS_KEY!,
