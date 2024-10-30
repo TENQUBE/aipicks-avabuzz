@@ -97,7 +97,7 @@ export default function Detail() {
   }
 
   function handleClickAdvBestItemsButton() {
-    // push(ActivityNames.AdvBestItems, {})
+    push(ActivityNames.AdvBestItems, {})
   }
 
   function handleClickRassi() {

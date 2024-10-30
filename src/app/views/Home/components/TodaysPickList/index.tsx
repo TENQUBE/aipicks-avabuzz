@@ -51,8 +51,6 @@ export default function TodaysPickList() {
   }
 
   function handleClickSlide(stockCode: string, pmsCode: string) {
-    if (swiper) swiper.autoplay.stop()
-
     push(ActivityNames.Detail, { stock_code: stockCode, pms_code: pmsCode })
   }
 
@@ -105,6 +103,12 @@ export default function TodaysPickList() {
   useEffect(() => {
     if (activity.isActive && swiper && !swiper.autoplay.running) {
       swiper.autoplay.start()
+    }
+  }, [activity, swiper])
+
+  useEffect(() => {
+    if (!activity.isActive && swiper && swiper.autoplay.running) {
+      swiper.autoplay.stop()
     }
   }, [activity, swiper])
 

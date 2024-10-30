@@ -1,5 +1,3 @@
-import Image from 'next/image'
-
 import { ActivityNames, useFlow } from '@/app/shared/libs/stackflow'
 import { AppScreen } from '@/app/shared/libs/stackflow/basic-ui'
 import Layout from '@/app/shared/components/Layout'
@@ -10,7 +8,7 @@ export default function Home() {
   const { push } = useFlow()
 
   function handleClickButton() {
-    // push(ActivityNames.AdvBestItems, {})
+    push(ActivityNames.AdvBestItems, {})
   }
 
   return (
