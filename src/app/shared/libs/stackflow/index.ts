@@ -8,21 +8,26 @@ import { ANIMATION_DURATION } from '@/app/shared/config'
 import { historySyncPlugin } from '@/app/shared/libs/stackflow/history-sync'
 import { basicUIPlugin } from '@/app/shared/libs/stackflow/basic-ui'
 import Home from '@/app/views/Home'
+import Detail from '@/app/views/Detail'
 
 export enum ActivityNames {
-  Home = 'Home'
+  Home = 'Home',
+  Detail = 'Detail'
 }
 
 export enum ActivityRoutes {
-  Home = '/'
+  Home = '/',
+  Detail = '/detail'
 }
 
 const activities = {
-  Home
+  Home,
+  Detail
 }
 
 export const routes: { [key in ActivityNames]: ActivityRoutes } = {
-  [ActivityNames.Home]: ActivityRoutes[ActivityNames.Home]
+  [ActivityNames.Home]: ActivityRoutes[ActivityNames.Home],
+  [ActivityNames.Detail]: ActivityRoutes[ActivityNames.Detail]
 }
 
 const getStackflowParams = () => {

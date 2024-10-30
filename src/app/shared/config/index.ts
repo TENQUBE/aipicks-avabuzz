@@ -22,6 +22,8 @@ export const API_URL = 'https://serviceapi.thinkpool.com/tenqube'
 export const GOLDBOX_URL = 'https://link.coupang.com/a/bGogTm'
 export const SECRET_KEY = process.env.NEXT_PUBLIC_COUPANG_PARTNERS_API_SECRET_KEY
 export const ACCESS_KEY = process.env.NEXT_PUBLIC_COUPANG_PARTNERS_API_ACCESS_KEY
+export const MINIMUM_COUPANG_AD_EXPOSURE_TIME =
+  process.env.NEXT_PUBLIC_NODE_ENV === 'development' ? 10 * 1000 : 2 * 60 * 60 * 1000
 
 /**
  * google adsence

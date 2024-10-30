@@ -1346,6 +1346,7 @@ __metadata:
     moment: "npm:^2.30.1"
     next: "npm:15.0.1"
     react: "npm:19.0.0-rc-69d4b800-20241021"
+    react-confetti-boom: "npm:^1.0.0"
     react-dom: "npm:19.0.0-rc-69d4b800-20241021"
     reflect-metadata: "npm:^0.2.2"
     swiper: "npm:^11.1.14"
@@ -2499,6 +2500,16 @@ __metadata:
     err-code: "npm:^2.0.2"
     retry: "npm:^0.12.0"
   checksum: 10c0/9c7045a1a2928094b5b9b15336dcd2a7b1c052f674550df63cc3f36cd44028e5080448175b6f6ca32b642de81150f5e7b1a98b728f15cb069f2dd60ac2616b96
+  languageName: node
+  linkType: hard
+
+"react-confetti-boom@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "react-confetti-boom@npm:1.0.0"
+  peerDependencies:
+    react: ">=16.8.0"
+    react-dom: ">=16.8.0"
+  checksum: 10c0/d2c99292169d529ccf4b2bb053ee37a9321a985e5bbf0d3e2cd7fba26c5f9260a6f218574879c907b2c8bb529721280927d5537edd9f459417594f27945aae59
   languageName: node
   linkType: hard
 
