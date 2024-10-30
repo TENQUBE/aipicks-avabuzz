@@ -79,10 +79,10 @@ export default function Detail() {
         setBaseInfoData(baseInfoData)
         setSignal1yChart(signal1yChart)
       } catch (error) {
-        // push(ActivityNames.Error, {
-        //   title: '잠시 후 다시 시도해주세요',
-        //   desc: '일시적인 오류가 발생하여<br />현재 서비스를 이용할 수 없습니다.'
-        // })
+        push(ActivityNames.Error, {
+          title: '잠시 후 다시 시도해주세요',
+          desc: '일시적인 오류가 발생하여<br />현재 서비스를 이용할 수 없습니다.'
+        })
       }
     },
     [inactiveStocks]
@@ -97,7 +97,7 @@ export default function Detail() {
   }
 
   function handleClickAdvBestItemsButton() {
-    // push(ActivityNames.AdvBestItems, {})
+    push(ActivityNames.AdvBestItems, {})
   }
 
   function handleClickRassi() {

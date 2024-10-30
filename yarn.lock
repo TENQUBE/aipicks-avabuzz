@@ -1349,6 +1349,7 @@ __metadata:
     react-confetti-boom: "npm:^1.0.0"
     react-dom: "npm:19.0.0-rc-69d4b800-20241021"
     reflect-metadata: "npm:^0.2.2"
+    sharp: "npm:^0.33.5"
     swiper: "npm:^11.1.14"
     typescript: "npm:^5"
     zustand: "npm:^5.0.0"

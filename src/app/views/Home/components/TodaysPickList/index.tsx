@@ -51,8 +51,6 @@ export default function TodaysPickList() {
   }
 
   function handleClickSlide(stockCode: string, pmsCode: string) {
-    if (swiper) swiper.autoplay.stop()
-
     push(ActivityNames.Detail, { stock_code: stockCode, pms_code: pmsCode })
   }
 
@@ -79,10 +77,10 @@ export default function TodaysPickList() {
 
       setTodaysPick([...todaysPick, ...todaysPick])
     } catch (error) {
-      // push(ActivityNames.Error, {
-      //   title: '잠시 후 다시 시도해주세요',
-      //   desc: '일시적인 오류가 발생하여<br />현재 서비스를 이용할 수 없습니다.'
-      // })
+      push(ActivityNames.Error, {
+        title: '잠시 후 다시 시도해주세요',
+        desc: '일시적인 오류가 발생하여<br />현재 서비스를 이용할 수 없습니다.'
+      })
     }
   }, [inactiveStocks])
 
@@ -105,6 +103,12 @@ export default function TodaysPickList() {
   useEffect(() => {
     if (activity.isActive && swiper && !swiper.autoplay.running) {
       swiper.autoplay.start()
+    }
+  }, [activity, swiper])
+
+  useEffect(() => {
+    if (!activity.isActive && swiper && swiper.autoplay.running) {
+      swiper.autoplay.stop()
     }
   }, [activity, swiper])
 

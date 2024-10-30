@@ -25,6 +25,7 @@
     "react-confetti-boom": "^1.0.0",
     "react-dom": "19.0.0-rc-69d4b800-20241021",
     "reflect-metadata": "^0.2.2",
+    "sharp": "^0.33.5",
     "swiper": "^11.1.14",
     "zustand": "^5.0.0"
   },
