@@ -24,27 +24,7 @@ jobs:
       - name: Install Dependencies
         run: yarn install
 
-      - name: Check if release file exists
-        id: check_release_file
-        run: |
-          if ls .changeset/*.md 2> /dev/null | grep -v "README.md" > /dev/null; then
-            echo "::set-output name=exist::true"
-          else
-            echo "::set-output name=exist::false"
-          fi
-        shell: bash
-
-      - name: Get last commit author
-        if: steps.check_release_file.outputs.exist == 'true'
-        id: get_last_commit_author
-        run: |
-          git log -1 --pretty=format:'%an' > author.txt
-          AUTHOR_NAME=$(cat author.txt)
-          echo "::set-output name=author::${AUTHOR_NAME}"
-        shell: bash
-
       - name: Build
-        if: steps.check_release_file.outputs.exist == 'true' && steps.get_last_commit_author.outputs.author != 'github-actions[bot]'&& steps.get_last_commit_author.outputs.author != 'dependabot[bot]'
         env:
           NEXT_PUBLIC_COUPANG_PARTNERS_API_ACCESS_KEY: ${{ secrets.COUPANG_PARTNERS_API_ACCESS_KEY }}
           NEXT_PUBLIC_COUPANG_PARTNERS_API_SECRET_KEY: ${{ secrets.COUPANG_PARTNERS_API_SECRET_KEY }}
