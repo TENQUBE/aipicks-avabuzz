@@ -1,4 +1,3 @@
-import { BackgroundColor } from './../../../../../../node_modules/wrap-ansi/node_modules/ansi-styles/index.d'
 import { globalStyle, keyframes, style } from '@vanilla-extract/css'
 
 export const area = style({
