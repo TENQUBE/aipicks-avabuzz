@@ -134,8 +134,8 @@ jobs:
         if: needs.release.outputs.published == 'true'
         uses: slackapi/slack-github-action@v1.26.0
         with:
-          # TENQUBE_FE 일반
-          channel-id: "C03QQK4BKDW"
+          # TENQUBE_FE deploy
+          channel-id: "C07SR98RWE4"
           slack-message: "${{ github.repository }} 상용 배포 ${{ needs.release.result == 'success' &&  '성공' || '실패'}}\nURL: https://buzzvil-thinkpool.tenqube.com/\nChangeLog: https://github.com/TENQUBE/buzzvil-thinkpool-webview/releases"
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
