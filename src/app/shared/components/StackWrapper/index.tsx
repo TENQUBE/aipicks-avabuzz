@@ -7,7 +7,7 @@ import isSafari from '@/app/shared/utils/isSafari'
 
 interface StackWrapperProps {
   path: string
-  searchParams: { [key: string]: string }
+  searchParams: Promise<{ [key: string]: string }>
 }
 
 export default async function StackWrapper({ path, searchParams }: StackWrapperProps) {
