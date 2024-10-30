@@ -1,5 +1,11 @@
 # buzzvil-thinkpool-webview
 
+## 0.0.5
+
+### Patch Changes
+
+- [#17](https://github.com/TENQUBE/buzzvil-thinkpool-webview/pull/17) [`c9f2de5`](https://github.com/TENQUBE/buzzvil-thinkpool-webview/commit/c9f2de5da845cf002339d83438e91150c9ddf6e9) Thanks [@8dong](https://github.com/8dong)! - chore: release workflow를 수정합니다.
+
 ## 0.0.4
 
 ### Patch Changes
