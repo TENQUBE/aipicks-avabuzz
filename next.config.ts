@@ -1,7 +1,21 @@
-import type { NextConfig } from "next";
+const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin')
+const vanillaExtractPlugin = createVanillaExtractPlugin()
 
-const nextConfig: NextConfig = {
-  /* config options here */
-};
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  reactStrictMode: false,
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'webchart.thinkpool.com'
+      },
+      {
+        protocol: 'https',
+        hostname: 'ads-partners.coupang.com'
+      }
+    ]
+  }
+}
 
-export default nextConfig;
+module.exports = vanillaExtractPlugin(nextConfig)

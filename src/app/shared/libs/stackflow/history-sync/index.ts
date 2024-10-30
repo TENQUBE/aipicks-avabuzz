@@ -1,0 +1,5 @@
+export { useHistoryTick } from './HistoryQueueContext'
+export * from './historySyncPlugin'
+export { makeTemplate } from './makeTemplate'
+export type { UrlPatternOptions } from './makeTemplate'
+export { useRoutes } from './RoutesContext'
