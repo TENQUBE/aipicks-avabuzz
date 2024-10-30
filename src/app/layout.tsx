@@ -1,5 +1,7 @@
 import localFont from 'next/font/local'
+import 'swiper/css'
 
+import GoogleAdScript from '@/app/shared/components/GoogleAdScript'
 import '@/app/global.css'
 
 const pretandard = localFont({
@@ -31,7 +33,12 @@ export default function RootLayout({
 }>) {
   return (
     <html className={`${pretandard.className} ${pretandard.variable}`} lang="ko">
-      <body>{children}</body>
+      <body>
+        <main>
+          <GoogleAdScript />
+          {children}
+        </main>
+      </body>
     </html>
   )
 }
