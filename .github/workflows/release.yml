@@ -1,0 +1,141 @@
+name: release
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v4
+      - run: corepack enable
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: "yarn"
+
+      - name: Install Dependencies
+        run: yarn install
+
+      - name: Check if release file exists
+        id: check_release_file
+        run: |
+          if ls .changeset/*.md 2> /dev/null | grep -v "README.md" > /dev/null; then
+            echo "::set-output name=exist::true"
+          else
+            echo "::set-output name=exist::false"
+          fi
+        shell: bash
+
+      - name: Get last commit author
+        if: steps.check_release_file.outputs.exist == 'true'
+        id: get_last_commit_author
+        run: |
+          git log -1 --pretty=format:'%an' > author.txt
+          AUTHOR_NAME=$(cat author.txt)
+          echo "::set-output name=author::${AUTHOR_NAME}"
+        shell: bash
+
+      - name: Build
+        if: steps.check_release_file.outputs.exist == 'true' && steps.get_last_commit_author.outputs.author != 'github-actions[bot]'&& steps.get_last_commit_author.outputs.author != 'dependabot[bot]'
+        env:
+          NEXT_PUBLIC_COUPANG_PARTNERS_API_ACCESS_KEY: ${{ secrets.COUPANG_PARTNERS_API_ACCESS_KEY }}
+          NEXT_PUBLIC_COUPANG_PARTNERS_API_SECRET_KEY: ${{ secrets.COUPANG_PARTNERS_API_SECRET_KEY }}
+          NEXT_PUBLIC_NODE_ENV: 'production'
+        run: |
+          yarn run build
+
+      - name: Create Release Pull Request
+        id: changesets
+        uses: changesets/action@v1
+        with:
+          title: "chore: update release version"
+          commit: "chore: update release version"
+          version: yarn changeset:version
+          # Include this to create GitHub releases and Git tags
+          publish: yarn release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure AWS credentials
+        if: steps.changesets.outputs.published == 'true'
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-2
+
+      - name: Deploy
+        if: steps.changesets.outputs.published == 'true'
+        env:
+          NEXT_PUBLIC_COUPANG_PARTNERS_API_ACCESS_KEY: ${{ secrets.COUPANG_PARTNERS_API_ACCESS_KEY }}
+          NEXT_PUBLIC_COUPANG_PARTNERS_API_SECRET_KEY: ${{ secrets.COUPANG_PARTNERS_API_SECRET_KEY }}
+          NEXT_PUBLIC_NODE_ENV: 'production'
+        run: |
+          yarn run deploy
+    outputs: 
+      published: ${{ steps.changesets.outputs.published }}
+
+  update-dev-branch:
+    runs-on: ubuntu-latest
+    needs: release
+    permissions:
+      contents: write
+    if: needs.release.outputs.published == 'true'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: dev
+
+      - name: Get current release version
+        id: get_version
+        run: |
+          version=$(curl --silent -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -H "X-GitHub-Api-Version: 2022-11-28" "https://api.github.com/repos/${{ github.repository }}/releases/latest"| jq -r .tag_name)
+
+          if [ -z "$version" ]; then
+          version="0.0.0"
+          else
+          version="${version#v}"
+          fi
+
+          echo "VERSION=${version}" >> $GITHUB_ENV
+
+      - name: Remove changeset.md files
+        run: |
+          find .changeset -type f -name "${VERSION}.md" -delete
+
+      - name: Update package.json version
+        run: |
+          jq --arg version "$VERSION" '.version = $version' package.json > tmp.json && mv tmp.json package.json
+
+      - name: Commit and push changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "chore: Update package.json version to $VERSION"
+          git push origin dev
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  notification:
+    runs-on: ubuntu-latest
+    needs: release
+    if: always()
+    steps:
+      - name: Send a Slack notification
+        if: needs.release.outputs.published == 'true'
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          # TENQUBE_FE 일반
+          channel-id: "C03QQK4BKDW"
+          slack-message: "${{ github.repository }} 상용 배포 ${{ needs.release.result == 'success' &&  '성공' || '실패'}}\nURL: https://buzzvil-thinkpool.tenqube.com/\nChangeLog: https://github.com/TENQUBE/buzzvil-thinkpool-webview/releases"
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
