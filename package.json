@@ -22,6 +22,7 @@
     "moment": "^2.30.1",
     "next": "15.0.1",
     "react": "19.0.0-rc-69d4b800-20241021",
+    "react-confetti-boom": "^1.0.0",
     "react-dom": "19.0.0-rc-69d4b800-20241021",
     "reflect-metadata": "^0.2.2",
     "swiper": "^11.1.14",

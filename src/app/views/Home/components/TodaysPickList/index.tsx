@@ -14,8 +14,7 @@ import { BaseInfoDataVM } from '@/modules/stock/adaptor/in/ui/vm/BaseInfoDataVM'
 import { Signal1yChartVM } from '@/modules/stock/adaptor/in/ui/vm/Signal1yChartVM'
 import {
   useClearInactiveStocks,
-  useInactiveStocksValue,
-  useSetInactiveStocks
+  useInactiveStocksValue
 } from '@/app/shared/hooks/useInactiveStockCodes'
 import {
   useSetTodaysPickUpdatedAt,
@@ -28,7 +27,6 @@ export default function TodaysPickList() {
   const activity = useActivity()
 
   const inactiveStocks = useInactiveStocksValue()
-  const setInactiveStocks = useSetInactiveStocks()
   const clearInactiveStocks = useClearInactiveStocks()
   const todaysPickUpdatedAt = useTodaysPickUpdatedAtValue()
   const setTodaysPickUpdatedAt = useSetTodaysPickUpdatedAt()
@@ -55,8 +53,7 @@ export default function TodaysPickList() {
   function handleClickSlide(stockCode: string, pmsCode: string) {
     if (swiper) swiper.autoplay.stop()
 
-    // push(ActivityNames.Detail, { stock_code: stockCode, pms_code: pmsCode })
-    setInactiveStocks(stockCode, pmsCode)
+    push(ActivityNames.Detail, { stock_code: stockCode, pms_code: pmsCode })
   }
 
   const updateTodayPicks = useCallback(async () => {
