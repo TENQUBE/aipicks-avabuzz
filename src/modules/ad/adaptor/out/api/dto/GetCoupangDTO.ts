@@ -1,7 +1,7 @@
 import { IsArray, IsBoolean, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator'
 import { Type } from 'class-transformer'
 
-class CoupangAdProduct {
+class CoupangDataDTO {
   @IsString()
   categoryName: string
 
@@ -28,7 +28,7 @@ class CoupangAdProduct {
   productUrl: string
 }
 
-export class CoupangAdDataDTO {
+export class GetCoupangDTO {
   @IsString()
   rCode: string
 
@@ -36,7 +36,7 @@ export class CoupangAdDataDTO {
   rMessage: string
 
   @IsArray()
-  @Type(() => CoupangAdProduct)
+  @Type(() => CoupangDataDTO)
   @ValidateNested({ each: true })
-  data: CoupangAdProduct[]
+  data: CoupangDataDTO[]
 }

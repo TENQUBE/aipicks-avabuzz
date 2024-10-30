@@ -1,26 +1,21 @@
 import { StockUseCase } from '@/modules/stock/application/port/in/StockUseCase'
-import { RecommendedStockVM } from '@/modules/stock/adaptor/in/ui/vm/RecommendedStockVM'
-import { StockBaseInfoDataVM } from '@/modules/stock/adaptor/in/ui/vm/StockBaseInfoDataVM'
-import { StockSignalInfoVM } from '@/modules/stock/adaptor/in/ui/vm/StockSignalInfoVM'
-import { AdvBestStockVM } from '@/modules/stock/adaptor/in/ui/vm/AdvBestStockVM'
+import { TodayPickVM } from '@/modules/stock/adaptor/in/ui/vm/TodayPickVM'
+import { BaseInfoDataVM } from '@/modules/stock/adaptor/in/ui/vm/BaseInfoDataVM'
+import { Signal1yChartVM } from '@/modules/stock/adaptor/in/ui/vm/Signal1yChartVM'
+import { AdvBestItemVM } from '@/modules/stock/adaptor/in/ui/vm/AdvBestItemVM'
 
 export class StockController {
   constructor(private readonly stockUseCase: StockUseCase) {}
 
   /**
    * 오늘의 추천종목 (3종목) 조회하기
-   * @returns {RecommendedStockVM[]} 오늘의 추천종목 (3종목)
+   * @returns {TodayPickVM[]} 오늘의 추천종목 (3종목)
    */
-  async getTodayPicks(): Promise<RecommendedStockVM[]> {
-    const result = await this.stockUseCase.getTodaysPick()
+  async getTodayPicks(): Promise<TodayPickVM[]> {
+    const todaysPick = await this.stockUseCase.getTodaysPick()
 
-    return result.map((result) =>
-      RecommendedStockVM.of(
-        result.getStockCode(),
-        result.getStockName(),
-        result.getPmsCode(),
-        result.getSector()
-      )
+    return todaysPick.map((item) =>
+      TodayPickVM.of(item.getStockCode(), item.getStockName(), item.getPmsCode(), item.getSector())
     )
   }
 
@@ -28,49 +23,49 @@ export class StockController {
    * 종목별 정보 조회하기
    * @param {string} code 종목코드
    * @param {string} pms_code 전략코드
-   * @returns {StockBaseInfoDataVM} 종목별 정보
+   * @returns {BaseInfoDataVM} 종목별 정보
    */
-  async getBaseInfoData(code: string, pms_code: string): Promise<StockBaseInfoDataVM> {
-    const result = await this.stockUseCase.getBaseInfoData(code, pms_code)
+  async getBaseInfoData(code: string, pms_code: string): Promise<BaseInfoDataVM> {
+    const baseInfoData = await this.stockUseCase.getBaseInfoData(code, pms_code)
 
-    return StockBaseInfoDataVM.of(result.getCode(), result.getAdv())
+    return BaseInfoDataVM.of(baseInfoData.getCode(), baseInfoData.getAdv())
   }
 
   /**
    * 매매신호 1년 차트 데이터 조회하기
    * @param {string} code 종목코드
    * @param {string} pms_code 전략코드
-   * @returns {StockSignalInfoVM} 매매신호 1년 차트 데이터
+   * @returns {Signal1yChartVM} 매매신호 1년 차트 데이터
    */
-  async getSignal1yChart(code: string, pms_code: string): Promise<StockSignalInfoVM> {
-    const result = await this.stockUseCase.getSignal1yChart(code, pms_code)
+  async getSignal1yChart(code: string, pms_code: string): Promise<Signal1yChartVM> {
+    const signal1yChart = await this.stockUseCase.getSignal1yChart(code, pms_code)
 
-    return StockSignalInfoVM.of(
-      result.getSeries(),
-      result.getCategories(),
-      result.getAnnotation(),
-      result.getChartName(),
-      result.getStatus()
+    return Signal1yChartVM.of(
+      signal1yChart.getSeries(),
+      signal1yChart.getCategories(),
+      signal1yChart.getAnnotation(),
+      signal1yChart.getChartName(),
+      signal1yChart.getStatus()
     )
   }
 
   /**
    * 베스트수익률(최근 3개월) 조회하기
-   * @returns {AdvBestStockVM[]} 베스트수익률(최근 3개월)
+   * @returns {AdvBestItemVM[]} 베스트수익률(최근 3개월)
    */
-  async getAdvBestItems(): Promise<AdvBestStockVM[]> {
-    const result = await this.stockUseCase.getAdvBestItems()
+  async getAdvBestItems(): Promise<AdvBestItemVM[]> {
+    const advBestItems = await this.stockUseCase.getAdvBestItems()
 
-    return result.map((result) =>
-      AdvBestStockVM.of(
-        result.getStockCode(),
-        result.getStockName(),
-        result.getBuyDatedeal(),
-        result.getBuyPrice(),
-        result.getSellDatedeal(),
-        result.getSellPrice(),
-        result.getTotalRate(),
-        result.getPmsName()
+    return advBestItems.map((item) =>
+      AdvBestItemVM.of(
+        item.getStockCode(),
+        item.getStockName(),
+        item.getBuyDatedeal(),
+        item.getBuyPrice(),
+        item.getSellDatedeal(),
+        item.getSellPrice(),
+        item.getTotalRate(),
+        item.getPmsName()
       )
     )
   }

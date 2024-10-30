@@ -1,4 +1,4 @@
-export class AdvBestStock {
+export class AdvBestItem {
   constructor(
     private readonly stock_code: string,
     private readonly stock_name: string,

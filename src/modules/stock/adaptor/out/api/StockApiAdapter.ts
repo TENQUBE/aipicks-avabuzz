@@ -1,56 +1,56 @@
 import { DtoResolver } from '@/modules/shared/dto/DtoResolver'
 import { HttpClientAdapter } from '@/modules/shared/adaptor/out/http-client/HttpClient'
-import { RecommendedStock } from '@/modules/stock/domain/RecommendedStock'
-import { TodaysPickDTO } from '@/modules/stock/adaptor/out/api/dto/TodaysPickDTO'
+import { TodayPick } from '@/modules/stock/domain/TodayPick'
+import { GetTodaysPickDTO } from '@/modules/stock/adaptor/out/api/dto/GetTodaysPickDTO'
 import { StockOutputPort } from '@/modules/stock/application/port/out/StockOutputPort'
-import { TodaysPickMapper } from '@/modules/stock/adaptor/out/api/TodaysPickMapper'
-import { BaseInfoDataDTO } from '@/modules/stock/adaptor/out/api/dto/BaseInfoDataDTO'
-import { StockBaseInfo } from '@/modules/stock/domain/StockBaseInfo'
+import { TodayPickMapper } from '@/modules/stock/adaptor/out/api/TodayPickMapper'
+import { GetBaseInfoDataDTO } from '@/modules/stock/adaptor/out/api/dto/GetBaseInfoDataDTO'
+import { BaseInfoData } from '@/modules/stock/domain/BaseInfoData'
 import { BaseInfoDataMapper } from '@/modules/stock/adaptor/out/api/BaseInfoDataMapper'
-import { StockSignalInfo } from '@/modules/stock/domain/StockSignalInfo'
-import { Signal1yChartDTO } from '@/modules/stock/adaptor/out/api/dto/Signal1yChartDTO'
+import { Signal1yChart } from '@/modules/stock/domain/Signal1yChart'
+import { GetSignal1yChartDTO } from '@/modules/stock/adaptor/out/api/dto/GetSignal1yChartDTO'
 import { Signal1yChartMapper } from '@/modules/stock/adaptor/out/api/Signal1yChartMapper'
-import { AdvBestStock } from '@/modules/stock/domain/AdvBestStock'
-import { AdvBestItemDTO } from '@/modules/stock/adaptor/out/api/dto/AdvBestItemDTO'
+import { AdvBestItem } from '@/modules/stock/domain/AdvBestItem'
+import { GetAdvBestItemDTO } from '@/modules/stock/adaptor/out/api/dto/GetAdvBestItemDTO'
 import { AdvBestItemMapper } from '@/modules/stock/adaptor/out/api/AdvBestItemMapper'
 
 export class StockApiAdapter implements StockOutputPort {
   constructor(private readonly httpClient: HttpClientAdapter) {}
 
-  async getTodaysPick(): Promise<RecommendedStock[]> {
-    const result = await this.httpClient.request<TodaysPickDTO[]>(`/api/todaysPick`, 'GET')
+  async getTodaysPick(): Promise<TodayPick[]> {
+    const result = await this.httpClient.request<GetTodaysPickDTO[]>(`/api/todaysPick`, 'GET')
 
-    await DtoResolver.validate(result, TodaysPickDTO)
+    await DtoResolver.validate(result, GetTodaysPickDTO)
 
-    return result.map((result) => TodaysPickMapper.toDomain(result))
+    return result.map((result) => TodayPickMapper.toDomain(result))
   }
 
-  async getBaseInfoData(code: string, pms_code: string): Promise<StockBaseInfo> {
-    const result = await this.httpClient.request<BaseInfoDataDTO>(
+  async getBaseInfoData(code: string, pms_code: string): Promise<BaseInfoData> {
+    const result = await this.httpClient.request<GetBaseInfoDataDTO>(
       `/api/baseInfoData/?code=${code}&pms_code=${pms_code}`,
       'GET'
     )
 
-    await DtoResolver.validate(result, BaseInfoDataDTO)
+    await DtoResolver.validate(result, GetBaseInfoDataDTO)
 
     return BaseInfoDataMapper.toDomain(result)
   }
 
-  async getSignal1yChart(code: string, pms_code: string): Promise<StockSignalInfo> {
-    const result = await this.httpClient.request<Signal1yChartDTO>(
+  async getSignal1yChart(code: string, pms_code: string): Promise<Signal1yChart> {
+    const result = await this.httpClient.request<GetSignal1yChartDTO>(
       `/api/signal1yChart/?code=${code}&pms_code=${pms_code}`,
       'GET'
     )
 
-    await DtoResolver.validate(result, Signal1yChartDTO)
+    await DtoResolver.validate(result, GetSignal1yChartDTO)
 
     return Signal1yChartMapper.toDomain(result)
   }
 
-  async getAdvBestItems(): Promise<AdvBestStock[]> {
-    const result = await this.httpClient.request<AdvBestItemDTO[]>(`/api/advBestItems`, 'GET')
+  async getAdvBestItems(): Promise<AdvBestItem[]> {
+    const result = await this.httpClient.request<GetAdvBestItemDTO[]>(`/api/advBestItems`, 'GET')
 
-    await Promise.all(result.map((result) => DtoResolver.validate(result, AdvBestItemDTO)))
+    await Promise.all(result.map((result) => DtoResolver.validate(result, GetAdvBestItemDTO)))
 
     return result.map((result) => AdvBestItemMapper.toDomain(result))
   }

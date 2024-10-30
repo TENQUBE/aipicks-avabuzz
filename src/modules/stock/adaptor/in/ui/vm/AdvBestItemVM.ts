@@ -1,4 +1,4 @@
-export class AdvBestStockVM {
+export class AdvBestItemVM {
   readonly stock_code: string
   readonly stock_name: string
   readonly buy_datedeal: string
@@ -38,7 +38,7 @@ export class AdvBestStockVM {
     total_rate: string,
     pms_name: string
   ) {
-    return new AdvBestStockVM(
+    return new AdvBestItemVM(
       stock_code,
       stock_name,
       buy_datedeal,

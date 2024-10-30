@@ -1,5 +1,5 @@
-import { CoupangAdData } from '@/modules/ad/domain/CoupangAdData'
+import { Coupang } from '@/modules/ad/domain/Coupang'
 
 export interface AdUseCase {
-  getCoupangAdData(imageSize: string): Promise<CoupangAdData>
+  getCoupang(imageSize: string): Promise<Coupang>
 }

@@ -24,7 +24,7 @@ export interface Status {
   total_rate: number
 }
 
-export class StockSignalInfo {
+export class Signal1yChart {
   constructor(
     private readonly series: Series,
     private readonly categories: Categories,

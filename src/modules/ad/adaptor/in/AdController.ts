@@ -1,12 +1,12 @@
 import { AdUseCase } from '@/modules/ad/application/port/in/AdUseCase'
-import { CoupangAdDataVM } from '@/modules/ad/adaptor/in/vm/CoupangAdDataVM'
+import { CoupangVM } from '@/modules/ad/adaptor/in/vm/CoupangVM'
 
 export class AdController {
   constructor(private readonly adUseCase: AdUseCase) {}
 
-  async getCoupangAdData(imageSize: string): Promise<CoupangAdDataVM> {
-    const result = await this.adUseCase.getCoupangAdData(imageSize)
+  async getCoupangAdData(imageSize: string): Promise<CoupangVM> {
+    const coupang = await this.adUseCase.getCoupang(imageSize)
 
-    return CoupangAdDataVM.of(result.getRCode(), result.getRMessage(), result.getData())
+    return CoupangVM.of(coupang.getRCode(), coupang.getRMessage(), coupang.getData())
   }
 }

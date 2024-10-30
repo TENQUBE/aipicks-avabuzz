@@ -1,14 +1,8 @@
-import { StockSignalInfo } from '@/modules/stock/domain/StockSignalInfo'
-import { Signal1yChartDTO } from '@/modules/stock/adaptor/out/api/dto/Signal1yChartDTO'
+import { Signal1yChart } from '@/modules/stock/domain/Signal1yChart'
+import { GetSignal1yChartDTO } from '@/modules/stock/adaptor/out/api/dto/GetSignal1yChartDTO'
 
 export class Signal1yChartMapper {
-  static toDomain(result: Signal1yChartDTO) {
-    return new StockSignalInfo(
-      result.series,
-      result.categories,
-      result.annotation,
-      result.chartName,
-      result.status
-    )
+  static toDomain(dto: GetSignal1yChartDTO) {
+    return new Signal1yChart(dto.series, dto.categories, dto.annotation, dto.chartName, dto.status)
   }
 }

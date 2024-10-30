@@ -1,8 +1,8 @@
-import { BaseInfoDataDTO } from '@/modules/stock/adaptor/out/api/dto/BaseInfoDataDTO'
-import { StockBaseInfo } from '@/modules/stock/domain/StockBaseInfo'
+import { GetBaseInfoDataDTO } from '@/modules/stock/adaptor/out/api/dto/GetBaseInfoDataDTO'
+import { BaseInfoData } from '@/modules/stock/domain/BaseInfoData'
 
 export class BaseInfoDataMapper {
-  static toDomain(result: BaseInfoDataDTO) {
-    return new StockBaseInfo(result.codeDTO, result.advDTO)
+  static toDomain(dto: GetBaseInfoDataDTO) {
+    return new BaseInfoData(dto.codeDTO, dto.advDTO)
   }
 }

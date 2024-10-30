@@ -1,4 +1,4 @@
-export interface CoupangAdProduct {
+export interface CoupangData {
   categoryName: string
   isFreeShipping?: boolean
   isRocket: boolean
@@ -9,11 +9,11 @@ export interface CoupangAdProduct {
   productUrl: string
 }
 
-export class CoupangAdData {
+export class Coupang {
   constructor(
     private readonly rCode: string,
     private readonly rMessage: string,
-    private readonly data: CoupangAdProduct[]
+    private readonly data: CoupangData[]
   ) {}
 
   getRCode() {

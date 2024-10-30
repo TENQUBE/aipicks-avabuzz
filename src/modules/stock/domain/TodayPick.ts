@@ -1,4 +1,4 @@
-export class RecommendedStock {
+export class TodayPick {
   constructor(
     private readonly stock_code: string,
     private readonly stock_name: string,

@@ -1,4 +1,4 @@
-export class RecommendedStockVM {
+export class TodayPickVM {
   readonly stock_code: string
   readonly stock_name: string
   readonly pms_code: string
@@ -12,6 +12,6 @@ export class RecommendedStockVM {
   }
 
   static of(stock_code: string, stock_name: string, pms_code: string, sector: string) {
-    return new RecommendedStockVM(stock_code, stock_name, pms_code, sector)
+    return new TodayPickVM(stock_code, stock_name, pms_code, sector)
   }
 }

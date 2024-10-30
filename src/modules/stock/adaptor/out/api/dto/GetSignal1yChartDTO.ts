@@ -9,7 +9,7 @@ import {
   ValidateNested
 } from 'class-validator'
 
-class Series {
+class SeriesDTO {
   /**
    * 주가리스트
    */
@@ -17,7 +17,7 @@ class Series {
   data: number[]
 }
 
-class Categories {
+class CategoriesDTO {
   /**
    * 날짜리스트
    */
@@ -25,7 +25,7 @@ class Categories {
   data: string[]
 }
 
-class AnnotationImage {
+class AnnotationImageDTO {
   /**
    * 매수/매도 신호 이미지주소
    */
@@ -33,7 +33,7 @@ class AnnotationImage {
   path: string
 }
 
-class Annotation {
+class AnnotationDTO {
   /**
    * 매매신호 X축 날짜
    */
@@ -59,12 +59,12 @@ class Annotation {
   arrow: 'up' | 'down'
 
   @IsNotEmptyObject()
-  @Type(() => AnnotationImage)
+  @Type(() => AnnotationImageDTO)
   @ValidateNested()
-  image: AnnotationImage
+  image: AnnotationImageDTO
 }
 
-class Status {
+class StatusDTO {
   /**
    * 적중률
    */
@@ -84,26 +84,26 @@ class Status {
   total_rate: number
 }
 
-export class Signal1yChartDTO {
+export class GetSignal1yChartDTO {
   @IsNotEmptyObject()
-  @Type(() => Series)
+  @Type(() => SeriesDTO)
   @ValidateNested()
-  series: Series
+  series: SeriesDTO
 
   @IsNotEmptyObject()
-  @Type(() => Categories)
+  @Type(() => CategoriesDTO)
   @ValidateNested()
-  categories: Categories
+  categories: CategoriesDTO
 
   @IsArray()
-  @Type(() => Annotation)
+  @Type(() => AnnotationDTO)
   @ValidateNested({ each: true })
-  annotation: Annotation[]
+  annotation: AnnotationDTO[]
 
   @IsOptional()
-  @Type(() => Status)
+  @Type(() => StatusDTO)
   @ValidateNested()
-  status?: Status
+  status?: StatusDTO
 
   /**
    * 종목의 일봉차트 주소

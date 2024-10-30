@@ -1,6 +1,6 @@
 import { IsString } from 'class-validator'
 
-export class TodaysPickDTO {
+export class GetTodaysPickDTO {
   /**
    * 종목코드
    */

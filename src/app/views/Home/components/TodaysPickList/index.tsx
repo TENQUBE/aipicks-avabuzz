@@ -9,9 +9,9 @@ import dayjs from 'dayjs'
 import { useFlow } from '@/app/shared/libs/stackflow'
 import { ActivityNames } from '@/app/shared/libs/stackflow'
 import modules from '@/modules'
-import { RecommendedStockVM } from '@/modules/stock/adaptor/in/ui/vm/RecommendedStockVM'
-import { StockBaseInfoDataVM } from '@/modules/stock/adaptor/in/ui/vm/StockBaseInfoDataVM'
-import { StockSignalInfoVM } from '@/modules/stock/adaptor/in/ui/vm/StockSignalInfoVM'
+import { TodayPickVM } from '@/modules/stock/adaptor/in/ui/vm/TodayPickVM'
+import { BaseInfoDataVM } from '@/modules/stock/adaptor/in/ui/vm/BaseInfoDataVM'
+import { Signal1yChartVM } from '@/modules/stock/adaptor/in/ui/vm/Signal1yChartVM'
 import {
   useClearInactiveStocks,
   useInactiveStocksValue,
@@ -34,13 +34,13 @@ export default function TodaysPickList() {
   const setTodaysPickUpdatedAt = useSetTodaysPickUpdatedAt()
 
   const [swiper, setSwiper] = useState<SwiperType | null>(null)
-  const [todaysPick, setTodaysPick] = useState<RecommendedStockVM[]>([])
+  const [todaysPick, setTodaysPick] = useState<TodayPickVM[]>([])
   const [inactiveStockInfoDataList, setInactiveStockInfoDataList] = useState<
     {
       stockCode: string
       pmsCode: string
-      baseInfo: StockBaseInfoDataVM
-      signalInfo: StockSignalInfoVM
+      baseInfo: BaseInfoDataVM
+      signalInfo: Signal1yChartVM
     }[]
   >([])
 

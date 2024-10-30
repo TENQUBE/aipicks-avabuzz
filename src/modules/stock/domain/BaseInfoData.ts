@@ -16,7 +16,7 @@ export interface Adv {
   cont4?: string
 }
 
-export class StockBaseInfo {
+export class BaseInfoData {
   constructor(private readonly code: Code, private readonly adv: Adv) {}
 
   getCode() {

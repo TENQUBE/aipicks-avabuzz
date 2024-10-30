@@ -1,6 +1,6 @@
 import { IsNumber, IsString } from 'class-validator'
 
-export class AdvBestItemDTO {
+export class GetAdvBestItemDTO {
   /**
    * 종목코드
    */

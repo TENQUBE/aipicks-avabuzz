@@ -80,7 +80,7 @@ class AdvDTO {
   cont4?: string
 }
 
-export class BaseInfoDataDTO {
+export class GetBaseInfoDataDTO {
   @IsNotEmptyObject()
   @Type(() => CodeDTO)
   @ValidateNested()
