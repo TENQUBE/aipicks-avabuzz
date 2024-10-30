@@ -1,5 +1,11 @@
 # buzzvil-thinkpool-webview
 
+## 0.0.4
+
+### Patch Changes
+
+- [#15](https://github.com/TENQUBE/buzzvil-thinkpool-webview/pull/15) [`4cbc8e0`](https://github.com/TENQUBE/buzzvil-thinkpool-webview/commit/4cbc8e03a2ab948545e2da5df6a6a06668ac2546) Thanks [@8dong](https://github.com/8dong)! - chore: slack 채널 id를 deploy로 수정합니다.
+
 ## 0.0.3
 
 ### Patch Changes
