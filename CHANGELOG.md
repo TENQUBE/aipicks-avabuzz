@@ -1,5 +1,11 @@
 # buzzvil-thinkpool-webview
 
+## 0.0.9
+
+### Patch Changes
+
+- [#26](https://github.com/TENQUBE/buzzvil-thinkpool-webview/pull/26) [`acbe0a9`](https://github.com/TENQUBE/buzzvil-thinkpool-webview/commit/acbe0a9e82be662bd907a3f08c6c9c1789da81d2) Thanks [@8dong](https://github.com/8dong)! - feat: QA 사항들을 반영합니다.
+
 ## 0.0.8
 
 ### Patch Changes
