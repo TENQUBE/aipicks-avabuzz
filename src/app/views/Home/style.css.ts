@@ -6,7 +6,7 @@ export const area = style({
   height: '100%',
   display: 'flex',
   flexDirection: 'column',
-  justifyContent: 'center',
+  justifyContent: 'space-between',
   overflow: 'hidden'
 })
 
@@ -35,7 +35,6 @@ export const desc = style({
 })
 
 export const listArea = style({
-  flex: '1 0 0',
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center'
@@ -45,7 +44,7 @@ export const button = style({
   display: 'flex',
   justifyContent: 'center',
   width: 'calc(100% - 4rem)',
-  margin: '6rem 2rem 2rem',
+  margin: '0 2rem 2rem',
   padding: '1.7rem 0',
   borderRadius: '50px',
   backgroundColor: '#E1E6E9',
