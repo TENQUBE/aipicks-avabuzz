@@ -1,5 +1,11 @@
 # buzzvil-thinkpool-webview
 
+## 0.0.7
+
+### Patch Changes
+
+- [#21](https://github.com/TENQUBE/buzzvil-thinkpool-webview/pull/21) [`a1a09d0`](https://github.com/TENQUBE/buzzvil-thinkpool-webview/commit/a1a09d05aaf497cb21abd23e476d5108c4aebc6a) Thanks [@8dong](https://github.com/8dong)! - fix: 홈 뷰 레이아웃 스타일을 수정합니다.
+
 ## 0.0.6
 
 ### Patch Changes
