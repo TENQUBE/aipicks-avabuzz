@@ -137,13 +137,15 @@ export default function TodaysPickList() {
       }}
       onActiveIndexChange={(swiper) => {
         swiper.slides.forEach((slide, index) => {
+          let keyframes: Keyframe[]
+
           if (swiper.activeIndex !== index) {
-            const keyframes = [{ opacity: '0.3' }]
-            slide.animate(keyframes, { duration: 300, fill: 'forwards' })
+            keyframes = [{ opacity: '0.3' }]
           } else {
-            const keyframes = [{ opacity: '1' }]
-            slide.animate(keyframes, { duration: 300, fill: 'forwards' })
+            keyframes = [{ opacity: '1' }]
           }
+
+          slide.animate(keyframes, { duration: 300, fill: 'forwards' })
         })
       }}
     >
