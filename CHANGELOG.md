@@ -1,5 +1,11 @@
 # buzzvil-thinkpool-webview
 
+## 0.0.6
+
+### Patch Changes
+
+- [#19](https://github.com/TENQUBE/buzzvil-thinkpool-webview/pull/19) [`7fba2b7`](https://github.com/TENQUBE/buzzvil-thinkpool-webview/commit/7fba2b73fa1175d17be7bdac6b9e1ac8e5c66372) Thanks [@8dong](https://github.com/8dong)! - modify: next/image Image 컴포넌트를 img 태그로 대체합니다.
+
 ## 0.0.5
 
 ### Patch Changes
