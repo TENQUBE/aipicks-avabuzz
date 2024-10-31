@@ -6,12 +6,10 @@ import { AdvBestItemVM } from '@/modules/stock/adaptor/in/ui/vm/AdvBestItemVM'
 import modules from '@/modules'
 import Layout from '@/app/shared/components/Layout'
 import GoogleAdsense from '@/app/shared/components/GoogleAdsense'
-import { useActiveActivities } from '@/app/shared/hooks/useActiveActivities'
 import * as styles from '@/app/views/AdvBestItems/style.css'
 
 export default function AdvBestItems() {
   const { push } = useFlow()
-  const activeActivities = useActiveActivities()
 
   const [advBestItems, setAdvBestItems] = useState<AdvBestItemVM[]>([])
 
@@ -32,7 +30,11 @@ export default function AdvBestItems() {
     }
   }
 
-  const updateAdvBestItems = useCallback(async () => {
+  function handleClickMoreButton() {
+    window.open('https://tradingpoint.co.kr/')
+  }
+
+  const fetchData = useCallback(async () => {
     try {
       const advBestItems = await modules.stock.getAdvBestItems()
 
@@ -51,13 +53,9 @@ export default function AdvBestItems() {
     }
   }, [])
 
-  function handleClickTodaysPickButton() {
-    window.open('https://tradingpoint.co.kr/')
-  }
-
   useEffect(() => {
-    updateAdvBestItems()
-  }, [updateAdvBestItems])
+    fetchData()
+  }, [fetchData])
 
   return (
     <AppScreen>
@@ -112,7 +110,7 @@ export default function AdvBestItems() {
             <GoogleAdsense type="medium" />
           </div>
         </section>
-        <button className={styles.button} onClick={handleClickTodaysPickButton}>
+        <button className={styles.button} onClick={handleClickMoreButton}>
           추천 종목 더보기
         </button>
       </Layout>

@@ -344,7 +344,7 @@ export const slide = style({
   flexDirection: 'column',
   justifyContent: 'center',
   alignItems: 'center',
-  width: '137px',
+  width: '154px',
   height: '137px',
   padding: '2rem',
   borderRadius: '16px',
