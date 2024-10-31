@@ -63,7 +63,7 @@ export const stockName = style({
 })
 
 export const pmsName = style({
-  padding: '0.6rem 1rem',
+  padding: '0.4rem 0.8rem',
   borderRadius: '12px',
   fontSize: '1.3rem',
   fontWeight: '600',
@@ -125,7 +125,7 @@ export const adArea = style({
 
 export const button = style({
   position: 'fixed',
-  bottom: '72px',
+  bottom: '64px',
   left: '20px',
   zIndex: '4',
   display: 'flex',

@@ -44,7 +44,7 @@ export const button = style({
   display: 'flex',
   justifyContent: 'center',
   width: 'calc(100% - 4rem)',
-  margin: '0 2rem 2rem',
+  margin: '0 2rem 1.2rem',
   padding: '1.7rem 0',
   borderRadius: '50px',
   backgroundColor: '#E1E6E9',

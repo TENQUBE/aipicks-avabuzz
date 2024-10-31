@@ -1,8 +1,7 @@
 import { Dispatch, SetStateAction, useCallback, useEffect, useRef, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 
-import { useFlow } from '@stackflow/react/future'
-import { ActivityNames } from '@/app/shared/libs/stackflow'
+import { ActivityNames, useFlow } from '@/app/shared/libs/stackflow'
 import { CoupangData } from '@/modules/ad/domain/Coupang'
 import modules from '@/modules'
 import CoupangAd from '@/app/views/Detail/components/CoupangAd'
@@ -155,17 +154,17 @@ export default function Loading({ setIsLoading, setIsShowOverlayAd }: LoadingPro
                 </div>
               )}
               <figure className={styles.imgArea}>
-                <img src="/images/detail/lock.png" alt="자물쇠 이미지" />
+                <img
+                  src={`/images/detail/${isFinishedLoading ? 'opened-' : ''}lock.png`}
+                  alt="자물쇠 이미지"
+                />
               </figure>
             </div>
           </div>
         </div>
 
-        <div className={styles.adArea} style={{ height: !isShowCoupangAd ? '280px' : '223px' }}>
-          <div
-            className={styles.adContent}
-            style={{ marginBottom: !isShowCoupangAd ? '5.4rem' : '1.2rem' }}
-          >
+        <div className={styles.adArea} style={{ height: !isShowCoupangAd ? '231px' : '215px' }}>
+          <div className={styles.adContent}>
             {isShowCoupangAd && coupangData && (
               <CoupangAd
                 skipSeconds={skipSeconds}

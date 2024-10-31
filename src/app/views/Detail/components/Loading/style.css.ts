@@ -117,15 +117,14 @@ export const pulse = style({
   alignItems: 'center',
   width: '118px',
   height: '118px',
-  borderRadius: '50%',
-  mixBlendMode: 'overlay'
+  borderRadius: '50%'
 })
 
 export const baackground = style({
   content: '',
   width: '100%',
   height: '100%',
-  backgroundColor: '#0768DD',
+  background: '#3AB1F0',
   borderRadius: '50%',
   opacity: '0.3',
   position: 'absolute',
@@ -165,7 +164,7 @@ export const adArea = style({
 
 export const adContent = style({
   width: 'calc(100% - 40px)',
-  margin: '0 2rem 0'
+  margin: '0 2rem 1.2rem'
 })
 
 export const googleAdArea = style({
@@ -180,7 +179,7 @@ export const button = style({
   alignItems: 'center',
   width: 'calc(100% - 40px)',
   padding: '1.7rem 0',
-  margin: '0 2rem 2rem',
+  margin: '0 2rem 1.2rem',
   borderRadius: '50px',
   backgroundColor: '#0768DD',
   opacity: '0',

@@ -38,10 +38,17 @@ export const title = style({
 
 export const content = style({
   position: 'absolute',
-  top: '44px',
+  top: '0',
   width: '100%',
-  height: 'calc(100% - 96px)',
-  overflowY: 'auto'
+  height: 'calc(100% - 52px)',
+  overflowY: 'auto',
+
+  selectors: {
+    '&.hasTopBar': {
+      height: 'calc(100% - 96px)',
+      top: '44px'
+    }
+  }
 })
 
 export const bottomAdBannerArea = style({

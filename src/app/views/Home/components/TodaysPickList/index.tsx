@@ -53,7 +53,7 @@ export default function TodaysPickList() {
     push(ActivityNames.Detail, { stock_code: stockCode, pms_code: pmsCode })
   }
 
-  const updateTodayPicks = useCallback(async () => {
+  const fetchData = useCallback(async () => {
     try {
       const todaysPick = await modules.stock.getTodayPicks()
 
@@ -84,8 +84,8 @@ export default function TodaysPickList() {
   }, [inactiveStocks])
 
   useEffect(() => {
-    updateTodayPicks()
-  }, [updateTodayPicks])
+    fetchData()
+  }, [fetchData])
 
   useEffect(() => {
     if (todaysPick.length <= 0) return
@@ -134,6 +134,19 @@ export default function TodaysPickList() {
       }}
       onSwiper={(swiper) => {
         setSwiper(swiper)
+      }}
+      onActiveIndexChange={(swiper) => {
+        swiper.slides.forEach((slide, index) => {
+          let keyframes: Keyframe[]
+
+          if (swiper.activeIndex !== index) {
+            keyframes = [{ opacity: '0.3' }]
+          } else {
+            keyframes = [{ opacity: '1' }]
+          }
+
+          slide.animate(keyframes, { duration: 300, fill: 'forwards' })
+        })
       }}
     >
       {todaysPick.length > 0 &&
@@ -206,7 +219,11 @@ export default function TodaysPickList() {
                           }`}
                         >
                           (
-                          {`${getInactiveStockInfoData(
+                          {`${
+                            getInactiveStockInfoData(stock.stock_code)!.baseInfo.code.fluct_amt > 0
+                              ? '+'
+                              : ''
+                          }${getInactiveStockInfoData(
                             stock.stock_code
                           )!.baseInfo.code.ratio.toLocaleString()}%`}
                           )

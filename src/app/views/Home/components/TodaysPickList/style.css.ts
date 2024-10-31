@@ -4,6 +4,7 @@ export const swiper = style({
   height: '100%',
   width: '100%',
   maxWidth: '256px',
+  minHeight: '348px',
   overflow: 'visible'
 })
 
@@ -187,7 +188,7 @@ export const buttonText = style({
   letterSpacing: '-0.02rem'
 })
 globalStyle(`${slide}.inactive ${buttonText}`, {
-  color: '#253FEB'
+  color: '#0768DD'
 })
 globalStyle(`${slide}.active  ${buttonText}`, {
   color: '#fff'
