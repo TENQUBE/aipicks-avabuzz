@@ -35,6 +35,10 @@ export default function Detail() {
   const stockCode = searchParams.get('stock_code')
   const pmsCode = searchParams.get('pms_code')
 
+  const todaysPickList = todaysPick
+    ? todaysPick.filter((item) => item.stock_code !== stockCode)
+    : null
+
   function getUpOrDown(value: number | undefined) {
     if (typeof value === 'undefined' || value === 0) return 'none'
     else if (value > 0) return 'up'
@@ -51,8 +55,35 @@ export default function Detail() {
     return stockInfoDataList.find((item) => item.stockCode === stockCode)?.baseInfo
   }
 
-  const updateStockInfo = useCallback(
-    async (stockCode: string, pmsCode: string) => {
+  function handleClickOverlayAdDim() {
+    setIsShowOverlayAd(false)
+  }
+
+  function handleClickOverlayAdCloseButton() {
+    setIsShowOverlayAd(false)
+  }
+
+  function handleClickAdvBestItemsButton() {
+    push(ActivityNames.AdvBestItems, {})
+  }
+
+  function handleClickRassi() {
+    window.open('https://tradingpoint.co.kr/')
+  }
+
+  function handleClickTodaysPick(stockCode: string, pmsCode: string) {
+    push(ActivityNames.Detail, { stock_code: stockCode, pms_code: pmsCode })
+  }
+
+  const fetchData = useCallback(
+    async (
+      stockCode: string,
+      pmsCode: string,
+      inactiveStocks: {
+        stockCode: string
+        pmsCode: string
+      }[]
+    ) => {
       try {
         const [todaysPick, baseInfoData, signal1yChart] = await Promise.all([
           modules.stock.getTodayPicks(),
@@ -84,34 +115,8 @@ export default function Detail() {
         })
       }
     },
-    [inactiveStocks]
+    []
   )
-
-  function handleClickOverlayAdDim() {
-    setIsShowOverlayAd(false)
-  }
-
-  function handleClickOverlayAdCloseButton() {
-    setIsShowOverlayAd(false)
-  }
-
-  function handleClickAdvBestItemsButton() {
-    push(ActivityNames.AdvBestItems, {})
-  }
-
-  function handleClickRassi() {
-    window.open('https://tradingpoint.co.kr/')
-  }
-
-  function handleClickTodaysPick(stockCode: string, pmsCode: string) {
-    push(ActivityNames.Detail, { stock_code: stockCode, pms_code: pmsCode })
-  }
-
-  useEffect(() => {
-    if (stockCode && pmsCode) {
-      updateStockInfo(stockCode, pmsCode)
-    }
-  }, [stockCode, pmsCode, updateStockInfo])
 
   useEffect(() => {
     if (!isLoading && !isShowOverlayAd) {
@@ -129,7 +134,11 @@ export default function Detail() {
     }
   }, [isLoading, isShowToast, isShowOverlayAd])
 
-  console.log(signal1yChart?.status)
+  useEffect(() => {
+    if (stockCode && pmsCode && inactiveStocks) {
+      fetchData(stockCode, pmsCode, inactiveStocks)
+    }
+  }, [stockCode, pmsCode, inactiveStocks, fetchData])
 
   return (
     <AppScreen>
@@ -161,10 +170,12 @@ export default function Detail() {
         </div>
       </>
       <Layout title="오늘의 추천 종목" backgroundColor="#fff">
-        {baseInfoData && signal1yChart && (
+        {baseInfoData && signal1yChart && inactiveStocks && (
           <div className={styles.area}>
             <div className={styles.content}>
-              <span className={styles.code}>{baseInfoData?.code.stock_code}</span>
+              <span className={styles.code}>
+                {inactiveStocks.find((item) => item.stockCode === stockCode)?.pmsCode}
+              </span>
               <span className={styles.name}>{baseInfoData?.code.stock_name}</span>
               <span className={`${styles.price} ${getUpOrDown(baseInfoData.code.ratio)}`}>
                 {baseInfoData?.code.curPrice.toLocaleString()}원
@@ -174,7 +185,8 @@ export default function Detail() {
                   {baseInfoData.code.fluct_amt.toLocaleString()}원
                 </span>
                 <span className={`${styles.ratio} ${getUpOrDown(baseInfoData.code.ratio)}`}>
-                  ({baseInfoData.code.ratio}%)
+                  ({baseInfoData.code.ratio > 0 ? '+' : ''}
+                  {baseInfoData.code.ratio}%)
                 </span>
                 <span className={styles.date}>{baseInfoData.code.latestDate} 기준</span>
               </div>
@@ -282,10 +294,15 @@ export default function Detail() {
                 className={styles.swiper}
                 slideClass={styles.slide}
               >
-                {todaysPick &&
-                  inactiveStocks &&
-                  todaysPick.map((item, index) => (
-                    <SwiperSlide className={styles.slide} key={index}>
+                {todaysPickList &&
+                  todaysPickList.map((item, index) => (
+                    <SwiperSlide
+                      className={styles.slide}
+                      key={index}
+                      onClick={() => {
+                        handleClickTodaysPick(item.stock_code, item.pms_code)
+                      }}
+                    >
                       {!getInactiveStock(item.stock_code) ? (
                         <>
                           <span className={styles.activeTitle}>
@@ -294,14 +311,7 @@ export default function Detail() {
                             확인해보세요
                           </span>
                           <div className={styles.activeButtonArea}>
-                            <button
-                              className={styles.activeButton}
-                              onClick={() => {
-                                handleClickTodaysPick(item.stock_code, item.pms_code)
-                              }}
-                            >
-                              확인하기
-                            </button>
+                            <button className={styles.activeButton}>확인하기</button>
                             <span className={styles.pointLabel}>5P</span>
                           </div>
                         </>
@@ -317,8 +327,8 @@ export default function Detail() {
                               {getBaseInfo(item.stock_code)?.code.curPrice.toLocaleString()}원
                             </span>
                             <span className={styles.inactiveRatio}>
-                              {getBaseInfo(item.stock_code)?.code.ratio! > 0 && '+'}
-                              {getBaseInfo(item.stock_code)?.code.ratio}%
+                              ({getBaseInfo(item.stock_code)?.code.ratio! > 0 ? '+' : ''}
+                              {getBaseInfo(item.stock_code)?.code.ratio}%)
                             </span>
                           </div>
                           <span className={styles.inactiveDate}>

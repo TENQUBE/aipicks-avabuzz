@@ -9,12 +9,14 @@ import * as styles from '@/app/shared/components/Layout/style.css'
 interface LayoutProps {
   title?: string
   backgroundColor?: string
+  hasTopBar?: boolean
 }
 
 export default function Layout({
   children,
   title,
-  backgroundColor = '#fff'
+  backgroundColor = '#fff',
+  hasTopBar = true
 }: PropsWithChildren<LayoutProps>) {
   const { pop, replace } = useFlow()
   const activeActivies = useActiveActivities()
@@ -23,13 +25,13 @@ export default function Layout({
     if (activeActivies.length > 1) {
       pop()
     } else {
-      replace(ActivityNames.Home, { Animation: false })
+      replace(ActivityNames.Home, {})
     }
   }
 
   return (
     <div className={styles.area} style={{ backgroundColor }}>
-      {title && (
+      {title && hasTopBar && (
         <div className={styles.topBar} style={{ backgroundColor }}>
           {activeActivies.length > 0 && (
             <button className={styles.backButton} onClick={handleClickBackButton}>
@@ -50,7 +52,7 @@ export default function Layout({
           <h1 className={styles.title}>{title}</h1>
         </div>
       )}
-      <div className={styles.content}>{children}</div>
+      <div className={`${styles.content} ${hasTopBar ? 'hasTopBar' : ''}`}>{children}</div>
       <div className={styles.bottomAdBannerArea}>
         <GoogleAdsense type="small" />
       </div>

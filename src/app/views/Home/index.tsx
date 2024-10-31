@@ -13,7 +13,7 @@ export default function Home() {
 
   return (
     <AppScreen>
-      <Layout backgroundColor="#F8F9FF">
+      <Layout hasTopBar={false} backgroundColor="#F8F9FF">
         <section className={styles.area}>
           <header className={styles.header}>
             <h1 className={styles.title}>
