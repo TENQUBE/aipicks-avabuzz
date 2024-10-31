@@ -166,7 +166,7 @@ export default function TodaysPickList() {
                         )!.baseInfo.code.curPrice.toLocaleString()} 원`}
                       </span>
                       <div className={styles.baesInfoCodeArea}>
-                        전일대비
+                        <span className={styles.baseInfoText}>전일대비</span>
                         {getInactiveStockInfoData(stock.stock_code)!.baseInfo.code.fluct_amt < 0 ? (
                           <svg
                             className={styles.baesInfoCodeAreaIcon}

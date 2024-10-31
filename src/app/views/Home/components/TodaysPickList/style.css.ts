@@ -2,7 +2,8 @@ import { globalStyle, style } from '@vanilla-extract/css'
 
 export const swiper = style({
   height: '100%',
-  width: '256px !important',
+  width: '100%',
+  maxWidth: '256px',
   overflow: 'visible'
 })
 
@@ -69,14 +70,18 @@ globalStyle(`${baseInfoArea}.minus ${price}`, {
 export const baesInfoCodeArea = style({
   marginBottom: '1.7rem',
   display: 'flex',
-  alignItems: 'center',
+  alignItems: 'center'
+})
+
+export const baseInfoText = style({
+  marginRight: '0.4rem',
   color: '#5E6265',
   fontSize: '1.4rem',
   lineHeight: '2rem'
 })
 
 export const baesInfoCodeAreaIcon = style({
-  marginLeft: '0.4rem'
+  marginRight: '0.2rem'
 })
 
 export const flunt = style({
@@ -119,7 +124,6 @@ globalStyle(`${lockImgArea} > img`, {
 
 export const chartImgArea = style({
   position: 'relative',
-  flex: '1 0 0',
   marginBottom: '1.5rem'
 })
 globalStyle(`${chartImgArea} > img`, {
