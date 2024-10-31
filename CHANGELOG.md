@@ -1,5 +1,11 @@
 # buzzvil-thinkpool-webview
 
+## 0.0.8
+
+### Patch Changes
+
+- [#23](https://github.com/TENQUBE/buzzvil-thinkpool-webview/pull/23) [`085802c`](https://github.com/TENQUBE/buzzvil-thinkpool-webview/commit/085802c6057aad2e00775691b732ba1bd94c81f2) Thanks [@8dong](https://github.com/8dong)! - fix: 홈 헤더 스타일을 수정합니다.
+
 ## 0.0.7
 
 ### Patch Changes
