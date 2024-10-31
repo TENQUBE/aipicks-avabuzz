@@ -15,7 +15,7 @@ export const header = style({
   flexDirection: 'column',
   justifyContent: 'center',
   alignItems: 'center',
-  padding: '2.8rem 2rem 4.2rem'
+  padding: '2.8rem 2rem 0rem'
 })
 
 export const title = style({
