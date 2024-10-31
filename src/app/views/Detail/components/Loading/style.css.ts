@@ -154,6 +154,8 @@ export const imgArea = style({
   height: '100px'
 })
 globalStyle(`${imgArea} > img`, {
+  width: '100%',
+  height: '100%',
   objectFit: 'contain'
 })
 

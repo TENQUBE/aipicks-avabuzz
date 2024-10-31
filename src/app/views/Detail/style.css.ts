@@ -30,11 +30,16 @@ export const toast = style({
   }
 })
 
-export const coinImg = style({
+export const coinImgArea = style({
   position: 'relative',
   width: '56px',
   height: '56px',
   marginBottom: '0.8rem'
+})
+globalStyle(`${coinImgArea} > img`, {
+  width: '100%',
+  height: '100%',
+  objectFit: 'contain'
 })
 
 export const toastContent = style({
@@ -185,12 +190,17 @@ export const contentTitle = style({
   letterSpacing: '-0.02px'
 })
 
-export const chartImg = style({
+export const chartImgArea = style({
   position: 'relative',
   width: '100%',
   height: '173px',
   marginBottom: '2.4rem',
   transform: 'translateX(3px)'
+})
+globalStyle(`${chartImgArea} > img`, {
+  width: '100%',
+  height: '100%',
+  objectFit: 'contain'
 })
 
 export const rateList = style({
@@ -250,6 +260,11 @@ export const rassiImgArea = style({
   width: '40px',
   height: '40px',
   marginRight: '1.6rem'
+})
+globalStyle(`${rassiImgArea} > img`, {
+  width: '100%',
+  height: '100%',
+  objectFit: 'contain'
 })
 
 export const rassiTextContent = style({

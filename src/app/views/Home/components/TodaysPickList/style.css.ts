@@ -108,6 +108,14 @@ export const lockImgArea = style({
   height: '80px',
   marginBottom: '1.6rem'
 })
+globalStyle(`${lockImgArea} > img`, {
+  position: 'absolute',
+  top: '0',
+  left: '0',
+  width: '100%',
+  height: '100%',
+  objectFit: 'contain'
+})
 
 export const chartImgArea = style({
   position: 'relative',
@@ -115,6 +123,8 @@ export const chartImgArea = style({
   marginBottom: '1.5rem'
 })
 globalStyle(`${chartImgArea} > img`, {
+  width: '100%',
+  height: '100%',
   objectFit: 'contain'
 })
 

@@ -1,4 +1,3 @@
-import Image from 'next/image'
 import { useCallback, useEffect, useState } from 'react'
 import { useActivity } from '@stackflow/react'
 import { Swiper, SwiperSlide } from 'swiper/react'
@@ -215,10 +214,10 @@ export default function TodaysPickList() {
                       </div>
                     </div>
                     <figure className={styles.chartImgArea}>
-                      <Image
+                      <img
+                        className={styles.chartImgArea}
                         src={getInactiveStockInfoData(stock.stock_code)!.signalInfo.chartName}
                         alt="차트 이미지"
-                        fill
                       />
                     </figure>
                   </>
@@ -228,7 +227,7 @@ export default function TodaysPickList() {
             {!isInactiveStockCode(stock.stock_code) && (
               <>
                 <figure className={styles.lockImgArea}>
-                  <Image src="/images/home/lock.png" alt="자물쇠 마크 이미지" fill />
+                  <img src="/images/home/lock.png" alt="자물쇠 마크 이미지" />
                   <span className={styles.point}>5P</span>
                 </figure>
                 <p className={styles.activeDesc}>

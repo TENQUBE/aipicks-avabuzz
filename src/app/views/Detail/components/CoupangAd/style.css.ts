@@ -1,4 +1,4 @@
-import { style } from '@vanilla-extract/css'
+import { globalStyle, style } from '@vanilla-extract/css'
 
 export const area = style({
   position: 'relative'
@@ -26,11 +26,16 @@ export const logoArea = style({
   marginBottom: '0.4rem'
 })
 
-export const symbolLogoImg = style({
+export const symbolLogoImgArea = style({
   position: 'relative',
   marginRight: '0.8rem',
   width: '18px',
   height: '18px'
+})
+globalStyle(`${symbolLogoImgArea} > img`, {
+  width: '100%',
+  height: '100%',
+  objectFit: 'contain'
 })
 
 export const textLogo = style({
@@ -53,12 +58,18 @@ export const productContent = style({
   WebkitBoxOrient: 'vertical'
 })
 
-export const productImg = style({
+export const productImgArea = style({
   position: 'relative',
   width: '80px',
   height: '72px',
   borderRadius: '12px',
-  backgroundColor: '#fff'
+  backgroundColor: '#fff',
+  overflow: 'hidden'
+})
+globalStyle(`${productImgArea} > img`, {
+  width: '100%',
+  height: '100%',
+  objectFit: 'contain'
 })
 
 export const adText = style({

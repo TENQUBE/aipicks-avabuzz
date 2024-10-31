@@ -1,5 +1,4 @@
 import { MouseEventHandler } from 'react'
-import Image from 'next/image'
 
 import { CoupangData } from '@/modules/ad/domain/Coupang'
 import * as styles from '@/app/views/Detail/components/CoupangAd/style.css'
@@ -24,21 +23,16 @@ export default function CoupangAd({
       <div className={styles.content} onClick={handleClickConfirmButton}>
         <div className={styles.contentArea}>
           <div className={styles.logoArea}>
-            <figure className={styles.symbolLogoImg}>
-              <Image
-                src="/images/ad/coupang-symbol-logo.png"
-                alt="쿠팡 심볼 로고 이미지"
-                fill
-                objectFit="contain"
-              />
+            <figure className={styles.symbolLogoImgArea}>
+              <img src="/images/ad/coupang-symbol-logo.png" alt="쿠팡 심볼 로고 이미지" />
             </figure>
             <span className={styles.textLogo}>쿠팡</span>
           </div>
           <p className={styles.productContent}>{data.productName}</p>
         </div>
         <div>
-          <figure className={styles.productImg}>
-            <Image src={data.productImage} alt="상품 이미지" fill objectFit="contain" />
+          <figure className={styles.productImgArea}>
+            <img src={data.productImage} alt="상품 이미지" />
           </figure>
           <span className={styles.adText}>AD</span>
         </div>

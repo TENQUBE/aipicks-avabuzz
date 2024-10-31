@@ -1,6 +1,5 @@
 import { Dispatch, SetStateAction, useCallback, useEffect, useRef, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
-import Image from 'next/image'
 
 import { useFlow } from '@stackflow/react/future'
 import { ActivityNames } from '@/app/shared/libs/stackflow'
@@ -156,7 +155,7 @@ export default function Loading({ setIsLoading, setIsShowOverlayAd }: LoadingPro
                 </div>
               )}
               <figure className={styles.imgArea}>
-                <Image src="/images/detail/lock.png" alt="자물쇠 이미지" fill />
+                <img src="/images/detail/lock.png" alt="자물쇠 이미지" />
               </figure>
             </div>
           </div>

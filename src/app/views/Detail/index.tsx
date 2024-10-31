@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
-import Image from 'next/image'
 import Confetti from 'react-confetti-boom'
 import { Swiper, SwiperSlide } from 'swiper/react'
 
@@ -36,8 +35,8 @@ export default function Detail() {
   const stockCode = searchParams.get('stock_code')
   const pmsCode = searchParams.get('pms_code')
 
-  function getUpOrDown(value: number) {
-    if (value === 0) return 'none'
+  function getUpOrDown(value: number | undefined) {
+    if (typeof value === 'undefined' || value === 0) return 'none'
     else if (value > 0) return 'up'
     else return 'down'
   }
@@ -130,6 +129,8 @@ export default function Detail() {
     }
   }, [isLoading, isShowToast, isShowOverlayAd])
 
+  console.log(signal1yChart?.status)
+
   return (
     <AppScreen>
       {isShowOverlayAd && (
@@ -153,8 +154,8 @@ export default function Detail() {
           </div>
         )}
         <div className={`${styles.toast} ${isShowToast ? 'open' : 'close'}`}>
-          <figure className={styles.coinImg}>
-            <Image src="/images/detail/coin.png" alt="코인 이미지" fill objectFit="contain" />
+          <figure className={styles.coinImgArea}>
+            <img src="/images/detail/coin.png" alt="코인 이미지" />
           </figure>
           <span className={styles.toastContent}>2 포인트 적립 완료!</span>
         </div>
@@ -196,45 +197,45 @@ export default function Detail() {
 
             <div className={styles.content} style={{ marginBottom: '1.2rem' }}>
               <h2 className={styles.contentTitle}>최근 1년 매매 신호</h2>
-              <figure className={styles.chartImg}>
-                <Image src={signal1yChart.chartName} alt="차트 이미지" fill objectFit="contain" />
+              <figure className={styles.chartImgArea}>
+                <img src={signal1yChart.chartName} alt="차트 이미지" />
               </figure>
               <ul className={styles.rateList}>
                 <li className={styles.rateItem}>
                   <span className={styles.rateTitle}>적중률</span>
                   <span
                     className={`${styles.rateNum} ${getUpOrDown(
-                      signal1yChart.status ? signal1yChart.status.win_rate! : 0
+                      signal1yChart.status?.win_rate ? signal1yChart.status.win_rate : 0
                     )}`}
                   >
-                    {signal1yChart.status ? signal1yChart.status.win_rate : '--.--'}%
+                    {signal1yChart.status?.win_rate ? signal1yChart.status.win_rate : '--.--'}%
                   </span>
                 </li>
                 <li className={styles.rateItem}>
                   <span className={styles.rateTitle}>최대 수익률</span>
                   <span
                     className={`${styles.rateNum} ${getUpOrDown(
-                      signal1yChart.status ? signal1yChart.status.max_rate! : 0
+                      signal1yChart.status?.max_rate ? signal1yChart.status.max_rate : 0
                     )}`}
                   >
-                    {signal1yChart.status ? signal1yChart.status.max_rate : '--.--'}%
+                    {signal1yChart.status?.max_rate ? signal1yChart.status.max_rate : '--.--'}%
                   </span>
                 </li>
                 <li className={styles.rateItem}>
                   <span className={styles.rateTitle}>누적 수익률</span>
                   <span
                     className={`${styles.rateNum} ${getUpOrDown(
-                      signal1yChart.status ? signal1yChart.status.total_rate! : 0
+                      signal1yChart.status?.total_rate ? signal1yChart.status.total_rate : 0
                     )}`}
                   >
-                    {signal1yChart.status ? signal1yChart.status.total_rate! : '--.--'}%
+                    {signal1yChart.status?.total_rate ? signal1yChart.status.total_rate : '--.--'}%
                   </span>
                 </li>
               </ul>
 
               <div className={styles.rassi} onClick={handleClickRassi}>
                 <figure className={styles.rassiImgArea}>
-                  <Image src="/images/detail/rassi.png" alt="라씨 아이콘" fill />
+                  <img src="/images/detail/rassi.png" alt="라씨 아이콘" />
                 </figure>
                 <div className={styles.rassiTextContent}>
                   <span className={styles.rassiDesc}>AI기반 최적의 투자 가격대 제시해주는</span>
