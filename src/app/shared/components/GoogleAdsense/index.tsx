@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-import Image from 'next/image'
 
 import { GOLDBOX_URL, SLOT } from '@/app/shared/config'
 import { useGoogleAdScriptLoadStatusValue } from '@/app/shared/hooks/useGoogleAdScriptLoadStatus'
@@ -96,7 +95,7 @@ export default function GoogleAdsense({ type }: GoogleAdsenseProps) {
         target="_blank"
         referrerPolicy="unsafe-url"
       >
-        <Image
+        <img
           className={`${styles.goldbox} ${type === 'small' ? 'overwrap' : ''}`}
           loading="eager"
           src={adImgSrc}
