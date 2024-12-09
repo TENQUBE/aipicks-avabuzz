@@ -11,34 +11,34 @@ import { basicUIPlugin } from '@/app/shared/libs/stackflow/basic-ui'
 import Detail from '@/app/views/Detail'
 import AdvBestItems from '@/app/views/AdvBestItems'
 import Error from '@/app/views/Error'
-import CoupangAdModal from '@/app/views/CoupangAdModal'
+import CoupangAd from '@/app/views/CoupangAd'
 
 export enum ActivityNames {
   Detail = 'Detail',
   AdvBestItems = 'AdvBestItems',
   Error = 'Error',
-  CoupangAdModal = 'CoupangAdModal'
+  CoupangAd = 'CoupangAd'
 }
 
 export enum ActivityRoutes {
   Detail = '/detail',
   AdvBestItems = '/adv-best-items',
   Error = '/error',
-  CoupangAdModal = '/coupang-ad-modal'
+  CoupangAd = '/coupang-ad'
 }
 
 const activities = {
   Detail,
   AdvBestItems,
   Error,
-  CoupangAdModal
+  CoupangAd
 }
 
 export const routes: { [key in ActivityNames]: ActivityRoutes } = {
   [ActivityNames.Detail]: ActivityRoutes[ActivityNames.Detail],
   [ActivityNames.AdvBestItems]: ActivityRoutes[ActivityNames.AdvBestItems],
   [ActivityNames.Error]: ActivityRoutes[ActivityNames.Error],
-  [ActivityNames.CoupangAdModal]: ActivityRoutes[ActivityNames.CoupangAdModal]
+  [ActivityNames.CoupangAd]: ActivityRoutes[ActivityNames.CoupangAd]
 }
 
 const getStackflowParams = () => {

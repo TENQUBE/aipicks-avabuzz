@@ -106,10 +106,10 @@ export default function AdvBestItems() {
               </li>
             ))}
           </ul>
-          <div className={styles.adArea}>
-            <GoogleAdsense type="medium" />
-          </div>
         </section>
+        <div className={styles.adArea}>
+          <GoogleAdsense type="banner" />
+        </div>
         {/* <button className={styles.button} onClick={handleClickMoreButton}>
           추천 종목 더보기
         </button> */}

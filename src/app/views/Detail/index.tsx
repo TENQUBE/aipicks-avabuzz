@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Confetti from 'react-confetti-boom'
-import { Swiper, SwiperSlide } from 'swiper/react'
 import dayjs from 'dayjs'
 
+import { ANIMATION_DURATION } from '@/app/shared/config'
 import { AppScreen } from '@/app/shared/libs/stackflow/basic-ui'
 import { useFlow } from '@/app/shared/libs/stackflow'
 import { ActivityNames } from '@/app/shared/libs/stackflow'
@@ -12,7 +12,7 @@ import { Signal1yChartVM } from '@/modules/stock/adaptor/in/ui/vm/Signal1yChartV
 import { TodayPickVM } from '@/modules/stock/adaptor/in/ui/vm/TodayPickVM'
 import modules from '@/modules'
 import Layout from '@/app/shared/components/Layout'
-import OverlayGoogleAdsense from '@/app/shared/components/OverlayGoogleAdsense'
+import InterstitialGoogleAdsense from '@/app/shared/components/InterstitialGoogleAdsense'
 import {
   useInactiveStocksValue,
   useClearInactiveStocks,
@@ -24,12 +24,11 @@ import {
   useSetTodaysPickUpdatedAt,
   useTodaysPickUpdatedAtValue
 } from '@/app/shared/hooks/useTodaysPickUpdatedAt'
-import * as styles from '@/app/views/Detail/style.css'
 import {
   useActivityParamsValue,
   useClearActivityParams
 } from '@/app/shared/hooks/useActivityParams'
-import { ANIMATION_DURATION } from '@/app/shared/config'
+import * as styles from '@/app/views/Detail/style.css'
 
 export default function Detail() {
   const { push } = useFlow()
@@ -46,7 +45,7 @@ export default function Detail() {
   const clearInactiveStocks = useClearInactiveStocks()
 
   const [isLoading, setIsLoading] = useState<boolean | null>(null)
-  const [isShowOverlayAd, setIsShowOverlayAd] = useState<boolean>(false)
+  const [isShowInterstitialAd, setIsShowInterstitialAd] = useState<boolean>(false)
   const [isShowToast, setIsShowToast] = useState<boolean>(false)
   const [stockCode, setStockCode] = useState<string | null>(
     searchParams.get('stock_code') ? searchParams.get('stock_code') : null
@@ -84,22 +83,16 @@ export default function Detail() {
     return stockInfoDataList.find((item) => item.stockCode === stockCode)?.baseInfo
   }
 
-  function handleClickOverlayAdDim() {
-    setIsShowOverlayAd(false)
-    setTimeout(() => {
-      setIsShowToast(true)
-    }, ANIMATION_DURATION)
-  }
+  const interstitialAdCloseCallback = useCallback(() => {
+    setIsShowInterstitialAd(false)
 
-  function handleClickOverlayAdCloseButton() {
-    setIsShowOverlayAd(false)
     setTimeout(() => {
       setIsShowToast(true)
     }, ANIMATION_DURATION)
-  }
+  }, [])
 
   function handleClickLoadingButton() {
-    push(ActivityNames.CoupangAdModal, {})
+    push(ActivityNames.CoupangAd, {})
   }
 
   function handleClickAdvBestItemsButton() {
@@ -131,24 +124,22 @@ export default function Detail() {
           ? dayjs(todaysPickUpdatedAt).diff(dayjs().startOf('D'), 'D') < 0
           : true
 
-        let currentInaactiveStocks = inactiveStocks
+        let curInactiveStocks = inactiveStocks
 
         if (isUpdateTodaysPick || !todaysPickUpdatedAt) {
           setTodaysPickUpdatedAt(new Date().toISOString())
 
           clearInactiveStocks()
-          currentInaactiveStocks = []
+          curInactiveStocks = []
         }
 
         let targetStockCode: string = stockCode ? stockCode : todaysPick[0].stock_code
         let targetPmsCode: string = pmsCode ? pmsCode : todaysPick[0].pms_code
 
-        if (currentInaactiveStocks.length > 0 && !stockCode && !pmsCode) {
+        if (curInactiveStocks.length > 0 && !stockCode && !pmsCode) {
           const activeStock = todaysPick.find(
             ({ stock_code }) =>
-              !currentInaactiveStocks.some(
-                (inactiveStock) => inactiveStock.stockCode === stock_code
-              )
+              !curInactiveStocks.some((inactiveStock) => inactiveStock.stockCode === stock_code)
           )
 
           if (activeStock) {
@@ -157,13 +148,11 @@ export default function Detail() {
           }
         }
 
-        const isLoading = !!currentInaactiveStocks.find(
-          ({ stockCode }) => stockCode === targetStockCode
-        )
+        const isLoading = !!curInactiveStocks.find(({ stockCode }) => stockCode === targetStockCode)
 
         if (isLoading) {
           setIsLoading(false)
-          setIsShowOverlayAd(true)
+          setIsShowInterstitialAd(true)
         } else {
           setIsLoading(true)
         }
@@ -176,7 +165,7 @@ export default function Detail() {
           modules.stock.getSignal1yChart(targetStockCode, targetPmsCode)
         ])
 
-        if (currentInaactiveStocks.length > 0) {
+        if (curInactiveStocks.length > 0) {
           async function getStockInfoData(stockCode: string, pmsCode: string) {
             const baseInfo = await modules.stock.getBaseInfoData(stockCode, pmsCode)
 
@@ -184,9 +173,7 @@ export default function Detail() {
           }
 
           const stockInfoData = await Promise.all(
-            currentInaactiveStocks.map(({ stockCode, pmsCode }) =>
-              getStockInfoData(stockCode, pmsCode)
-            )
+            curInactiveStocks.map(({ stockCode, pmsCode }) => getStockInfoData(stockCode, pmsCode))
           )
 
           setStockInfoDataList(stockInfoData)
@@ -206,12 +193,12 @@ export default function Detail() {
   )
 
   useEffect(() => {
-    if (!isLoading && !isShowOverlayAd && isShowToast) {
+    if (!isLoading && !isShowInterstitialAd && isShowToast) {
       setTimeout(() => {
         setIsShowToast(false)
       }, 2000)
     }
-  }, [isLoading, isShowToast, isShowOverlayAd])
+  }, [isLoading, isShowInterstitialAd, isShowToast])
 
   useEffect(() => {
     if (isFetchedRef.current || !isRehydratedInactiveStock || !isRehydratedTodaysPickUpdateAt)
@@ -243,14 +230,16 @@ export default function Detail() {
       return
 
     switch (activityParams.from) {
-      case ActivityNames.CoupangAdModal:
-        setInactiveStocks(stockCode, pmsCode)
+      case ActivityNames.CoupangAd:
+        if (activityParams.params.isSeenAd) {
+          setInactiveStocks(stockCode, pmsCode)
 
-        setIsLoading(false)
+          setIsLoading(false)
 
-        setTimeout(() => {
-          setIsShowOverlayAd(true)
-        }, ANIMATION_DURATION)
+          setTimeout(() => {
+            setIsShowInterstitialAd(true)
+          }, ANIMATION_DURATION)
+        }
 
         break
     }
@@ -267,11 +256,8 @@ export default function Detail() {
 
   return (
     <AppScreen>
-      {isShowOverlayAd && (
-        <OverlayGoogleAdsense
-          handleClickDim={handleClickOverlayAdDim}
-          handleClickCloseButton={handleClickOverlayAdCloseButton}
-        />
+      {isShowInterstitialAd && (
+        <InterstitialGoogleAdsense closeCallback={interstitialAdCloseCallback} />
       )}
 
       <>
@@ -306,200 +292,206 @@ export default function Detail() {
       )}
 
       <Layout title="AI 추천종목" backgroundColor="#fff">
-        {baseInfoData && signal1yChart && inactiveStocks && typeof isLoading === 'boolean' && (
-          <div className={styles.area}>
-            <div className={styles.content}>
-              <span className={styles.code}>
-                {!isLoading
-                  ? inactiveStocks.find((item) => item.stockCode === stockCode)?.pmsCode
-                  : replaceWithAsterisk(
-                      inactiveStocks.find((item) => item.stockCode === stockCode)?.pmsCode
-                    )}
-              </span>
-              <span className={styles.name}>
-                {!isLoading
-                  ? baseInfoData.code.stock_name
-                  : replaceWithAsterisk(baseInfoData.code.stock_name)}
-              </span>
-              <span className={`${styles.price} ${getUpOrDown(baseInfoData.code.ratio)}`}>
-                {baseInfoData?.code.curPrice.toLocaleString()}원
-              </span>
-              <div className={styles.fluntArea}>
-                <span className={`${styles.fluntAmount} ${getUpOrDown(baseInfoData.code.ratio)}`}>
-                  {baseInfoData.code.fluct_amt.toLocaleString()}원
-                </span>
-                <span className={`${styles.ratio} ${getUpOrDown(baseInfoData.code.ratio)}`}>
-                  ({baseInfoData.code.ratio > 0 ? '+' : ''}
-                  {baseInfoData.code.ratio}%)
-                </span>
-                <span className={styles.date}>{baseInfoData.code.latestDate} 기준</span>
-              </div>
-
-              <ul className={styles.priceList}>
-                <li className={styles.priceItem}>
-                  <span className={styles.priceItemTitle}>매수가</span>
-                  <span className={styles.priceItemAmount}>
-                    {!isLoading ? baseInfoData.adv.buy_price.toLocaleString() : '**,***'}원
-                  </span>
-                </li>
-                <li className={styles.priceItem}>
-                  <span className={styles.priceItemTitle}>목표가</span>
-                  <span className={styles.priceItemAmount}>
-                    {!isLoading ? baseInfoData.adv.goal_price.toLocaleString() : '**,***'}원
-                  </span>
-                </li>
-              </ul>
-            </div>
-            <div className={styles.content} style={{ marginBottom: '1.2rem' }}>
-              <h2 className={styles.contentTitle}>최근 1년 매매 신호</h2>
-              <figure className={styles.chartImgArea}>
-                <img src={signal1yChart.chartName} alt="차트 이미지" />
-              </figure>
-              <ul className={styles.rateList}>
-                <li className={styles.rateItem}>
-                  <span className={styles.rateTitle}>적중률</span>
-                  <span
-                    className={`${styles.rateNum} ${getUpOrDown(
-                      signal1yChart.status?.win_rate ? signal1yChart.status.win_rate : 0
-                    )}`}
-                  >
-                    {isLoading && '***'}
-                    {!isLoading &&
-                      typeof signal1yChart.status?.win_rate === 'number' &&
-                      `${signal1yChart.status.win_rate}%`}
-                    {!isLoading && typeof signal1yChart.status?.win_rate !== 'number' && '--.--'}
-                  </span>
-                </li>
-                <li className={styles.rateItem}>
-                  <span className={styles.rateTitle}>최대 수익률</span>
-                  <span
-                    className={`${styles.rateNum} ${getUpOrDown(
-                      signal1yChart.status?.max_rate ? signal1yChart.status.max_rate : 0
-                    )}`}
-                  >
-                    {isLoading && '***'}
-                    {!isLoading &&
-                      typeof signal1yChart.status?.max_rate === 'number' &&
-                      `${signal1yChart.status.max_rate}%`}
-                    {!isLoading && typeof signal1yChart.status?.max_rate !== 'number' && '--.--'}
-                  </span>
-                </li>
-                <li className={styles.rateItem}>
-                  <span className={styles.rateTitle}>누적 수익률</span>
-                  <span
-                    className={`${styles.rateNum} ${getUpOrDown(
-                      signal1yChart.status?.total_rate ? signal1yChart.status.total_rate : 0
-                    )}`}
-                  >
-                    {isLoading && '***'}
-                    {!isLoading &&
-                      typeof signal1yChart.status?.total_rate === 'number' &&
-                      `${signal1yChart.status.max_rate}%`}
-                    {!isLoading && typeof signal1yChart.status?.total_rate !== 'number' && '--.--'}
-                  </span>
-                </li>
-              </ul>
-
-              <div className={styles.rassi} onClick={handleClickRassi}>
-                <figure className={styles.rassiImgArea}>
-                  <img src="/images/detail/rassi.png" alt="라씨 아이콘" />
-                </figure>
-                <div className={styles.rassiTextContent}>
-                  <span className={styles.rassiDesc}>AI기반 최적의 투자 가격대 제시해주는</span>
-                  <span className={styles.rassiTitle}>투자의 비책</span>
-                </div>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="25"
-                  viewBox="0 0 24 25"
-                  fill="none"
-                >
-                  <path
-                    d="M9.29006 16.3805L13.1701 12.5005L9.29006 8.62047C8.90006 8.23047 8.90006 7.60047 9.29006 7.21047C9.68006 6.82047 10.3101 6.82047 10.7001 7.21047L15.2901 11.8005C15.6801 12.1905 15.6801 12.8205 15.2901 13.2105L10.7001 17.8005C10.3101 18.1905 9.68006 18.1905 9.29006 17.8005C8.91006 17.4105 8.90006 16.7705 9.29006 16.3805Z"
-                    fill="#9FA7AE"
-                  />
-                </svg>
-              </div>
-            </div>
-
-            <div className={styles.content}>
-              <h2 className={styles.contentTitle}>투자포인트</h2>
-              {!isLoading && (
-                <div className={styles.contArea}>
-                  <h3 className={styles.contTitle}>{baseInfoData.adv.cont1}</h3>
-                  <ul className={styles.contList}>
-                    {baseInfoData.adv?.cont2 && (
-                      <li className={styles.contItem}>{baseInfoData.adv.cont2}</li>
-                    )}
-                    {baseInfoData.adv?.cont3 && (
-                      <li className={styles.contItem}>{baseInfoData.adv.cont3}</li>
-                    )}
-                    {baseInfoData.adv?.cont4 && (
-                      <li className={styles.contItem}>{baseInfoData.adv.cont4}</li>
-                    )}
-                  </ul>
-                </div>
-              )}
-            </div>
-
-            <div className={styles.todaysPickArea}>
-              <h2 className={styles.contentTitle}>오늘의 추천 종목</h2>
-              <div className={styles.stockList}>
-                {todaysPickList &&
-                  todaysPickList.map((item, index) => (
-                    <div
-                      className={styles.stockItem}
-                      key={index}
-                      onClick={() => {
-                        handleClickTodaysPick(item.stock_code, item.pms_code)
-                      }}
-                    >
-                      {!getInactiveStock(item.stock_code) ? (
-                        <>
-                          <span className={styles.activeTitle}>
-                            추천 종목을
-                            <br />
-                            확인해보세요
-                          </span>
-                          <div className={styles.activeButtonArea}>
-                            <button className={styles.activeButton}>확인하기</button>
-                            <span className={styles.pointLabel}>5P</span>
-                          </div>
-                        </>
-                      ) : (
-                        <>
-                          <span className={styles.inactiveTitle}>{item.stock_name}</span>
-                          <div
-                            className={`${styles.inactiveContent} ${
-                              getBaseInfo(item.stock_code)?.code.ratio! < 0 ? 'minus' : 'plus'
-                            }`}
-                          >
-                            <span className={styles.inactivePrice}>
-                              {getBaseInfo(item.stock_code)?.code.curPrice.toLocaleString()}원
-                            </span>
-                            <span className={styles.inactiveRatio}>
-                              ({getBaseInfo(item.stock_code)?.code.ratio! > 0 ? '+' : ''}
-                              {getBaseInfo(item.stock_code)?.code.ratio}%)
-                            </span>
-                          </div>
-                          <span className={styles.inactiveDate}>
-                            {getBaseInfo(item.stock_code)?.code.latestDate} 기준
-                          </span>
-                        </>
+        {typeof isLoading === 'boolean' &&
+          todaysPick &&
+          baseInfoData &&
+          signal1yChart &&
+          inactiveStocks && (
+            <div className={styles.area}>
+              <div className={styles.content}>
+                <span className={styles.code}>
+                  {!isLoading
+                    ? todaysPick.find((item) => item.stock_code === stockCode)?.pms_code
+                    : replaceWithAsterisk(
+                        todaysPick.find((item) => item.stock_code === stockCode)?.pms_code
                       )}
-                    </div>
-                  ))}
+                </span>
+                <span className={styles.name}>
+                  {!isLoading
+                    ? baseInfoData.code.stock_name
+                    : replaceWithAsterisk(baseInfoData.code.stock_name)}
+                </span>
+                <span className={`${styles.price} ${getUpOrDown(baseInfoData.code.ratio)}`}>
+                  {baseInfoData?.code.curPrice.toLocaleString()}원
+                </span>
+                <div className={styles.fluntArea}>
+                  <span className={`${styles.fluntAmount} ${getUpOrDown(baseInfoData.code.ratio)}`}>
+                    {baseInfoData.code.fluct_amt.toLocaleString()}원
+                  </span>
+                  <span className={`${styles.ratio} ${getUpOrDown(baseInfoData.code.ratio)}`}>
+                    ({baseInfoData.code.ratio > 0 ? '+' : ''}
+                    {baseInfoData.code.ratio}%)
+                  </span>
+                  <span className={styles.date}>{baseInfoData.code.latestDate} 기준</span>
+                </div>
+
+                <ul className={styles.priceList}>
+                  <li className={styles.priceItem}>
+                    <span className={styles.priceItemTitle}>매수가</span>
+                    <span className={styles.priceItemAmount}>
+                      {!isLoading ? baseInfoData.adv.buy_price.toLocaleString() : '**,***'}원
+                    </span>
+                  </li>
+                  <li className={styles.priceItem}>
+                    <span className={styles.priceItemTitle}>목표가</span>
+                    <span className={styles.priceItemAmount}>
+                      {!isLoading ? baseInfoData.adv.goal_price.toLocaleString() : '**,***'}원
+                    </span>
+                  </li>
+                </ul>
+              </div>
+              <div className={styles.content} style={{ marginBottom: '1.2rem' }}>
+                <h2 className={styles.contentTitle}>최근 1년 매매 신호</h2>
+                <figure className={styles.chartImgArea}>
+                  <img src={signal1yChart.chartName} alt="차트 이미지" />
+                </figure>
+                <ul className={styles.rateList}>
+                  <li className={styles.rateItem}>
+                    <span className={styles.rateTitle}>적중률</span>
+                    <span
+                      className={`${styles.rateNum} ${getUpOrDown(
+                        signal1yChart.status?.win_rate ? signal1yChart.status.win_rate : 0
+                      )}`}
+                    >
+                      {isLoading && '***'}
+                      {!isLoading &&
+                        typeof signal1yChart.status?.win_rate === 'number' &&
+                        `${signal1yChart.status.win_rate}%`}
+                      {!isLoading && typeof signal1yChart.status?.win_rate !== 'number' && '--.--'}
+                    </span>
+                  </li>
+                  <li className={styles.rateItem}>
+                    <span className={styles.rateTitle}>최대 수익률</span>
+                    <span
+                      className={`${styles.rateNum} ${getUpOrDown(
+                        signal1yChart.status?.max_rate ? signal1yChart.status.max_rate : 0
+                      )}`}
+                    >
+                      {isLoading && '***'}
+                      {!isLoading &&
+                        typeof signal1yChart.status?.max_rate === 'number' &&
+                        `${signal1yChart.status.max_rate}%`}
+                      {!isLoading && typeof signal1yChart.status?.max_rate !== 'number' && '--.--'}
+                    </span>
+                  </li>
+                  <li className={styles.rateItem}>
+                    <span className={styles.rateTitle}>누적 수익률</span>
+                    <span
+                      className={`${styles.rateNum} ${getUpOrDown(
+                        signal1yChart.status?.total_rate ? signal1yChart.status.total_rate : 0
+                      )}`}
+                    >
+                      {isLoading && '***'}
+                      {!isLoading &&
+                        typeof signal1yChart.status?.total_rate === 'number' &&
+                        `${signal1yChart.status.max_rate}%`}
+                      {!isLoading &&
+                        typeof signal1yChart.status?.total_rate !== 'number' &&
+                        '--.--'}
+                    </span>
+                  </li>
+                </ul>
+
+                <div className={styles.rassi} onClick={handleClickRassi}>
+                  <figure className={styles.rassiImgArea}>
+                    <img src="/images/detail/rassi.png" alt="라씨 아이콘" />
+                  </figure>
+                  <div className={styles.rassiTextContent}>
+                    <span className={styles.rassiDesc}>AI기반 최적의 투자 가격대 제시해주는</span>
+                    <span className={styles.rassiTitle}>투자의 비책</span>
+                  </div>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="25"
+                    viewBox="0 0 24 25"
+                    fill="none"
+                  >
+                    <path
+                      d="M9.29006 16.3805L13.1701 12.5005L9.29006 8.62047C8.90006 8.23047 8.90006 7.60047 9.29006 7.21047C9.68006 6.82047 10.3101 6.82047 10.7001 7.21047L15.2901 11.8005C15.6801 12.1905 15.6801 12.8205 15.2901 13.2105L10.7001 17.8005C10.3101 18.1905 9.68006 18.1905 9.29006 17.8005C8.91006 17.4105 8.90006 16.7705 9.29006 16.3805Z"
+                      fill="#9FA7AE"
+                    />
+                  </svg>
+                </div>
+              </div>
+
+              <div className={styles.content}>
+                <h2 className={styles.contentTitle}>투자포인트</h2>
+                {!isLoading && (
+                  <div className={styles.contArea}>
+                    <h3 className={styles.contTitle}>{baseInfoData.adv.cont1}</h3>
+                    <ul className={styles.contList}>
+                      {baseInfoData.adv?.cont2 && (
+                        <li className={styles.contItem}>{baseInfoData.adv.cont2}</li>
+                      )}
+                      {baseInfoData.adv?.cont3 && (
+                        <li className={styles.contItem}>{baseInfoData.adv.cont3}</li>
+                      )}
+                      {baseInfoData.adv?.cont4 && (
+                        <li className={styles.contItem}>{baseInfoData.adv.cont4}</li>
+                      )}
+                    </ul>
+                  </div>
+                )}
+              </div>
+
+              <div className={styles.todaysPickArea}>
+                <h2 className={styles.contentTitle}>오늘의 추천 종목</h2>
+                <div className={styles.stockList}>
+                  {todaysPickList &&
+                    todaysPickList.map((item, index) => (
+                      <div
+                        className={styles.stockItem}
+                        key={index}
+                        onClick={() => {
+                          handleClickTodaysPick(item.stock_code, item.pms_code)
+                        }}
+                      >
+                        {!getInactiveStock(item.stock_code) ? (
+                          <>
+                            <span className={styles.activeTitle}>
+                              추천 종목을
+                              <br />
+                              확인해보세요
+                            </span>
+                            <div className={styles.activeButtonArea}>
+                              <button className={styles.activeButton}>확인하기</button>
+                              <span className={styles.pointLabel}>5P</span>
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <span className={styles.inactiveTitle}>{item.stock_name}</span>
+                            <div
+                              className={`${styles.inactiveContent} ${
+                                getBaseInfo(item.stock_code)?.code.ratio! < 0 ? 'minus' : 'plus'
+                              }`}
+                            >
+                              <span className={styles.inactivePrice}>
+                                {getBaseInfo(item.stock_code)?.code.curPrice.toLocaleString()}원
+                              </span>
+                              <span className={styles.inactiveRatio}>
+                                ({getBaseInfo(item.stock_code)?.code.ratio! > 0 ? '+' : ''}
+                                {getBaseInfo(item.stock_code)?.code.ratio}%)
+                              </span>
+                            </div>
+                            <span className={styles.inactiveDate}>
+                              {getBaseInfo(item.stock_code)?.code.latestDate} 기준
+                            </span>
+                          </>
+                        )}
+                      </div>
+                    ))}
+                </div>
+              </div>
+
+              <div className={styles.buttonGroup}>
+                <button className={styles.button} onClick={handleClickAdvBestItemsButton}>
+                  씽크풀 지난 추천 주식 성과보기
+                </button>
               </div>
             </div>
-
-            <div className={styles.buttonGroup}>
-              <button className={styles.button} onClick={handleClickAdvBestItemsButton}>
-                씽크풀 지난 추천 주식 성과보기
-              </button>
-            </div>
-          </div>
-        )}
+          )}
       </Layout>
     </AppScreen>
   )

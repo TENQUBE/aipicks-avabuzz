@@ -1,7 +1,7 @@
 import { style } from '@vanilla-extract/css'
 
 export const area = style({
-  padding: '3.2rem 2rem 10.1rem'
+  padding: '3.2rem 2rem 9rem'
 })
 
 export const header = style({
@@ -30,8 +30,7 @@ export const list = style({
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'center',
-  alignItems: 'center',
-  marginBottom: '5.4rem'
+  alignItems: 'center'
 })
 
 export const item = style({
@@ -120,7 +119,8 @@ export const totalRate = style({
 })
 
 export const adArea = style({
-  height: '150px'
+  height: '150px',
+  marginBottom: '1.2rem'
 })
 
 export const button = style({
