@@ -13,15 +13,17 @@ declare global {
 }
 
 interface GoogleAdsenseProps {
-  type: 'small' | 'medium' | 'large'
+  type: 'small' | 'medium' | 'modal' | 'large'
 }
 
-function getDefaultAdInfo(type: 'small' | 'medium' | 'large') {
+function getDefaultAdInfo(type: 'small' | 'medium' | 'large' | 'modal') {
   switch (type) {
     case 'large':
       return { src: '/images/ad/coupang-large.webp', width: 600, height: 960 }
     case 'small':
       return { src: '/images/ad/coupang-small.webp', width: 1125, height: 156 }
+    case 'modal':
+      return { src: '/images/ad/coupang-modal.webp', width: 240, height: 220 }
     default:
       // medium
       return { src: '/images/ad/coupang-medium.webp', width: 640, height: 300 }
