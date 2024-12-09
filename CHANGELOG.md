@@ -1,5 +1,11 @@
 # buzzvil-thinkpool-webview
 
+## 0.0.10
+
+### Patch Changes
+
+- [#30](https://github.com/TENQUBE/buzzvil-thinkpool-webview/pull/30) [`f33c2fb`](https://github.com/TENQUBE/buzzvil-thinkpool-webview/commit/f33c2fbb35d99c848f424af030bd6c0e9f8f9c69) Thanks [@8dong](https://github.com/8dong)! - feat: 전체 플로우를 수정합니다.
+
 ## 0.0.9
 
 ### Patch Changes
