@@ -402,7 +402,7 @@ export const stockItem = style({
   backgroundColor: '#fff',
 
   selectors: {
-    '&.last-of-type': {
+    '&:last-of-type': {
       marginRight: '0'
     }
   }

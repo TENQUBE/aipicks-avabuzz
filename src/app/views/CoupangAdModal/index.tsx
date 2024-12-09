@@ -58,6 +58,8 @@ const CoupangAdModal: ActivityComponentType = () => {
   }, [])
 
   useEffect(() => {
+    if (!coupangData) return
+
     const timerId = setInterval(() => {
       setSkipSeconds((prevState) => {
         if (prevState <= 0) {
@@ -72,7 +74,7 @@ const CoupangAdModal: ActivityComponentType = () => {
     return () => {
       clearInterval(timerId)
     }
-  }, [])
+  }, [coupangData])
 
   useEffect(() => {
     setIsFinsihedLoading(false)
@@ -92,7 +94,7 @@ const CoupangAdModal: ActivityComponentType = () => {
                 <span className={styles.adText}>AD</span>
               </>
             ) : (
-              <GoogleAdsense type="medium" />
+              <GoogleAdsense type="modal" />
             )}
           </div>
           {isShowCoupangAd && (
