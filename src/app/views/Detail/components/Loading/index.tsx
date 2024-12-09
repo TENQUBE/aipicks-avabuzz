@@ -178,7 +178,7 @@ export default function Loading({
             )}
             {!isShowCoupangAd && (
               <div className={styles.googleAdArea}>
-                <GoogleAdsense type="medium" />
+                <GoogleAdsense type="banner" />
               </div>
             )}
           </div>

@@ -75,7 +75,7 @@ export default function Modal({ children, closeModalCallback }: PropsWithChildre
       </section>
 
       <div className={styles.bottomAdBannerArea}>
-        <GoogleAdsense type="small" />
+        <GoogleAdsense type="floating" />
       </div>
     </>
   )

@@ -1,6 +1,5 @@
 import { PropsWithChildren } from 'react'
 
-import { ActivityNames } from '@/app/shared/libs/stackflow'
 import { useFlow } from '@/app/shared/libs/stackflow'
 import GoogleAdsense from '@/app/shared/components/GoogleAdsense'
 import { useActiveActivities } from '@/app/shared/hooks/useActiveActivities'
@@ -18,7 +17,7 @@ export default function Layout({
   backgroundColor = '#fff',
   hasTopBar = true
 }: PropsWithChildren<LayoutProps>) {
-  const { pop, replace } = useFlow()
+  const { pop } = useFlow()
   const activeActivies = useActiveActivities()
 
   function handleClickBackButton() {
@@ -50,7 +49,7 @@ export default function Layout({
       )}
       <div className={`${styles.content} ${hasTopBar ? 'hasTopBar' : ''}`}>{children}</div>
       <div className={styles.bottomAdBannerArea}>
-        <GoogleAdsense type="small" />
+        <GoogleAdsense type="floating" />
       </div>
     </div>
   )

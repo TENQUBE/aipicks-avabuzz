@@ -28,6 +28,7 @@ export const adArea = style({
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
+  minWidth: '240px',
   width: '100%',
   height: '220px',
   marginBottom: '1.6rem',

@@ -11,11 +11,10 @@ import { useGetIsShowCoupangAd, useSetCoupangAdWatchedAt } from '@/app/shared/ho
 import { useSetActivityParams } from '@/app/shared/hooks/useActivityParams'
 import * as styles from './style.css'
 
-const CoupangAdModal: ActivityComponentType = () => {
+const CoupangAd: ActivityComponentType = () => {
   const { replace, pop } = useFlow()
 
   const [coupangData, setCoupangData] = useState<CoupangData | null>(null)
-  const [isFinishedLoading, setIsFinsihedLoading] = useState<boolean>(false)
   const [skipSeconds, setSkipSeconds] = useState<number>(5)
 
   const setCoupangAdWatchedAt = useSetCoupangAdWatchedAt()
@@ -31,7 +30,7 @@ const CoupangAdModal: ActivityComponentType = () => {
       setCoupangAdWatchedAt(new Date().toISOString())
     }
 
-    setActivityParams(ActivityNames.CoupangAdModal, ActivityNames.Detail, { isSeenAd: true })
+    setActivityParams(ActivityNames.CoupangAd, ActivityNames.Detail, { isSeenAd: true })
 
     pop()
   }
@@ -42,7 +41,7 @@ const CoupangAdModal: ActivityComponentType = () => {
     pop()
   }
 
-  const updateCoupangData = useCallback(async () => {
+  const fetchData = useCallback(async () => {
     try {
       const coupangAdData = await modules.ad.getCoupang('240X216')
 
@@ -63,7 +62,6 @@ const CoupangAdModal: ActivityComponentType = () => {
     const timerId = setInterval(() => {
       setSkipSeconds((prevState) => {
         if (prevState <= 0) {
-          setIsFinsihedLoading(true)
           return 0
         } else {
           return prevState - 1
@@ -77,10 +75,10 @@ const CoupangAdModal: ActivityComponentType = () => {
   }, [coupangData])
 
   useEffect(() => {
-    setIsFinsihedLoading(false)
+    if (coupangData) return
 
-    updateCoupangData()
-  }, [updateCoupangData])
+    fetchData()
+  }, [coupangData, fetchData])
 
   return (
     <Modal>
@@ -144,4 +142,4 @@ const CoupangAdModal: ActivityComponentType = () => {
   )
 }
 
-export default CoupangAdModal
+export default CoupangAd

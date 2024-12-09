@@ -13,20 +13,20 @@ declare global {
 }
 
 interface GoogleAdsenseProps {
-  type: 'small' | 'medium' | 'modal' | 'large'
+  type: 'floating' | 'banner' | 'modal' | 'interstitial'
 }
 
-function getDefaultAdInfo(type: 'small' | 'medium' | 'large' | 'modal') {
+function getDefaultAdInfo(type: 'floating' | 'banner' | 'modal' | 'interstitial') {
   switch (type) {
-    case 'large':
-      return { src: '/images/ad/coupang-large.webp', width: 600, height: 960 }
-    case 'small':
-      return { src: '/images/ad/coupang-small.webp', width: 1125, height: 156 }
+    case 'interstitial':
+      return { src: '/images/ad/coupang-interstitial.png', width: 600, height: 960 }
+    case 'floating':
+      return { src: '/images/ad/coupang-floating.png', width: 1125, height: 156 }
     case 'modal':
-      return { src: '/images/ad/coupang-modal.webp', width: 240, height: 220 }
+      return { src: '/images/ad/coupang-modal.png', width: 240, height: 220 }
     default:
-      // medium
-      return { src: '/images/ad/coupang-medium.webp', width: 640, height: 300 }
+      // banner
+      return { src: '/images/ad/coupang-banner.png', width: 640, height: 300 }
   }
 }
 
@@ -98,7 +98,7 @@ export default function GoogleAdsense({ type }: GoogleAdsenseProps) {
         referrerPolicy="unsafe-url"
       >
         <img
-          className={`${styles.goldbox} ${type === 'small' ? 'overwrap' : ''}`}
+          className={`${styles.goldbox} ${type === 'floating' ? 'overwrap' : ''}`}
           loading="eager"
           src={adImgSrc}
           alt="광고 이미지"
