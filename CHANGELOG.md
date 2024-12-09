@@ -1,5 +1,11 @@
 # buzzvil-thinkpool-webview
 
+## 0.0.11
+
+### Patch Changes
+
+- [#33](https://github.com/TENQUBE/buzzvil-thinkpool-webview/pull/33) [`7eb9edc`](https://github.com/TENQUBE/buzzvil-thinkpool-webview/commit/7eb9edcba22a03192ea15b7caeea7d2d596e5ef5) Thanks [@8dong](https://github.com/8dong)! - feat: coupang-ad 페이지를 추가합니다.
+
 ## 0.0.10
 
 ### Patch Changes
