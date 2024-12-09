@@ -110,9 +110,9 @@ export default function AdvBestItems() {
             <GoogleAdsense type="medium" />
           </div>
         </section>
-        <button className={styles.button} onClick={handleClickMoreButton}>
+        {/* <button className={styles.button} onClick={handleClickMoreButton}>
           추천 종목 더보기
-        </button>
+        </button> */}
       </Layout>
     </AppScreen>
   )

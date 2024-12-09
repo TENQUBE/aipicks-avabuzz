@@ -8,37 +8,37 @@ import { ANIMATION_DURATION } from '@/app/shared/config'
 import isIos from '@/app/shared/utils/isIos'
 import { historySyncPlugin } from '@/app/shared/libs/stackflow/history-sync'
 import { basicUIPlugin } from '@/app/shared/libs/stackflow/basic-ui'
-import Home from '@/app/views/Home'
 import Detail from '@/app/views/Detail'
 import AdvBestItems from '@/app/views/AdvBestItems'
 import Error from '@/app/views/Error'
+import CoupangAdModal from '@/app/views/CoupangAdModal'
 
 export enum ActivityNames {
-  Home = 'Home',
   Detail = 'Detail',
   AdvBestItems = 'AdvBestItems',
-  Error = 'Error'
+  Error = 'Error',
+  CoupangAdModal = 'CoupangAdModal'
 }
 
 export enum ActivityRoutes {
-  Home = '/',
   Detail = '/detail',
   AdvBestItems = '/adv-best-items',
-  Error = '/error'
+  Error = '/error',
+  CoupangAdModal = '/coupang-ad-modal'
 }
 
 const activities = {
-  Home,
   Detail,
   AdvBestItems,
-  Error
+  Error,
+  CoupangAdModal
 }
 
 export const routes: { [key in ActivityNames]: ActivityRoutes } = {
-  [ActivityNames.Home]: ActivityRoutes[ActivityNames.Home],
   [ActivityNames.Detail]: ActivityRoutes[ActivityNames.Detail],
   [ActivityNames.AdvBestItems]: ActivityRoutes[ActivityNames.AdvBestItems],
-  [ActivityNames.Error]: ActivityRoutes[ActivityNames.Error]
+  [ActivityNames.Error]: ActivityRoutes[ActivityNames.Error],
+  [ActivityNames.CoupangAdModal]: ActivityRoutes[ActivityNames.CoupangAdModal]
 }
 
 const getStackflowParams = () => {
@@ -48,7 +48,7 @@ const getStackflowParams = () => {
     plugins: [
       historySyncPlugin({
         routes,
-        fallbackActivity: () => ActivityNames.Home
+        fallbackActivity: () => ActivityNames.Detail
       }),
       basicRendererPlugin(),
       basicUIPlugin(

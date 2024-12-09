@@ -63,14 +63,19 @@ export const contentArea = style({
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
+  width: 'calc(100% - 4rem)',
   borderRadius: '20px',
+  overflow: 'hidden',
   backgroundColor: '#fff',
+  opacity: '0',
   transform: 'translate(-50%, -45%)',
-  animation: `${toTop} ${MODAL_ANIMATION_DURATION / 1000}s forwards`,
+  animation: `${toTop} ${MODAL_ANIMATION_DURATION / 1000}s forwards, ${fadeIn} ${
+    MODAL_ANIMATION_DURATION / 1000
+  }s forwards`,
 
   selectors: {
     '&.close': {
-      animationName: `${toBottom}`
+      animationName: `${toBottom}, ${fadeOut}`
     }
   }
 })

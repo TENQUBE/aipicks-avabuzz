@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Confetti from 'react-confetti-boom'
 import { Swiper, SwiperSlide } from 'swiper/react'
+import dayjs from 'dayjs'
 
 import { AppScreen } from '@/app/shared/libs/stackflow/basic-ui'
 import { useFlow } from '@/app/shared/libs/stackflow'
@@ -11,20 +12,48 @@ import { Signal1yChartVM } from '@/modules/stock/adaptor/in/ui/vm/Signal1yChartV
 import { TodayPickVM } from '@/modules/stock/adaptor/in/ui/vm/TodayPickVM'
 import modules from '@/modules'
 import Layout from '@/app/shared/components/Layout'
-import Loading from '@/app/views/Detail/components/Loading'
 import OverlayGoogleAdsense from '@/app/shared/components/OverlayGoogleAdsense'
-import { useInactiveStocksValue } from '@/app/shared/hooks/useInactiveStockCodes'
+import {
+  useInactiveStocksValue,
+  useClearInactiveStocks,
+  useSetInactiveStocks,
+  useIsRehydratedInactiveStock
+} from '@/app/shared/hooks/useInactiveStockCodes'
+import {
+  useIsRehydratedTodaysPickUpdatedAt,
+  useSetTodaysPickUpdatedAt,
+  useTodaysPickUpdatedAtValue
+} from '@/app/shared/hooks/useTodaysPickUpdatedAt'
 import * as styles from '@/app/views/Detail/style.css'
+import {
+  useActivityParamsValue,
+  useClearActivityParams
+} from '@/app/shared/hooks/useActivityParams'
+import { ANIMATION_DURATION } from '@/app/shared/config'
 
 export default function Detail() {
   const { push } = useFlow()
   const searchParams = useSearchParams()
 
+  const activityParams = useActivityParamsValue()
+  const clearActivityParams = useClearActivityParams()
   const inactiveStocks = useInactiveStocksValue()
+  const isRehydratedInactiveStock = useIsRehydratedInactiveStock()
+  const setInactiveStocks = useSetInactiveStocks()
+  const todaysPickUpdatedAt = useTodaysPickUpdatedAtValue()
+  const isRehydratedTodaysPickUpdateAt = useIsRehydratedTodaysPickUpdatedAt()
+  const setTodaysPickUpdatedAt = useSetTodaysPickUpdatedAt()
+  const clearInactiveStocks = useClearInactiveStocks()
 
-  const [isLoading, setIsLoading] = useState<boolean>(true)
+  const [isLoading, setIsLoading] = useState<boolean | null>(null)
   const [isShowOverlayAd, setIsShowOverlayAd] = useState<boolean>(false)
   const [isShowToast, setIsShowToast] = useState<boolean>(false)
+  const [stockCode, setStockCode] = useState<string | null>(
+    searchParams.get('stock_code') ? searchParams.get('stock_code') : null
+  )
+  const [pmsCode, setPmsCode] = useState<string | null>(
+    searchParams.get('pms_code') ? searchParams.get('pms_code') : null
+  )
   const [todaysPick, setTodaysPick] = useState<TodayPickVM[] | null>(null)
   const [baseInfoData, setBaseInfoData] = useState<BaseInfoDataVM | null>(null)
   const [signal1yChart, setSignal1yChart] = useState<Signal1yChartVM | null>(null)
@@ -32,12 +61,10 @@ export default function Detail() {
     { stockCode: string; pmsCode: string; baseInfo: BaseInfoDataVM }[] | null
   >(null)
 
-  const stockCode = searchParams.get('stock_code')
-  const pmsCode = searchParams.get('pms_code')
+  const isFetchedRef = useRef<boolean>(false)
 
-  const todaysPickList = todaysPick
-    ? todaysPick.filter((item) => item.stock_code !== stockCode)
-    : null
+  const todaysPickList =
+    todaysPick && stockCode ? todaysPick.filter((item) => item.stock_code !== stockCode) : null
 
   function getUpOrDown(value: number | undefined) {
     if (typeof value === 'undefined' || value === 0) return 'none'
@@ -46,6 +73,8 @@ export default function Detail() {
   }
 
   function getInactiveStock(stockCode: string) {
+    if (!inactiveStocks) return null
+
     return inactiveStocks.find((item) => item.stockCode === stockCode)
   }
 
@@ -57,10 +86,20 @@ export default function Detail() {
 
   function handleClickOverlayAdDim() {
     setIsShowOverlayAd(false)
+    setTimeout(() => {
+      setIsShowToast(true)
+    }, ANIMATION_DURATION)
   }
 
   function handleClickOverlayAdCloseButton() {
     setIsShowOverlayAd(false)
+    setTimeout(() => {
+      setIsShowToast(true)
+    }, ANIMATION_DURATION)
+  }
+
+  function handleClickLoadingButton() {
+    push(ActivityNames.CoupangAdModal, {})
   }
 
   function handleClickAdvBestItemsButton() {
@@ -77,21 +116,67 @@ export default function Detail() {
 
   const fetchData = useCallback(
     async (
-      stockCode: string,
-      pmsCode: string,
       inactiveStocks: {
         stockCode: string
         pmsCode: string
-      }[]
+      }[],
+      todaysPickUpdatedAt: string | null,
+      stockCode: string | null,
+      pmsCode: string | null
     ) => {
       try {
-        const [todaysPick, baseInfoData, signal1yChart] = await Promise.all([
-          modules.stock.getTodayPicks(),
-          modules.stock.getBaseInfoData(stockCode, pmsCode),
-          modules.stock.getSignal1yChart(stockCode, pmsCode)
+        const todaysPick = await modules.stock.getTodayPicks()
+
+        const isUpdateTodaysPick = todaysPickUpdatedAt
+          ? dayjs(todaysPickUpdatedAt).diff(dayjs().startOf('D'), 'D') < 0
+          : true
+
+        let currentInaactiveStocks = inactiveStocks
+
+        if (isUpdateTodaysPick || !todaysPickUpdatedAt) {
+          setTodaysPickUpdatedAt(new Date().toISOString())
+
+          clearInactiveStocks()
+          currentInaactiveStocks = []
+        }
+
+        let targetStockCode: string = stockCode ? stockCode : todaysPick[0].stock_code
+        let targetPmsCode: string = pmsCode ? pmsCode : todaysPick[0].pms_code
+
+        if (currentInaactiveStocks.length > 0 && !stockCode && !pmsCode) {
+          const activeStock = todaysPick.find(
+            ({ stock_code }) =>
+              !currentInaactiveStocks.some(
+                (inactiveStock) => inactiveStock.stockCode === stock_code
+              )
+          )
+
+          if (activeStock) {
+            targetStockCode = activeStock.stock_code
+            targetPmsCode = activeStock.pms_code
+          }
+        }
+
+        const isLoading = !!currentInaactiveStocks.find(
+          ({ stockCode }) => stockCode === targetStockCode
+        )
+
+        if (isLoading) {
+          setIsLoading(false)
+          setIsShowOverlayAd(true)
+        } else {
+          setIsLoading(true)
+        }
+
+        setStockCode(targetStockCode)
+        setPmsCode(targetPmsCode)
+
+        const [baseInfoData, signal1yChart] = await Promise.all([
+          modules.stock.getBaseInfoData(targetStockCode, targetPmsCode),
+          modules.stock.getSignal1yChart(targetStockCode, targetPmsCode)
         ])
 
-        if (inactiveStocks.length > 0) {
+        if (currentInaactiveStocks.length > 0) {
           async function getStockInfoData(stockCode: string, pmsCode: string) {
             const baseInfo = await modules.stock.getBaseInfoData(stockCode, pmsCode)
 
@@ -99,7 +184,9 @@ export default function Detail() {
           }
 
           const stockInfoData = await Promise.all(
-            inactiveStocks.map(({ stockCode, pmsCode }) => getStockInfoData(stockCode, pmsCode))
+            currentInaactiveStocks.map(({ stockCode, pmsCode }) =>
+              getStockInfoData(stockCode, pmsCode)
+            )
           )
 
           setStockInfoDataList(stockInfoData)
@@ -119,14 +206,6 @@ export default function Detail() {
   )
 
   useEffect(() => {
-    if (!isLoading && !isShowOverlayAd) {
-      setTimeout(() => {
-        setIsShowToast(true)
-      }, 500)
-    }
-  }, [isLoading, isShowOverlayAd])
-
-  useEffect(() => {
     if (!isLoading && !isShowOverlayAd && isShowToast) {
       setTimeout(() => {
         setIsShowToast(false)
@@ -135,10 +214,56 @@ export default function Detail() {
   }, [isLoading, isShowToast, isShowOverlayAd])
 
   useEffect(() => {
-    if (stockCode && pmsCode && inactiveStocks) {
-      fetchData(stockCode, pmsCode, inactiveStocks)
+    if (isFetchedRef.current || !isRehydratedInactiveStock || !isRehydratedTodaysPickUpdateAt)
+      return
+
+    isFetchedRef.current = true
+
+    fetchData(inactiveStocks, todaysPickUpdatedAt, stockCode, pmsCode)
+  }, [
+    isRehydratedInactiveStock,
+    isRehydratedTodaysPickUpdateAt,
+    inactiveStocks,
+    todaysPickUpdatedAt,
+    stockCode,
+    pmsCode,
+    fetchData
+  ])
+
+  useEffect(() => {
+    if (
+      !todaysPick ||
+      !stockCode ||
+      !pmsCode ||
+      activityParams.to !== ActivityNames.Detail ||
+      activityParams.params === null ||
+      activityParams.from === null ||
+      activityParams.to === null
+    )
+      return
+
+    switch (activityParams.from) {
+      case ActivityNames.CoupangAdModal:
+        setInactiveStocks(stockCode, pmsCode)
+
+        setIsLoading(false)
+
+        setTimeout(() => {
+          setIsShowOverlayAd(true)
+        }, ANIMATION_DURATION)
+
+        break
     }
-  }, [stockCode, pmsCode, inactiveStocks, fetchData])
+
+    clearActivityParams()
+  }, [todaysPick, stockCode, pmsCode, activityParams])
+
+  function replaceWithAsterisk(value?: string) {
+    if (!value) return ''
+
+    if (value.length <= 1) return value
+    return value[0] + '*'.repeat(value.length - 1)
+  }
 
   return (
     <AppScreen>
@@ -148,7 +273,7 @@ export default function Detail() {
           handleClickCloseButton={handleClickOverlayAdCloseButton}
         />
       )}
-      {isLoading && <Loading setIsLoading={setIsLoading} setIsShowOverlayAd={setIsShowOverlayAd} />}
+
       <>
         {isShowToast && (
           <div className={styles.confettiArea}>
@@ -166,17 +291,36 @@ export default function Detail() {
           <figure className={styles.coinImgArea}>
             <img src="/images/detail/coin.png" alt="코인 이미지" />
           </figure>
-          <span className={styles.toastContent}>2 포인트 적립 완료!</span>
+          <span className={styles.toastContent}>1 포인트 적립 완료!</span>
         </div>
       </>
-      <Layout title="오늘의 추천 종목" backgroundColor="#fff">
-        {baseInfoData && signal1yChart && inactiveStocks && (
+
+      {typeof isLoading === 'boolean' && isLoading && (
+        <div className={styles.loadingArea}>
+          <div className={styles.buttonBackground} />
+          <span className={styles.loadingDesc}>다음 내용이 궁금하다면?</span>
+          <button className={styles.loadingAreaButton} onClick={handleClickLoadingButton}>
+            광고보고 추천종목 확인하기
+          </button>
+        </div>
+      )}
+
+      <Layout title="AI 추천종목" backgroundColor="#fff">
+        {baseInfoData && signal1yChart && inactiveStocks && typeof isLoading === 'boolean' && (
           <div className={styles.area}>
             <div className={styles.content}>
               <span className={styles.code}>
-                {inactiveStocks.find((item) => item.stockCode === stockCode)?.pmsCode}
+                {!isLoading
+                  ? inactiveStocks.find((item) => item.stockCode === stockCode)?.pmsCode
+                  : replaceWithAsterisk(
+                      inactiveStocks.find((item) => item.stockCode === stockCode)?.pmsCode
+                    )}
               </span>
-              <span className={styles.name}>{baseInfoData?.code.stock_name}</span>
+              <span className={styles.name}>
+                {!isLoading
+                  ? baseInfoData.code.stock_name
+                  : replaceWithAsterisk(baseInfoData.code.stock_name)}
+              </span>
               <span className={`${styles.price} ${getUpOrDown(baseInfoData.code.ratio)}`}>
                 {baseInfoData?.code.curPrice.toLocaleString()}원
               </span>
@@ -195,18 +339,17 @@ export default function Detail() {
                 <li className={styles.priceItem}>
                   <span className={styles.priceItemTitle}>매수가</span>
                   <span className={styles.priceItemAmount}>
-                    {baseInfoData.adv.buy_price.toLocaleString()}원
+                    {!isLoading ? baseInfoData.adv.buy_price.toLocaleString() : '**,***'}원
                   </span>
                 </li>
                 <li className={styles.priceItem}>
                   <span className={styles.priceItemTitle}>목표가</span>
                   <span className={styles.priceItemAmount}>
-                    {baseInfoData.adv.goal_price.toLocaleString()}원
+                    {!isLoading ? baseInfoData.adv.goal_price.toLocaleString() : '**,***'}원
                   </span>
                 </li>
               </ul>
             </div>
-
             <div className={styles.content} style={{ marginBottom: '1.2rem' }}>
               <h2 className={styles.contentTitle}>최근 1년 매매 신호</h2>
               <figure className={styles.chartImgArea}>
@@ -220,7 +363,11 @@ export default function Detail() {
                       signal1yChart.status?.win_rate ? signal1yChart.status.win_rate : 0
                     )}`}
                   >
-                    {signal1yChart.status?.win_rate ? signal1yChart.status.win_rate : '--.--'}%
+                    {isLoading && '***'}
+                    {!isLoading &&
+                      typeof signal1yChart.status?.win_rate === 'number' &&
+                      `${signal1yChart.status.win_rate}%`}
+                    {!isLoading && typeof signal1yChart.status?.win_rate !== 'number' && '--.--'}
                   </span>
                 </li>
                 <li className={styles.rateItem}>
@@ -230,7 +377,11 @@ export default function Detail() {
                       signal1yChart.status?.max_rate ? signal1yChart.status.max_rate : 0
                     )}`}
                   >
-                    {signal1yChart.status?.max_rate ? signal1yChart.status.max_rate : '--.--'}%
+                    {isLoading && '***'}
+                    {!isLoading &&
+                      typeof signal1yChart.status?.max_rate === 'number' &&
+                      `${signal1yChart.status.max_rate}%`}
+                    {!isLoading && typeof signal1yChart.status?.max_rate !== 'number' && '--.--'}
                   </span>
                 </li>
                 <li className={styles.rateItem}>
@@ -240,7 +391,11 @@ export default function Detail() {
                       signal1yChart.status?.total_rate ? signal1yChart.status.total_rate : 0
                     )}`}
                   >
-                    {signal1yChart.status?.total_rate ? signal1yChart.status.total_rate : '--.--'}%
+                    {isLoading && '***'}
+                    {!isLoading &&
+                      typeof signal1yChart.status?.total_rate === 'number' &&
+                      `${signal1yChart.status.max_rate}%`}
+                    {!isLoading && typeof signal1yChart.status?.total_rate !== 'number' && '--.--'}
                   </span>
                 </li>
               </ul>
@@ -270,34 +425,31 @@ export default function Detail() {
 
             <div className={styles.content}>
               <h2 className={styles.contentTitle}>투자포인트</h2>
-              <div className={styles.contArea}>
-                <h3 className={styles.contTitle}>{baseInfoData.adv.cont1}</h3>
-                <ul className={styles.contList}>
-                  {baseInfoData.adv?.cont2 && (
-                    <li className={styles.contItem}>{baseInfoData.adv.cont2}</li>
-                  )}
-                  {baseInfoData.adv?.cont3 && (
-                    <li className={styles.contItem}>{baseInfoData.adv.cont3}</li>
-                  )}
-                  {baseInfoData.adv?.cont4 && (
-                    <li className={styles.contItem}>{baseInfoData.adv.cont4}</li>
-                  )}
-                </ul>
-              </div>
+              {!isLoading && (
+                <div className={styles.contArea}>
+                  <h3 className={styles.contTitle}>{baseInfoData.adv.cont1}</h3>
+                  <ul className={styles.contList}>
+                    {baseInfoData.adv?.cont2 && (
+                      <li className={styles.contItem}>{baseInfoData.adv.cont2}</li>
+                    )}
+                    {baseInfoData.adv?.cont3 && (
+                      <li className={styles.contItem}>{baseInfoData.adv.cont3}</li>
+                    )}
+                    {baseInfoData.adv?.cont4 && (
+                      <li className={styles.contItem}>{baseInfoData.adv.cont4}</li>
+                    )}
+                  </ul>
+                </div>
+              )}
             </div>
 
             <div className={styles.todaysPickArea}>
               <h2 className={styles.contentTitle}>오늘의 추천 종목</h2>
-              <Swiper
-                spaceBetween={12}
-                slidesPerView="auto"
-                className={styles.swiper}
-                slideClass={styles.slide}
-              >
+              <div className={styles.stockList}>
                 {todaysPickList &&
                   todaysPickList.map((item, index) => (
-                    <SwiperSlide
-                      className={styles.slide}
+                    <div
+                      className={styles.stockItem}
                       key={index}
                       onClick={() => {
                         handleClickTodaysPick(item.stock_code, item.pms_code)
@@ -336,9 +488,9 @@ export default function Detail() {
                           </span>
                         </>
                       )}
-                    </SwiperSlide>
+                    </div>
                   ))}
-              </Swiper>
+              </div>
             </div>
 
             <div className={styles.buttonGroup}>

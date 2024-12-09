@@ -5,9 +5,8 @@ export const area = style({
   flexDirection: 'column',
   justifyContent: 'center',
   alignItems: 'center',
-  width: '300px',
-  padding: '3.2rem 2.4rem',
-  borderRadius: '20px',
+  width: '100%',
+  padding: '2.4rem 2rem',
   backgroundColor: '#fff',
   boxShadow: '0px 3px 15px 0px rgba(0, 0, 0, 0.08)'
 })
