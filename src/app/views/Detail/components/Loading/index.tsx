@@ -1,5 +1,4 @@
 import { Dispatch, SetStateAction, useCallback, useEffect, useRef, useState } from 'react'
-import { useSearchParams } from 'next/navigation'
 
 import { ActivityNames, useFlow } from '@/app/shared/libs/stackflow'
 import { CoupangData } from '@/modules/ad/domain/Coupang'
@@ -11,12 +10,18 @@ import { useGetIsShowCoupangAd, useSetCoupangAdWatchedAt } from '@/app/shared/ho
 import * as styles from '@/app/views/Detail/components/Loading/style.css'
 
 interface LoadingProps {
+  stockCode: string
+  pmsCode: string
   setIsLoading: Dispatch<SetStateAction<boolean>>
   setIsShowOverlayAd: Dispatch<SetStateAction<boolean>>
 }
 
-export default function Loading({ setIsLoading, setIsShowOverlayAd }: LoadingProps) {
-  const searchParams = useSearchParams()
+export default function Loading({
+  stockCode,
+  pmsCode,
+  setIsLoading,
+  setIsShowOverlayAd
+}: LoadingProps) {
   const { push, pop } = useFlow()
 
   const setInactiveStocks = useSetInactiveStocks()
@@ -48,9 +53,6 @@ export default function Loading({ setIsLoading, setIsShowOverlayAd }: LoadingPro
 
   function handleClickConfirmButton() {
     if (!isFinishedLoading) return
-
-    const stockCode = searchParams.get('stock_code') as string
-    const pmsCode = searchParams.get('pms_code') as string
 
     setInactiveStocks(stockCode, pmsCode)
 

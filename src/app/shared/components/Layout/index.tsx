@@ -22,11 +22,7 @@ export default function Layout({
   const activeActivies = useActiveActivities()
 
   function handleClickBackButton() {
-    if (activeActivies.length > 1) {
-      pop()
-    } else {
-      replace(ActivityNames.Home, {})
-    }
+    pop()
   }
 
   return (

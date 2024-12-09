@@ -36,6 +36,7 @@ export const coinImgArea = style({
   height: '56px',
   marginBottom: '0.8rem'
 })
+
 globalStyle(`${coinImgArea} > img`, {
   width: '100%',
   height: '100%',
@@ -52,6 +53,52 @@ export const toastContent = style({
   lineHeight: '2.4rem',
   letterSpacing: '-0.02rem',
   whiteSpace: 'nowrap'
+})
+
+export const loadingArea = style({
+  position: 'absolute',
+  top: '0',
+  left: '0',
+  zIndex: '1',
+  width: '100%',
+  height: '100%'
+})
+
+export const buttonBackground = style({
+  position: 'absolute',
+  bottom: '52px',
+  left: '0',
+  width: '100%',
+  height: '50%',
+  background: 'linear-gradient(180deg, rgba(230, 243, 255, 0) 0%, #E6F3FF 50.96%)'
+})
+
+export const loadingDesc = style({
+  position: 'absolute',
+  bottom: '126px',
+  left: '0',
+  width: '100%',
+  fontSize: '1.6rem',
+  lineHeight: '2.3rem',
+  fontWeight: '600',
+  textAlign: 'center'
+})
+
+export const loadingAreaButton = style({
+  position: 'absolute',
+  bottom: '64px',
+  left: '20px',
+  width: 'calc(100% - 4rem)',
+  height: '52px',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  backgroundColor: '#0768DD',
+  borderRadius: '50px',
+  fontSize: '1.6rem',
+  lineHeight: '2.2rem',
+  fontWeight: '600',
+  color: '#fff'
 })
 
 export const area = style({
@@ -332,23 +379,33 @@ export const todaysPickArea = style({
   justifyContent: 'center'
 })
 
-export const swiper = style({
+export const stockList = style({
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
   height: '100%',
   width: 'calc(100% + 4rem)',
   padding: '0 2rem',
   marginLeft: '-2rem'
 })
 
-export const slide = style({
+export const stockItem = style({
+  flex: '1 0 0',
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'center',
   alignItems: 'center',
-  width: '154px',
   height: '137px',
   padding: '2rem',
+  marginRight: '1.2rem',
   borderRadius: '16px',
-  backgroundColor: '#fff'
+  backgroundColor: '#fff',
+
+  selectors: {
+    '&.last-of-type': {
+      marginRight: '0'
+    }
+  }
 })
 
 export const activeTitle = style({
