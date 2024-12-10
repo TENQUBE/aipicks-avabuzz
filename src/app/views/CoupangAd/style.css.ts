@@ -57,7 +57,6 @@ export const productImg = style({
 })
 
 export const adDesc = style({
-  marginBottom: '1.2rem',
   fontSize: '1.2rem',
   color: '#5E6265',
   textAlign: 'center'
@@ -85,6 +84,7 @@ export const confirmButton = style({
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
+  marginTop: '1.2rem',
   width: '100%',
   height: '48px',
   borderRadius: '50px',

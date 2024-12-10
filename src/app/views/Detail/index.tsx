@@ -46,7 +46,8 @@ export default function Detail() {
 
   const [isLoading, setIsLoading] = useState<boolean | null>(null)
   const [isShowInterstitialAd, setIsShowInterstitialAd] = useState<boolean>(false)
-  const [isShowToast, setIsShowToast] = useState<boolean>(false)
+  const [isShowPointConfetti, setIsShowPointConfetti] = useState<boolean>(false)
+  const [toastContent, setToastContent] = useState<string | null>(null)
   const [stockCode, setStockCode] = useState<string | null>(
     searchParams.get('stock_code') ? searchParams.get('stock_code') : null
   )
@@ -61,6 +62,7 @@ export default function Detail() {
   >(null)
 
   const isFetchedRef = useRef<boolean>(false)
+  const toastAreaElRef = useRef<HTMLDivElement>(null)
 
   const todaysPickList =
     todaysPick && stockCode ? todaysPick.filter((item) => item.stock_code !== stockCode) : null
@@ -87,7 +89,7 @@ export default function Detail() {
     setIsShowInterstitialAd(false)
 
     setTimeout(() => {
-      setIsShowToast(true)
+      setIsShowPointConfetti(true)
     }, ANIMATION_DURATION)
   }, [])
 
@@ -193,12 +195,12 @@ export default function Detail() {
   )
 
   useEffect(() => {
-    if (!isLoading && !isShowInterstitialAd && isShowToast) {
+    if (!isLoading && !isShowInterstitialAd && isShowPointConfetti) {
       setTimeout(() => {
-        setIsShowToast(false)
+        setIsShowPointConfetti(false)
       }, 2000)
     }
-  }, [isLoading, isShowInterstitialAd, isShowToast])
+  }, [isLoading, isShowInterstitialAd, isShowPointConfetti])
 
   useEffect(() => {
     if (isFetchedRef.current || !isRehydratedInactiveStock || !isRehydratedTodaysPickUpdateAt)
@@ -239,6 +241,28 @@ export default function Detail() {
           setTimeout(() => {
             setIsShowInterstitialAd(true)
           }, ANIMATION_DURATION)
+        } else {
+          setToastContent('5초 이상 체류 후 결과 확인이 가능합니다. ')
+
+          setTimeout(() => {
+            if (!toastAreaElRef.current) return
+
+            toastAreaElRef.current.classList.remove('close')
+            toastAreaElRef.current.classList.add('open')
+          }, ANIMATION_DURATION)
+
+          setTimeout(() => {
+            if (!toastAreaElRef.current) return
+
+            toastAreaElRef.current.classList.remove('open')
+            toastAreaElRef.current.classList.add('close')
+
+            toastAreaElRef.current.addEventListener('animationend', (event: AnimationEvent) => {
+              if (event.animationName === styles.toastClose) {
+                setToastContent(null)
+              }
+            })
+          }, 2000)
         }
 
         break
@@ -261,7 +285,7 @@ export default function Detail() {
       )}
 
       <>
-        {isShowToast && (
+        {isShowPointConfetti && (
           <div className={styles.confettiArea}>
             <Confetti
               mode="boom"
@@ -273,13 +297,17 @@ export default function Detail() {
             />
           </div>
         )}
-        <div className={`${styles.toast} ${isShowToast ? 'open' : 'close'}`}>
+        <div className={`${styles.confettiContent} ${isShowPointConfetti ? 'open' : 'close'}`}>
           <figure className={styles.coinImgArea}>
             <img src="/images/detail/coin.png" alt="코인 이미지" />
           </figure>
-          <span className={styles.toastContent}>1 포인트 적립 완료!</span>
+          <span className={styles.confettiTextContent}>1 포인트 적립 완료!</span>
         </div>
       </>
+
+      <div className={styles.toastArea} ref={toastAreaElRef}>
+        {toastContent}
+      </div>
 
       {typeof isLoading === 'boolean' && isLoading && (
         <div className={styles.loadingArea}>
@@ -324,16 +352,15 @@ export default function Detail() {
                   </span>
                   <span className={styles.date}>{baseInfoData.code.latestDate} 기준</span>
                 </div>
-
                 <ul className={styles.priceList}>
                   <li className={styles.priceItem}>
-                    <span className={styles.priceItemTitle}>매수가</span>
+                    <span className={styles.priceItemTitle}>추천 매수가</span>
                     <span className={styles.priceItemAmount}>
                       {!isLoading ? baseInfoData.adv.buy_price.toLocaleString() : '**,***'}원
                     </span>
                   </li>
                   <li className={styles.priceItem}>
-                    <span className={styles.priceItemTitle}>목표가</span>
+                    <span className={styles.priceItemTitle}>목표 매도가</span>
                     <span className={styles.priceItemAmount}>
                       {!isLoading ? baseInfoData.adv.goal_price.toLocaleString() : '**,***'}원
                     </span>
@@ -341,11 +368,11 @@ export default function Detail() {
                 </ul>
               </div>
               <div className={styles.content} style={{ marginBottom: '1.2rem' }}>
-                <h2 className={styles.contentTitle}>최근 1년 매매 신호</h2>
+                <h2 className={styles.contentTitle}>최근 주가 추이</h2>
                 <figure className={styles.chartImgArea}>
                   <img src={signal1yChart.chartName} alt="차트 이미지" />
                 </figure>
-                <ul className={styles.rateList}>
+                {/* <ul className={styles.rateList}>
                   <li className={styles.rateItem}>
                     <span className={styles.rateTitle}>적중률</span>
                     <span
@@ -390,8 +417,7 @@ export default function Detail() {
                         '--.--'}
                     </span>
                   </li>
-                </ul>
-
+                </ul> */}
                 <div className={styles.rassi} onClick={handleClickRassi}>
                   <figure className={styles.rassiImgArea}>
                     <img src="/images/detail/rassi.png" alt="라씨 아이콘" />
@@ -414,7 +440,6 @@ export default function Detail() {
                   </svg>
                 </div>
               </div>
-
               <div className={styles.content}>
                 <h2 className={styles.contentTitle}>투자포인트</h2>
                 {!isLoading && (
@@ -434,7 +459,6 @@ export default function Detail() {
                   </div>
                 )}
               </div>
-
               <div className={styles.todaysPickArea}>
                 <h2 className={styles.contentTitle}>오늘의 추천 종목</h2>
                 <div className={styles.stockList}>
@@ -484,7 +508,6 @@ export default function Detail() {
                     ))}
                 </div>
               </div>
-
               <div className={styles.buttonGroup}>
                 <button className={styles.button} onClick={handleClickAdvBestItemsButton}>
                   씽크풀 지난 추천 주식 성과보기
