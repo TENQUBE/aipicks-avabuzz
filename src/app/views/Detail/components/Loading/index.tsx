@@ -38,7 +38,7 @@ export default function Loading({
 
   const updateCoupangData = useCallback(async () => {
     try {
-      const coupangAdData = await modules.ad.getCoupang('240X216')
+      const coupangAdData = await modules.ad.getCoupang('test', '240X216')
 
       const coupangData = coupangAdData.data[Math.floor(Math.random() * coupangAdData.data.length)]
 
