@@ -28,4 +28,5 @@ export const MINIMUM_COUPANG_AD_EXPOSURE_TIME =
 /**
  * google adsence
  */
-export const SLOT = 5964045296
+export const SLOT = 9052166035
+export const CLIENT_ID = 'ca-pub-4440358116924496'

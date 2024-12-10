@@ -21,13 +21,12 @@ const generateHmac = (url: string, method: string, secretKey: string, accessKey:
 export async function GET(req: NextRequest) {
   try {
     const subId = req.nextUrl.searchParams.get('subId')
+    const deviceId = req.nextUrl.searchParams.get('deviceId')
     const imageSize = req.nextUrl.searchParams.get('imageSize')
 
     const domain = 'https://api-gateway.coupang.com'
     const path = `/v2/providers/affiliate_open_api/apis/openapi/v1/products/reco`
-    const queryString = `${`deviceId=`}${subId ? `&subId=${subId}` : ''}${
-      imageSize ? `&imageSize=${imageSize}` : ''
-    }`
+    const queryString = `deviceId=${deviceId}&subId=${subId}&imageSize=${imageSize}`
 
     const authorization = generateHmac(`${path}?${queryString}`, 'GET', SECRET_KEY!, ACCESS_KEY!)
 
