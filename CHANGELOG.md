@@ -1,5 +1,11 @@
 # buzzvil-thinkpool-webview
 
+## 0.0.13
+
+### Patch Changes
+
+- [#41](https://github.com/TENQUBE/buzzvil-thinkpool-webview/pull/41) [`9ea829f`](https://github.com/TENQUBE/buzzvil-thinkpool-webview/commit/9ea829f7dd1490ebf68acfe531a9eaac02553642) Thanks [@8dong](https://github.com/8dong)! - feat: 애드팝콘 광고를 적용합니다.
+
 ## 0.0.12
 
 ### Patch Changes
