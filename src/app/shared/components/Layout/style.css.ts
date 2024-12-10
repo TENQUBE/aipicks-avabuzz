@@ -1,4 +1,4 @@
-import { style } from '@vanilla-extract/css'
+import { style, keyframes } from '@vanilla-extract/css'
 
 export const area = style({
   position: 'relative',
@@ -47,6 +47,57 @@ export const content = style({
     '&.hasTopBar': {
       height: 'calc(100% - 96px)',
       top: '44px'
+    }
+  }
+})
+
+export const toastOpen = keyframes({
+  '0%': {
+    transform: 'translate(-50%, 0)',
+    opacity: '0'
+  },
+
+  '100%': {
+    transform: 'translate(-50%, -50px)',
+    opacity: '1'
+  }
+})
+
+export const toastClose = keyframes({
+  '0%': {
+    transform: 'translate(-50%, -50px)',
+    opacity: '1'
+  },
+
+  '100%': {
+    transform: 'translate(-50%, 0)',
+    opacity: '0'
+  }
+})
+
+export const toastArea = style({
+  position: 'fixed',
+  bottom: '52px',
+  left: '50%',
+  zIndex: '2',
+  transform: 'translate(-50%, 0)',
+  padding: '1.2rem 2rem',
+  borderRadius: '100px',
+  opacity: '0',
+  boxShadow: '8px 8px 20px 0px rgba(0, 0, 0, 0.12)',
+  backgroundColor: '#808080',
+  color: '#fff',
+  fontSize: '1.6rem',
+  textAlign: 'center',
+  whiteSpace: 'nowrap',
+  pointerEvents: 'none',
+
+  selectors: {
+    '&.open': {
+      animation: `${toastOpen} 0.3s forwards`
+    },
+    '&.close': {
+      animation: `${toastClose} 0.3s forwards`
     }
   }
 })

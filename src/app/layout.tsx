@@ -2,6 +2,7 @@ import localFont from 'next/font/local'
 import 'swiper/css'
 
 import GoogleAdScript from '@/app/shared/components/GoogleAdScript'
+import AdpopcornAdScript from './shared/components/AdpopcornAdScript'
 import '@/app/global.css'
 
 const pretandard = localFont({
@@ -36,6 +37,7 @@ export default function RootLayout({
       <body>
         <main>
           <GoogleAdScript />
+          <AdpopcornAdScript />
           {children}
         </main>
       </body>

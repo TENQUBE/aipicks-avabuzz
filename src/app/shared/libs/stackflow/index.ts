@@ -1,6 +1,6 @@
 'use client'
 
-import { stackflow } from '@stackflow/react'
+import { stackflow, StackflowReactPlugin } from '@stackflow/react'
 import { basicRendererPlugin } from '@stackflow/plugin-renderer-basic'
 import 'reflect-metadata'
 
@@ -8,37 +8,47 @@ import { ANIMATION_DURATION } from '@/app/shared/config'
 import isIos from '@/app/shared/utils/isIos'
 import { historySyncPlugin } from '@/app/shared/libs/stackflow/history-sync'
 import { basicUIPlugin } from '@/app/shared/libs/stackflow/basic-ui'
+import StackWrapper from '@/app/shared/components/StackWrapper'
 import Detail from '@/app/views/Detail'
 import AdvBestItems from '@/app/views/AdvBestItems'
 import Error from '@/app/views/Error'
-import CoupangAd from '@/app/views/CoupangAd'
+import Ad from '@/app/views/Ad'
 
 export enum ActivityNames {
   Detail = 'Detail',
   AdvBestItems = 'AdvBestItems',
   Error = 'Error',
-  CoupangAd = 'CoupangAd'
+  Ad = 'Ad'
 }
 
 export enum ActivityRoutes {
   Detail = '/detail',
   AdvBestItems = '/adv-best-items',
   Error = '/error',
-  CoupangAd = '/coupang-ad'
+  Ad = '/ad'
 }
 
 const activities = {
   Detail,
   AdvBestItems,
   Error,
-  CoupangAd
+  Ad
 }
 
 export const routes: { [key in ActivityNames]: ActivityRoutes } = {
   [ActivityNames.Detail]: ActivityRoutes[ActivityNames.Detail],
   [ActivityNames.AdvBestItems]: ActivityRoutes[ActivityNames.AdvBestItems],
   [ActivityNames.Error]: ActivityRoutes[ActivityNames.Error],
-  [ActivityNames.CoupangAd]: ActivityRoutes[ActivityNames.CoupangAd]
+  [ActivityNames.Ad]: ActivityRoutes[ActivityNames.Ad]
+}
+
+const stackWrapperPlugin: StackflowReactPlugin = () => {
+  return {
+    key: 'stackWrapper',
+    wrapStack({ stack }) {
+      return StackWrapper({ children: stack.render(), activities: stack.activities })
+    }
+  }
 }
 
 const getStackflowParams = () => {
@@ -56,7 +66,8 @@ const getStackflowParams = () => {
           ({
             theme: 'cupertino'
           } as never)
-      )
+      ),
+      stackWrapperPlugin
     ]
   }
 }

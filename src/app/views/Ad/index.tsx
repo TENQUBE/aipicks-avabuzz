@@ -2,32 +2,45 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { ActivityComponentType } from '@stackflow/react'
 import { useFlow } from '@stackflow/react/future'
 
+import {
+  ADPOPCORN_AOS_APP_KEY,
+  ADPOPCORN_AOS_BANNER_300X250_1,
+  ADPOPCORN_IOS_APP_KEY,
+  ADPOPCORN_IOS_BANNER_300X250_1
+} from '@/app/shared/config'
+import isIos from '@/app/shared/utils/isIos'
 import { ActivityNames } from '@/app/shared/libs/stackflow'
 import modules from '@/modules'
 import { CoupangData } from '@/modules/ad/domain/Coupang'
-import GoogleAdsense from '@/app/shared/components/GoogleAdsense'
+import AdpopcornBannerAd from '@/app/shared/components/AdpopcornBannerAd'
 import Modal from '@/app/shared/components/Modal'
 import { useGetIsShowCoupangAd, useSetCoupangAdWatchedAt } from '@/app/shared/hooks/useCoupangAd'
 import { useSetActivityParams } from '@/app/shared/hooks/useActivityParams'
+import { useDeviceIdValue } from '@/app/shared/hooks/useDeviceId'
 import * as styles from './style.css'
 
-const CoupangAd: ActivityComponentType = () => {
+const Ad: ActivityComponentType = () => {
   const { replace, pop } = useFlow()
+
+  const deviceId = useDeviceIdValue()
+  const setCoupangAdWatchedAt = useSetCoupangAdWatchedAt()
+  const getIsShowCoupangAd = useGetIsShowCoupangAd()
+  const setActivityParams = useSetActivityParams()
 
   const [coupangData, setCoupangData] = useState<CoupangData | null>(null)
   const [skipSeconds, setSkipSeconds] = useState<number>(5)
   const [isMouseOverAdArea, setIsMouseOverAdArea] = useState<boolean>(false)
   const [isSeenAd, setIsSeenAd] = useState<boolean>(false)
-
-  const setCoupangAdWatchedAt = useSetCoupangAdWatchedAt()
-  const getIsShowCoupangAd = useGetIsShowCoupangAd()
-  const setActivityParams = useSetActivityParams()
+  const [isVisibleWindow, setIsVisibleWindow] = useState<boolean>(false)
 
   const isShowCoupangAd = getIsShowCoupangAd()
 
   const isShowCoupangAdRef = useRef<boolean>(isShowCoupangAd)
   const isFetchedRef = useRef<boolean>(false)
   const timerIdRef = useRef<NodeJS.Timeout | null>()
+
+  const adpopcornAppKey = isIos() ? ADPOPCORN_IOS_APP_KEY : ADPOPCORN_AOS_APP_KEY
+  const adpopcornAdCode = isIos() ? ADPOPCORN_IOS_BANNER_300X250_1 : ADPOPCORN_AOS_BANNER_300X250_1
 
   function handleClickConfirmButton() {
     if (isShowCoupangAdRef.current && coupangData) {
@@ -36,7 +49,7 @@ const CoupangAd: ActivityComponentType = () => {
       setCoupangAdWatchedAt(new Date().toISOString())
     }
 
-    setActivityParams(ActivityNames.CoupangAd, ActivityNames.Detail, { isSeenAd })
+    setActivityParams(ActivityNames.Ad, ActivityNames.Detail, { isSeenAd: true })
 
     pop()
   }
@@ -48,36 +61,38 @@ const CoupangAd: ActivityComponentType = () => {
   }
 
   function handleMouseOverAdArea() {
+    if (isShowCoupangAdRef.current) return
+
     console.log('handleMouseOverAdArea')
     setIsMouseOverAdArea(true)
   }
 
   function handleMouseOutAdArea() {
+    if (isShowCoupangAdRef.current) return
+
     console.log('handleMouseOutAdArea')
     setIsMouseOverAdArea(false)
   }
 
   const handleVisibleChangeWindow = useCallback(() => {
-    if (!isMouseOverAdArea) return
-
     if (document.visibilityState === 'hidden') {
+      setIsVisibleWindow(false)
+
       timerIdRef.current = setTimeout(() => {
         setIsSeenAd(true)
       }, 3000)
     } else if (document.visibilityState === 'visible') {
+      setIsVisibleWindow(true)
+
       if (timerIdRef.current) {
         clearTimeout(timerIdRef.current)
       }
-
-      setActivityParams(ActivityNames.CoupangAd, ActivityNames.Detail, { isSeenAd })
-
-      pop()
     }
-  }, [isMouseOverAdArea, isSeenAd])
+  }, [])
 
   const fetchData = useCallback(async () => {
     try {
-      const coupangAdData = await modules.ad.getCoupang('test', '240X220')
+      const coupangAdData = await modules.ad.getCoupang(deviceId, '300X250')
 
       const coupangData = coupangAdData.data[Math.floor(Math.random() * coupangAdData.data.length)]
 
@@ -88,7 +103,7 @@ const CoupangAd: ActivityComponentType = () => {
         desc: '일시적인 오류가 발생하여<br />현재 서비스를 이용할 수 없습니다.'
       })
     }
-  }, [])
+  }, [deviceId])
 
   useEffect(() => {
     if (coupangData || !isShowCoupangAdRef.current || isFetchedRef.current) return
@@ -99,7 +114,7 @@ const CoupangAd: ActivityComponentType = () => {
   }, [coupangData, fetchData])
 
   useEffect(() => {
-    if (!isFetchedRef.current) return
+    if (!isShowCoupangAdRef.current || !coupangData) return
 
     const timerId = setInterval(() => {
       setSkipSeconds((prevState) => {
@@ -115,7 +130,7 @@ const CoupangAd: ActivityComponentType = () => {
     return () => {
       clearInterval(timerId)
     }
-  }, [])
+  }, [coupangData])
 
   useEffect(() => {
     if (isShowCoupangAdRef.current) return
@@ -126,24 +141,37 @@ const CoupangAd: ActivityComponentType = () => {
     }
   }, [handleVisibleChangeWindow])
 
+  useEffect(() => {
+    if (!isMouseOverAdArea || !isVisibleWindow) return
+
+    setActivityParams(ActivityNames.Ad, ActivityNames.Detail, { isSeenAd })
+
+    pop()
+  }, [isMouseOverAdArea, isVisibleWindow, isSeenAd])
+
   return (
-    <Modal>
+    <Modal isShowCloseButton={!isShowCoupangAdRef.current}>
       <div className={styles.area}>
-        {isShowCoupangAdRef.current && coupangData && (
-          <p className={styles.productName}>{coupangData.productName}</p>
+        {isShowCoupangAdRef.current && (
+          <p className={styles.productName}>{coupangData?.productName}</p>
         )}
         <div
           className={styles.adArea}
           onMouseOver={handleMouseOverAdArea}
           onMouseOut={handleMouseOutAdArea}
         >
-          {isShowCoupangAdRef.current && coupangData ? (
+          {isShowCoupangAdRef.current ? (
             <>
-              <img src={coupangData.productImage} alt={coupangData.productName} />
+              <img src={coupangData?.productImage} alt={coupangData?.productName} />
               <span className={styles.adText}>AD</span>
             </>
           ) : (
-            <GoogleAdsense type="modal" />
+            <AdpopcornBannerAd
+              id={adpopcornAdCode.id}
+              type={adpopcornAdCode.type}
+              appKey={adpopcornAppKey}
+              placementId={adpopcornAdCode.placementId}
+            />
           )}
         </div>
         <p
@@ -154,7 +182,7 @@ const CoupangAd: ActivityComponentType = () => {
               : '광고로 이동하여 5초 이상 방문하고 돌아오면<br />추천종목을 확인할 수 있어요.'
           }}
         />
-        {isShowCoupangAdRef.current && coupangData && (
+        {isShowCoupangAdRef.current && (
           <button className={styles.confirmButton} onClick={handleClickConfirmButton}>
             <span
               className={styles.timer}
@@ -193,4 +221,4 @@ const CoupangAd: ActivityComponentType = () => {
   )
 }
 
-export default CoupangAd
+export default Ad
