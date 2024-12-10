@@ -33,7 +33,6 @@ jobs:
           yarn run build
 
       - name: Configure AWS credentials
-        if: steps.changesets.outputs.published == 'true'
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -41,15 +40,12 @@ jobs:
           aws-region: ap-northeast-2
 
       - name: Deploy
-        if: steps.changesets.outputs.published == 'true'
         env:
           NEXT_PUBLIC_COUPANG_PARTNERS_API_ACCESS_KEY: ${{ secrets.COUPANG_PARTNERS_API_ACCESS_KEY }}
           NEXT_PUBLIC_COUPANG_PARTNERS_API_SECRET_KEY: ${{ secrets.COUPANG_PARTNERS_API_SECRET_KEY }}
           NEXT_PUBLIC_NODE_ENV: 'development'
         run: |
           yarn run devDeploy
-    outputs: 
-      published: ${{ steps.changesets.outputs.published }}
 
   notification:
     runs-on: ubuntu-latest
@@ -57,7 +53,6 @@ jobs:
     if: always()
     steps:
       - name: Send a Slack notification
-        if: needs.release.outputs.published == 'true'
         uses: slackapi/slack-github-action@v1.26.0
         with:
           # TENQUBE_FE deploy
