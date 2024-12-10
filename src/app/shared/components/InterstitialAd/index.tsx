@@ -1,24 +1,25 @@
 import { useRef, AnimationEvent } from 'react'
 
-import GoogleAdsense from '@/app/shared/components/GoogleAdsense'
-import * as styles from '@/app/shared/components/InterstitialGoogleAdsense/style.css'
+import {
+  ADPOPCORN_AOS_APP_KEY,
+  ADPOPCORN_AOS_BANNER_320X100_1,
+  ADPOPCORN_IOS_APP_KEY,
+  ADPOPCORN_IOS_BANNER_300X250_1
+} from '../../config'
+import isIos from '../../utils/isIos'
+import AdpopcornBannerAd from '../AdpopcornBannerAd'
+import * as styles from './style.css'
 
-interface InterstitialGoogleAdsenseProps {
+interface InterstitialAdProps {
   closeCallback: Function
 }
 
-export default function InterstitialGoogleAdsense({
-  closeCallback
-}: InterstitialGoogleAdsenseProps) {
+export default function InterstitialAd({ closeCallback }: InterstitialAdProps) {
   const dimElRef = useRef<HTMLDivElement>(null)
   const contentElRef = useRef<HTMLDivElement>(null)
 
-  function handleClickDim() {
-    if (!dimElRef.current || !contentElRef.current) return
-
-    dimElRef.current.classList.add('close')
-    contentElRef.current.classList.add('close')
-  }
+  const adpopcornAppkey = isIos() ? ADPOPCORN_IOS_APP_KEY : ADPOPCORN_AOS_APP_KEY
+  const adpopcornAdCode = isIos() ? ADPOPCORN_IOS_BANNER_300X250_1 : ADPOPCORN_AOS_BANNER_320X100_1
 
   function handleAnimationEndDimEl(event: AnimationEvent) {
     if (event.animationName.includes(styles.fadeOut)) {
@@ -35,12 +36,7 @@ export default function InterstitialGoogleAdsense({
 
   return (
     <>
-      <div
-        className={styles.dim}
-        ref={dimElRef}
-        onClick={handleClickDim}
-        onAnimationEnd={handleAnimationEndDimEl}
-      />
+      <div className={styles.dim} ref={dimElRef} onAnimationEnd={handleAnimationEndDimEl} />
       <div className={styles.content} ref={contentElRef}>
         <button className={styles.button} onClick={handleClickCloseButton}>
           <svg
@@ -57,7 +53,12 @@ export default function InterstitialGoogleAdsense({
           </svg>
           닫기
         </button>
-        <GoogleAdsense type="interstitial" />
+        <AdpopcornBannerAd
+          id={adpopcornAdCode.id}
+          type={adpopcornAdCode.type}
+          appKey={adpopcornAppkey}
+          placementId={adpopcornAdCode.placementId}
+        />
       </div>
     </>
   )

@@ -8,26 +8,24 @@ const activityParamsStore = create<{
     to: ActivityNames | null
     params: any
   }
-  setActivityParams: (from: ActivityNames | null, to: ActivityNames | null, params: any) => void
-  clearActivityParams: () => void
+  setValue: (from: ActivityNames | null, to: ActivityNames | null, params: any) => void
+  clearValue: () => void
 }>((set) => ({
   value: {
     from: null,
     to: null,
     params: null
   },
-  setActivityParams(from: ActivityNames | null, to: ActivityNames | null, params: any) {
+  setValue(from: ActivityNames | null, to: ActivityNames | null, params: any) {
     set({ value: { from, to, params } })
   },
-  clearActivityParams() {
+  clearValue() {
     set({ value: { from: null, to: null, params: null } })
   }
 }))
 
 export const useActivityParamsValue = () => activityParamsStore(({ value }) => value)
 
-export const useSetActivityParams = () =>
-  activityParamsStore(({ setActivityParams }) => setActivityParams)
+export const useSetActivityParams = () => activityParamsStore(({ setValue }) => setValue)
 
-export const useClearActivityParams = () =>
-  activityParamsStore(({ clearActivityParams }) => clearActivityParams)
+export const useClearActivityParams = () => activityParamsStore(({ clearValue }) => clearValue)

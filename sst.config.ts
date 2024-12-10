@@ -17,7 +17,7 @@ export default $config({
   async run() {
     new sst.aws.Nextjs('BuzzvilThinkpoolWebview', {
       domain: {
-        name: 'buzzvil-thinkpool.tenqube.com',
+        name: 'aipicks-avabuzz.tenqube.com',
         cert: 'arn:aws:acm:us-east-1:253030741903:certificate/80564239-ddf5-4e0c-9a11-e5fbb169aaab'
       },
       imageOptimization: {

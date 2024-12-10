@@ -12,7 +12,7 @@ import { Signal1yChartVM } from '@/modules/stock/adaptor/in/ui/vm/Signal1yChartV
 import { TodayPickVM } from '@/modules/stock/adaptor/in/ui/vm/TodayPickVM'
 import modules from '@/modules'
 import Layout from '@/app/shared/components/Layout'
-import InterstitialGoogleAdsense from '@/app/shared/components/InterstitialGoogleAdsense'
+import InterstitialAd from '@/app/shared/components/InterstitialAd'
 import {
   useInactiveStocksValue,
   useClearInactiveStocks,
@@ -28,6 +28,7 @@ import {
   useActivityParamsValue,
   useClearActivityParams
 } from '@/app/shared/hooks/useActivityParams'
+import { useSetToastContent } from '@/app/shared/hooks/useToastContent'
 import * as styles from '@/app/views/Detail/style.css'
 
 export default function Detail() {
@@ -43,11 +44,11 @@ export default function Detail() {
   const isRehydratedTodaysPickUpdateAt = useIsRehydratedTodaysPickUpdatedAt()
   const setTodaysPickUpdatedAt = useSetTodaysPickUpdatedAt()
   const clearInactiveStocks = useClearInactiveStocks()
+  const setToastContent = useSetToastContent()
 
   const [isLoading, setIsLoading] = useState<boolean | null>(null)
   const [isShowInterstitialAd, setIsShowInterstitialAd] = useState<boolean>(false)
   const [isShowPointConfetti, setIsShowPointConfetti] = useState<boolean>(false)
-  const [toastContent, setToastContent] = useState<string | null>(null)
   const [stockCode, setStockCode] = useState<string | null>(
     searchParams.get('stock_code') ? searchParams.get('stock_code') : null
   )
@@ -62,7 +63,6 @@ export default function Detail() {
   >(null)
 
   const isFetchedRef = useRef<boolean>(false)
-  const toastAreaElRef = useRef<HTMLDivElement>(null)
 
   const todaysPickList =
     todaysPick && stockCode ? todaysPick.filter((item) => item.stock_code !== stockCode) : null
@@ -94,7 +94,7 @@ export default function Detail() {
   }, [])
 
   function handleClickLoadingButton() {
-    push(ActivityNames.CoupangAd, {})
+    push(ActivityNames.Ad, {})
   }
 
   function handleClickAdvBestItemsButton() {
@@ -232,7 +232,7 @@ export default function Detail() {
       return
 
     switch (activityParams.from) {
-      case ActivityNames.CoupangAd:
+      case ActivityNames.Ad:
         if (activityParams.params.isSeenAd) {
           setInactiveStocks(stockCode, pmsCode)
 
@@ -242,27 +242,7 @@ export default function Detail() {
             setIsShowInterstitialAd(true)
           }, ANIMATION_DURATION)
         } else {
-          setToastContent('5초 이상 체류 후 결과 확인이 가능합니다. ')
-
-          setTimeout(() => {
-            if (!toastAreaElRef.current) return
-
-            toastAreaElRef.current.classList.remove('close')
-            toastAreaElRef.current.classList.add('open')
-          }, ANIMATION_DURATION)
-
-          setTimeout(() => {
-            if (!toastAreaElRef.current) return
-
-            toastAreaElRef.current.classList.remove('open')
-            toastAreaElRef.current.classList.add('close')
-
-            toastAreaElRef.current.addEventListener('animationend', (event: AnimationEvent) => {
-              if (event.animationName === styles.toastClose) {
-                setToastContent(null)
-              }
-            })
-          }, 2000)
+          setToastContent('5초 이상 체류 후 결과 확인이 가능합니다.')
         }
 
         break
@@ -280,9 +260,7 @@ export default function Detail() {
 
   return (
     <AppScreen>
-      {isShowInterstitialAd && (
-        <InterstitialGoogleAdsense closeCallback={interstitialAdCloseCallback} />
-      )}
+      {isShowInterstitialAd && <InterstitialAd closeCallback={interstitialAdCloseCallback} />}
 
       <>
         {isShowPointConfetti && (
@@ -305,10 +283,6 @@ export default function Detail() {
         </div>
       </>
 
-      <div className={styles.toastArea} ref={toastAreaElRef}>
-        {toastContent}
-      </div>
-
       {typeof isLoading === 'boolean' && isLoading && (
         <div className={styles.loadingArea}>
           <div className={styles.buttonBackground} />
@@ -329,9 +303,9 @@ export default function Detail() {
               <div className={styles.content}>
                 <span className={styles.code}>
                   {!isLoading
-                    ? todaysPick.find((item) => item.stock_code === stockCode)?.pms_code
+                    ? todaysPick.find((item) => item.stock_code === stockCode)?.stock_code
                     : replaceWithAsterisk(
-                        todaysPick.find((item) => item.stock_code === stockCode)?.pms_code
+                        todaysPick.find((item) => item.stock_code === stockCode)?.stock_code
                       )}
                 </span>
                 <span className={styles.name}>

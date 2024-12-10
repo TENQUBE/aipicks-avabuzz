@@ -3,8 +3,9 @@
 import { useEffect, useRef } from 'react'
 
 import { CLIENT_ID, GOLDBOX_URL, SLOT } from '@/app/shared/config'
-import { useGoogleAdScriptLoadStatusValue } from '@/app/shared/hooks/useGoogleAdScriptLoadStatus'
+import { useIsLoadedGoogleAdsenseScriptValue } from '@/app/shared/hooks/useIsLoadedGoogleAdSenseScript'
 import * as styles from '@/app/shared/components/GoogleAdsense/style.css'
+import { useIsAdBlock } from '../../hooks/useIsAdBlock'
 
 declare global {
   interface Window {
@@ -31,7 +32,8 @@ function getDefaultAdInfo(type: 'floating' | 'banner' | 'modal' | 'interstitial'
 }
 
 export default function GoogleAdsense({ type }: GoogleAdsenseProps) {
-  const googleADScriptLoadStatus = useGoogleAdScriptLoadStatusValue()
+  const isLoaded = useIsLoadedGoogleAdsenseScriptValue()
+  const isAdBlock = useIsAdBlock()
 
   const googleAdElRef = useRef<HTMLModElement>(null)
   const defaultAdElRef = useRef<HTMLAnchorElement>(null)
@@ -39,22 +41,18 @@ export default function GoogleAdsense({ type }: GoogleAdsenseProps) {
   const { src: adImgSrc, width: adImgWidth, height: adImgHeight } = getDefaultAdInfo(type)
 
   useEffect(() => {
-    switch (googleADScriptLoadStatus) {
-      case 'resolved':
-        if (typeof window.adsbygoogle === 'undefined' && defaultAdElRef.current) {
-          defaultAdElRef.current!.style.display = 'block'
-        } else {
-          ;(window.adsbygoogle = window.adsbygoogle || []).push({})
-        }
-        break
-      case 'rejected':
+    if (isLoaded === null || isAdBlock === null) return
+
+    if (isLoaded && !isAdBlock) {
+      if (typeof window.adsbygoogle === 'undefined' && defaultAdElRef.current) {
         defaultAdElRef.current!.style.display = 'block'
-        break
-      default:
-        // pending
-        return
+      } else {
+        ;(window.adsbygoogle = window.adsbygoogle || []).push({})
+      }
+    } else {
+      defaultAdElRef.current!.style.display = 'block'
     }
-  }, [googleADScriptLoadStatus])
+  }, [isLoaded, isAdBlock])
 
   useEffect(() => {
     const observer = new MutationObserver(() => {

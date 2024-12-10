@@ -41,6 +41,7 @@
     "@smithy/middleware-retry": "^3.0.25",
     "@smithy/service-error-classification": "^3.0.8",
     "@smithy/util-retry": "^3.0.8",
+    "@types/google-publisher-tag": "^1.20241202.0",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

@@ -1759,6 +1759,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/google-publisher-tag@npm:^1.20241202.0":
+  version: 1.20241202.0
+  resolution: "@types/google-publisher-tag@npm:1.20241202.0"
+  checksum: 10c0/e5d2c1d6c036adadfb930386d06aa7cd7d812b15b0204b7d03671c61d2201d3d10c62cd39b40c859674952bcdc923a5f46c3a2fbb043f7832554c6b99c644eda
+  languageName: node
+  linkType: hard
+
 "@types/node@npm:*":
   version: 22.8.2
   resolution: "@types/node@npm:22.8.2"
@@ -2088,6 +2095,7 @@ __metadata:
     "@stackflow/core": "npm:^1.1.0"
     "@stackflow/plugin-renderer-basic": "npm:^1.1.13"
     "@stackflow/react": "npm:^1.4.1"
+    "@types/google-publisher-tag": "npm:^1.20241202.0"
     "@types/node": "npm:^20"
     "@types/react": "npm:^18"
     "@types/react-dom": "npm:^18"
