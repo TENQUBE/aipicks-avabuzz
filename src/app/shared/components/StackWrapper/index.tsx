@@ -17,24 +17,23 @@ export default function StackWrapper({ children }: PropsWithChildren<StackWrappe
   const isAdBlock = useIsAdBlock()
   const setIsAdBlock = useSetIsAdBlock()
 
-  const checkIsAdBlock = useCallback(() => {
-    const controller = new AbortController()
-    const timerId = setTimeout(() => {
-      controller.abort()
-    }, 3000)
+  const checkIsAdBlock = useCallback(async () => {
+    try {
+      const controller = new AbortController()
+      const timerId = setTimeout(() => {
+        controller.abort()
+      }, 3000)
 
-    fetch('https://securepubads.g.doubleclick.net/tag', {
-      mode: 'no-cors',
-      signal: controller.signal
-    })
-      .then(() => {
-        clearTimeout(timerId)
+      await fetch('https://securepubads.g.doubleclick.net/tag', {
+        mode: 'no-cors',
+        signal: controller.signal
+      })
 
-        setIsAdBlock(false)
-      })
-      .catch(() => {
-        setIsAdBlock(true)
-      })
+      clearTimeout(timerId)
+      setIsAdBlock(false)
+    } catch (error) {
+      setIsAdBlock(true)
+    }
   }, [])
 
   useEffect(() => {

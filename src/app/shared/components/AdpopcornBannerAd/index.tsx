@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { v4 as uuidv4 } from 'uuid'
 
 import GoogleAdsense from '../GoogleAdsense'
 import { useIsAdBlock } from '../../hooks/useIsAdBlock'
@@ -31,7 +30,7 @@ export default function AdpopcornBannerAd({
   const isSetupAdpopcornRef = useRef<boolean>(false)
   const slotRef = useRef<googletag.Slot | null>(null)
 
-  const adElIdRef = useRef<string>(`${id}-${uuidv4()}`)
+  const adElIdRef = useRef<string>(`${id}-${new Date().toISOString()}`)
 
   function getAdSize(type: string) {
     switch (type) {
