@@ -1,5 +1,11 @@
 # buzzvil-thinkpool-webview
 
+## 0.0.14
+
+### Patch Changes
+
+- [`41ab8a6`](https://github.com/TENQUBE/aipicks-avabuzz/commit/41ab8a6643bdd8ee3d4648a953036325fd9674a8) Thanks [@8dong](https://github.com/8dong)! - chore: sst 배포 설정을 수정합니다.
+
 ## 0.0.13
 
 ### Patch Changes
