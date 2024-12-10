@@ -1,3 +1,4 @@
+import { sendGAEvent } from '@next/third-parties/google'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { ActivityComponentType } from '@stackflow/react'
 import { useFlow } from '@stackflow/react/future'
@@ -49,6 +50,10 @@ const Ad: ActivityComponentType = () => {
       setCoupangAdWatchedAt(new Date().toISOString())
     }
 
+    if (process.env.NODE_ENV === 'production') {
+      sendGAEvent('event', '추천종목_참여_play')
+    }
+
     setActivityParams(ActivityNames.Ad, ActivityNames.Detail, { isSeenAd: true })
 
     pop()
@@ -64,6 +69,11 @@ const Ad: ActivityComponentType = () => {
     if (isShowCoupangAdRef.current) return
 
     console.log('handleMouseOverAdArea')
+
+    if (process.env.NODE_ENV === 'production') {
+      sendGAEvent('event', '추천종목_참여_play')
+    }
+
     setIsMouseOverAdArea(true)
   }
 
