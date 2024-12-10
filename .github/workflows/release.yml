@@ -59,7 +59,7 @@ jobs:
           NEXT_PUBLIC_COUPANG_PARTNERS_API_SECRET_KEY: ${{ secrets.COUPANG_PARTNERS_API_SECRET_KEY }}
           NEXT_PUBLIC_NODE_ENV: 'production'
         run: |
-          yarn run deploy
+          yarn run prodDeploy
     outputs: 
       published: ${{ steps.changesets.outputs.published }}
 
@@ -116,6 +116,6 @@ jobs:
         with:
           # TENQUBE_FE deploy
           channel-id: "C07SR98RWE4"
-          slack-message: "${{ github.repository }} 상용 배포 ${{ needs.release.result == 'success' &&  '성공' || '실패'}}\nURL: https://aipicks-avabuzz.tenqube.com/\nChangeLog: https://github.com/TENQUBE/buzzvil-thinkpool-webview/releases"
+          slack-message: "${{ github.repository }} 상용 배포 ${{ needs.release.result == 'success' &&  '성공' || '실패'}}\nURL: https://aipicks-avabuzz.tenqube.com/\nChangeLog: https://github.com/TENQUBE/aipicks-avabuzz/releases"
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}

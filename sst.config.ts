@@ -3,7 +3,7 @@
 export default $config({
   app(input) {
     return {
-      name: 'buzzvil-thinkpool-webview',
+      name: 'aipicks-avabuzz',
       removal: input?.stage === 'production' ? 'retain' : 'remove',
       home: 'aws',
       providers: {
@@ -15,9 +15,11 @@ export default $config({
     }
   },
   async run() {
-    new sst.aws.Nextjs('BuzzvilThinkpoolWebview', {
+    const isProd = $app.stage === 'production'
+
+    new sst.aws.Nextjs('AiPicksAvabuzz', {
       domain: {
-        name: 'aipicks-avabuzz.tenqube.com',
+        name: isProd ? 'aipicks-avabuzz.tenqube.com' : 'dev-aipicks-avabuzz.tenqube.com',
         cert: 'arn:aws:acm:us-east-1:253030741903:certificate/80564239-ddf5-4e0c-9a11-e5fbb169aaab'
       },
       imageOptimization: {
