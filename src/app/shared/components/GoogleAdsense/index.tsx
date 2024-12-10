@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react'
 
-import { GOLDBOX_URL, SLOT } from '@/app/shared/config'
+import { CLIENT_ID, GOLDBOX_URL, SLOT } from '@/app/shared/config'
 import { useGoogleAdScriptLoadStatusValue } from '@/app/shared/hooks/useGoogleAdScriptLoadStatus'
 import * as styles from '@/app/shared/components/GoogleAdsense/style.css'
 
@@ -87,7 +87,7 @@ export default function GoogleAdsense({ type }: GoogleAdsenseProps) {
           overflow: 'hidden'
         }}
         ref={googleAdElRef}
-        data-ad-client="ca-pub-4440358116924496"
+        data-ad-client={CLIENT_ID}
         data-ad-slot={SLOT}
       />
       <a

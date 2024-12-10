@@ -5,7 +5,7 @@ import { Coupang } from '@/modules/ad/domain/Coupang'
 export class AdService implements AdUseCase {
   constructor(private readonly outputPort: AdOutPutPort) {}
 
-  getCoupang(imageSize: string): Promise<Coupang> {
-    return this.outputPort.getCoupang(imageSize)
+  getCoupang(deviceId: string, imageSize: string): Promise<Coupang> {
+    return this.outputPort.getCoupang(deviceId, imageSize)
   }
 }
