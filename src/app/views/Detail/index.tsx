@@ -89,6 +89,12 @@ export default function Detail() {
   const interstitialAdCloseCallback = useCallback(() => {
     setIsShowInterstitialAd(false)
 
+    setTimeout(() => {
+      if (typeof window.postbackFire !== 'undefined') {
+        console.log('call postbackFire')
+        window.postbackFire('tenqube')
+      }
+    }, ANIMATION_DURATION)
     // setTimeout(() => {
     //   setIsShowPointConfetti(true)
     // }, ANIMATION_DURATION)
