@@ -1,32 +1,55 @@
-import { headers } from 'next/headers'
-import { userAgent } from 'next/server'
-import { Suspense } from 'react'
+import { useSearchParams } from 'next/navigation'
+import { PropsWithChildren, useCallback, useEffect } from 'react'
+import { Activity } from '@stackflow/core'
 
-import Stack from '@/app/shared/libs/stackflow'
-import isSafari from '@/app/shared/utils/isSafari'
+import { useSetDeviceId } from '../../hooks/useDeviceId'
+import { useIsAdBlock, useSetIsAdBlock } from '../../hooks/useIsAdBlock'
+import * as styles from './style.css'
 
 interface StackWrapperProps {
-  path: string
-  searchParams: Promise<{ [key: string]: string }>
+  activities: Activity[]
 }
 
-export default async function StackWrapper({ path, searchParams }: StackWrapperProps) {
-  const [headerList, searchParamsObj] = await Promise.all([headers(), searchParams])
+export default function StackWrapper({ children }: PropsWithChildren<StackWrapperProps>) {
+  const searchParams = useSearchParams()
 
-  const noAnimate = isSafari(userAgent({ headers: headerList }).ua)
+  const setDeviceId = useSetDeviceId()
+  const isAdBlock = useIsAdBlock()
+  const setIsAdBlock = useSetIsAdBlock()
 
-  const queryString = new URLSearchParams(searchParamsObj).toString()
+  const checkIsAdBlock = useCallback(() => {
+    const controller = new AbortController()
+    const timerId = setTimeout(() => {
+      controller.abort()
+    }, 3000)
 
-  return (
-    <Suspense>
-      <Stack
-        initialContext={{
-          req: {
-            path: `/${path}/?${queryString}`,
-            noAnimate
-          }
-        }}
-      />
-    </Suspense>
-  )
+    fetch('https://securepubads.g.doubleclick.net/tag', {
+      mode: 'no-cors',
+      signal: controller.signal
+    })
+      .then(() => {
+        clearTimeout(timerId)
+
+        setIsAdBlock(false)
+      })
+      .catch(() => {
+        setIsAdBlock(true)
+      })
+  }, [])
+
+  useEffect(() => {
+    const deviceId = searchParams.get('deviceId')
+
+    if (deviceId) {
+      setDeviceId(deviceId)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (typeof isAdBlock === 'boolean') return
+
+    checkIsAdBlock()
+  }, [isAdBlock, checkIsAdBlock])
+
+  return <div className={styles.area}>{children}</div>
 }

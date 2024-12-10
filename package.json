@@ -32,6 +32,7 @@
     "sharp": "^0.33.5",
     "sst": "3.2.70",
     "swiper": "^11.1.14",
+    "uuid": "^11.0.3",
     "zustand": "^5.0.0"
   },
   "devDependencies": {
@@ -41,6 +42,7 @@
     "@smithy/middleware-retry": "^3.0.25",
     "@smithy/service-error-classification": "^3.0.8",
     "@smithy/util-retry": "^3.0.8",
+    "@types/google-publisher-tag": "^1.20241202.0",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

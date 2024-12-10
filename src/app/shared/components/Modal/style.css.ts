@@ -1,4 +1,4 @@
-import { keyframes, style } from '@vanilla-extract/css'
+import { keyframes, style, globalStyle } from '@vanilla-extract/css'
 
 import { MODAL_ANIMATION_DURATION } from '@/app/shared/config'
 
@@ -37,6 +37,25 @@ export const dim = style({
   }
 })
 
+export const button = style({
+  position: 'absolute',
+  top: '-30px',
+  right: '0',
+  zIndex: '999',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  color: '#FFF',
+  fontSize: '1.6rem',
+  fontWeight: '600',
+  lineHeight: '2.2rem',
+  letterSpacing: '-0.02rem'
+})
+
+globalStyle(`${button} > svg`, {
+  marginRight: '0.4rem'
+})
+
 export const toTop = keyframes({
   '0%': {
     transform: 'translate(-50%, -45%)'
@@ -65,7 +84,6 @@ export const contentArea = style({
   alignItems: 'center',
   width: 'calc(100% - 4rem)',
   borderRadius: '20px',
-  overflow: 'hidden',
   backgroundColor: '#fff',
   opacity: '0',
   transform: 'translate(-50%, -45%)',

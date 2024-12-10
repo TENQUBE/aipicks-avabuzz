@@ -13,13 +13,6 @@ export default function InterstitialGoogleAdsense({
   const dimElRef = useRef<HTMLDivElement>(null)
   const contentElRef = useRef<HTMLDivElement>(null)
 
-  function handleClickDim() {
-    if (!dimElRef.current || !contentElRef.current) return
-
-    dimElRef.current.classList.add('close')
-    contentElRef.current.classList.add('close')
-  }
-
   function handleAnimationEndDimEl(event: AnimationEvent) {
     if (event.animationName.includes(styles.fadeOut)) {
       closeCallback()
@@ -35,12 +28,7 @@ export default function InterstitialGoogleAdsense({
 
   return (
     <>
-      <div
-        className={styles.dim}
-        ref={dimElRef}
-        onClick={handleClickDim}
-        onAnimationEnd={handleAnimationEndDimEl}
-      />
+      <div className={styles.dim} ref={dimElRef} onAnimationEnd={handleAnimationEndDimEl} />
       <div className={styles.content} ref={contentElRef}>
         <button className={styles.button} onClick={handleClickCloseButton}>
           <svg

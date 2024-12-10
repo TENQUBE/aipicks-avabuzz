@@ -1,8 +1,19 @@
-import { PropsWithChildren } from 'react'
+import { PropsWithChildren, useEffect, useRef, useState } from 'react'
 
+import {
+  AdCode,
+  ADPOPCORN_AOS_APP_KEY,
+  ADPOPCORN_AOS_BANNER_320X50_1,
+  ADPOPCORN_IOS_APP_KEY,
+  ADPOPCORN_IOS_BANNER_320X50_1,
+  ANIMATION_DURATION
+} from '../../config'
+import isIos from '../../utils/isIos'
 import { useFlow } from '@/app/shared/libs/stackflow'
-import GoogleAdsense from '@/app/shared/components/GoogleAdsense'
+import AdpopcornBannerAd from '../AdpopcornBannerAd'
 import { useActiveActivities } from '@/app/shared/hooks/useActiveActivities'
+import { useSetToastContent, useToastContentValue } from '../../hooks/useToastContent'
+import { useIsLoadedAdpopcornScript } from '../../hooks/useIsLoadedAdpopcornScript'
 import * as styles from '@/app/shared/components/Layout/style.css'
 
 interface LayoutProps {
@@ -18,11 +29,54 @@ export default function Layout({
   hasTopBar = true
 }: PropsWithChildren<LayoutProps>) {
   const { pop } = useFlow()
+
   const activeActivies = useActiveActivities()
+  const toastContent = useToastContentValue()
+  const setToastContent = useSetToastContent()
+  const isLoadedAdpopcornScript = useIsLoadedAdpopcornScript()
+
+  const [adpopcornAppkey, setAdpopcornAppKey] = useState<string | null>(null)
+  const [adpopcornAdCode, setAdpopcornAdCode] = useState<AdCode | null>(null)
+
+  const toastAreaElRef = useRef<HTMLDivElement>(null)
 
   function handleClickBackButton() {
     pop()
   }
+
+  useEffect(() => {
+    if (isLoadedAdpopcornScript) {
+      const appKey = isIos() ? ADPOPCORN_IOS_APP_KEY : ADPOPCORN_AOS_APP_KEY
+      const adCode = isIos() ? ADPOPCORN_IOS_BANNER_320X50_1 : ADPOPCORN_AOS_BANNER_320X50_1
+
+      setAdpopcornAppKey(appKey)
+      setAdpopcornAdCode(adCode)
+    }
+  }, [isLoadedAdpopcornScript])
+
+  useEffect(() => {
+    if (!toastContent) return
+
+    setTimeout(() => {
+      if (!toastAreaElRef.current) return
+
+      toastAreaElRef.current.classList.remove('close')
+      toastAreaElRef.current.classList.add('open')
+    }, ANIMATION_DURATION)
+
+    setTimeout(() => {
+      if (!toastAreaElRef.current) return
+
+      toastAreaElRef.current.classList.remove('open')
+      toastAreaElRef.current.classList.add('close')
+
+      toastAreaElRef.current.addEventListener('animationend', (event: AnimationEvent) => {
+        if (event.animationName === styles.toastClose) {
+          setToastContent('')
+        }
+      })
+    }, ANIMATION_DURATION + 2000)
+  }, [toastContent])
 
   return (
     <div className={styles.area} style={{ backgroundColor }}>
@@ -48,8 +102,18 @@ export default function Layout({
         </div>
       )}
       <div className={`${styles.content} ${hasTopBar ? 'hasTopBar' : ''}`}>{children}</div>
+      <div className={styles.toastArea} ref={toastAreaElRef}>
+        {toastContent}
+      </div>
       <div className={styles.bottomAdBannerArea}>
-        <GoogleAdsense type="floating" />
+        {isLoadedAdpopcornScript !== null && adpopcornAdCode && adpopcornAppkey && (
+          <AdpopcornBannerAd
+            id={adpopcornAdCode.id}
+            type={adpopcornAdCode.type}
+            appKey={adpopcornAppkey}
+            placementId={adpopcornAdCode.placementId}
+          />
+        )}
       </div>
     </div>
   )

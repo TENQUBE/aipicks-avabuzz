@@ -12,6 +12,7 @@ export const area = style({
 
 export const productName = style({
   width: '100%',
+  height: '44px',
   marginBottom: '1.6rem',
   display: '-webkit-box',
   overflow: 'hidden',
@@ -28,11 +29,10 @@ export const adArea = style({
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
-  minWidth: '240px',
+  minWidth: '300px',
   width: '100%',
-  height: '220px',
+  height: '250px',
   marginBottom: '1.6rem',
-  borderRadius: '20px',
   overflow: 'hidden'
 })
 
