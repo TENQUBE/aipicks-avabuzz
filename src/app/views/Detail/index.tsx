@@ -12,7 +12,7 @@ import { Signal1yChartVM } from '@/modules/stock/adaptor/in/ui/vm/Signal1yChartV
 import { TodayPickVM } from '@/modules/stock/adaptor/in/ui/vm/TodayPickVM'
 import modules from '@/modules'
 import Layout from '@/app/shared/components/Layout'
-import InterstitialGoogleAdsense from '@/app/shared/components/InterstitialGoogleAdsense'
+import InterstitialAd from '@/app/shared/components/InterstitialAd'
 import {
   useInactiveStocksValue,
   useClearInactiveStocks,
@@ -94,7 +94,7 @@ export default function Detail() {
   }, [])
 
   function handleClickLoadingButton() {
-    push(ActivityNames.CoupangAd, {})
+    push(ActivityNames.Ad, {})
   }
 
   function handleClickAdvBestItemsButton() {
@@ -232,7 +232,7 @@ export default function Detail() {
       return
 
     switch (activityParams.from) {
-      case ActivityNames.CoupangAd:
+      case ActivityNames.Ad:
         if (activityParams.params.isSeenAd) {
           setInactiveStocks(stockCode, pmsCode)
 
@@ -260,9 +260,7 @@ export default function Detail() {
 
   return (
     <AppScreen>
-      {isShowInterstitialAd && (
-        <InterstitialGoogleAdsense closeCallback={interstitialAdCloseCallback} />
-      )}
+      {isShowInterstitialAd && <InterstitialAd closeCallback={interstitialAdCloseCallback} />}
 
       <>
         {isShowPointConfetti && (

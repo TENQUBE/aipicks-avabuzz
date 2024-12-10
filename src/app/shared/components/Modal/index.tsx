@@ -17,12 +17,11 @@ import {
   ADPOPCORN_IOS_APP_KEY,
   ADPOPCORN_IOS_BANNER_320X50_1
 } from '../../config'
-import { useFlow } from '@/app/shared/libs/stackflow'
-import GoogleAdsense from '@/app/shared/components/GoogleAdsense'
-import { useIsLoadedAdpopcornScript } from '../../hooks/useIsLoadedAdpopcornScript'
-import * as styles from '@/app/shared/components/Modal/style.css'
 import isIos from '../../utils/isIos'
+import { useFlow } from '@/app/shared/libs/stackflow'
 import AdpopcornBannerAd from '../AdpopcornBannerAd'
+import { useIsLoadedAdpopcornScriptValue } from '../../hooks/useIsLoadedAdpopcornScript'
+import * as styles from '@/app/shared/components/Modal/style.css'
 
 interface ModalProps {
   children: ReactNode
@@ -38,7 +37,7 @@ export default function Modal({
   const activity = useActivity()
   const { pop } = useFlow()
 
-  const isLoadedAdpopcornScript = useIsLoadedAdpopcornScript()
+  const isLoadedAdpopcornScript = useIsLoadedAdpopcornScriptValue()
 
   const dimElRef = useRef<HTMLDivElement>(null)
   const contentElRef = useRef<HTMLDivElement>(null)

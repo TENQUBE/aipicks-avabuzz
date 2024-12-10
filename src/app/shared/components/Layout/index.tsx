@@ -13,7 +13,7 @@ import { useFlow } from '@/app/shared/libs/stackflow'
 import AdpopcornBannerAd from '../AdpopcornBannerAd'
 import { useActiveActivities } from '@/app/shared/hooks/useActiveActivities'
 import { useSetToastContent, useToastContentValue } from '../../hooks/useToastContent'
-import { useIsLoadedAdpopcornScript } from '../../hooks/useIsLoadedAdpopcornScript'
+import { useIsLoadedAdpopcornScriptValue } from '../../hooks/useIsLoadedAdpopcornScript'
 import * as styles from '@/app/shared/components/Layout/style.css'
 
 interface LayoutProps {
@@ -33,7 +33,7 @@ export default function Layout({
   const activeActivies = useActiveActivities()
   const toastContent = useToastContentValue()
   const setToastContent = useSetToastContent()
-  const isLoadedAdpopcornScript = useIsLoadedAdpopcornScript()
+  const isLoadedAdpopcornScript = useIsLoadedAdpopcornScriptValue()
 
   const [adpopcornAppkey, setAdpopcornAppKey] = useState<string | null>(null)
   const [adpopcornAdCode, setAdpopcornAdCode] = useState<AdCode | null>(null)

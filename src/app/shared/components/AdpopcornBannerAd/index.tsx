@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid'
 
 import GoogleAdsense from '../GoogleAdsense'
 import { useIsAdBlock } from '../../hooks/useIsAdBlock'
-import { useIsLoadedAdpopcornScript } from '../../hooks/useIsLoadedAdpopcornScript'
+import { useIsLoadedAdpopcornScriptValue } from '../../hooks/useIsLoadedAdpopcornScript'
 import * as styles from './style.css'
 
 interface AdpopcornBannerAdProps {
@@ -21,7 +21,7 @@ export default function AdpopcornBannerAd({
   appKey,
   placementId
 }: AdpopcornBannerAdProps) {
-  const isLoaded = useIsLoadedAdpopcornScript()
+  const isLoaded = useIsLoadedAdpopcornScriptValue()
   const isAdBlock = useIsAdBlock()
 
   const [isShowGoogleAdSense, setIsShowGoogleAdSense] = useState<boolean>(false)

@@ -19,7 +19,7 @@ import { useSetActivityParams } from '@/app/shared/hooks/useActivityParams'
 import { useDeviceIdValue } from '@/app/shared/hooks/useDeviceId'
 import * as styles from './style.css'
 
-const CoupangAd: ActivityComponentType = () => {
+const Ad: ActivityComponentType = () => {
   const { replace, pop } = useFlow()
 
   const deviceId = useDeviceIdValue()
@@ -49,7 +49,7 @@ const CoupangAd: ActivityComponentType = () => {
       setCoupangAdWatchedAt(new Date().toISOString())
     }
 
-    setActivityParams(ActivityNames.CoupangAd, ActivityNames.Detail, { isSeenAd: true })
+    setActivityParams(ActivityNames.Ad, ActivityNames.Detail, { isSeenAd: true })
 
     pop()
   }
@@ -61,11 +61,15 @@ const CoupangAd: ActivityComponentType = () => {
   }
 
   function handleMouseOverAdArea() {
+    if (isShowCoupangAdRef.current) return
+
     console.log('handleMouseOverAdArea')
     setIsMouseOverAdArea(true)
   }
 
   function handleMouseOutAdArea() {
+    if (isShowCoupangAdRef.current) return
+
     console.log('handleMouseOutAdArea')
     setIsMouseOverAdArea(false)
   }
@@ -140,7 +144,7 @@ const CoupangAd: ActivityComponentType = () => {
   useEffect(() => {
     if (!isMouseOverAdArea || !isVisibleWindow) return
 
-    setActivityParams(ActivityNames.CoupangAd, ActivityNames.Detail, { isSeenAd })
+    setActivityParams(ActivityNames.Ad, ActivityNames.Detail, { isSeenAd })
 
     pop()
   }, [isMouseOverAdArea, isVisibleWindow, isSeenAd])
@@ -217,4 +221,4 @@ const CoupangAd: ActivityComponentType = () => {
   )
 }
 
-export default CoupangAd
+export default Ad

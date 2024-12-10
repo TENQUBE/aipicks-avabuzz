@@ -8,7 +8,8 @@ const isLoadedAdpopcornScriptStore = create<{
   setValue: (value) => set(() => ({ value }))
 }))
 
-export const useIsLoadedAdpopcornScript = () => isLoadedAdpopcornScriptStore((state) => state.value)
+export const useIsLoadedAdpopcornScriptValue = () =>
+  isLoadedAdpopcornScriptStore((state) => state.value)
 
 export const useSetIsLoadedAdpopcornScript = () =>
   isLoadedAdpopcornScriptStore((state) => state.setValue)

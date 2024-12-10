@@ -7,5 +7,5 @@ interface PageProps {
 }
 
 export default function Page({ searchParams }: PageProps) {
-  return <StackContainer path="coupang-ad" searchParams={searchParams} />
+  return <StackContainer path="ad" searchParams={searchParams} />
 }
