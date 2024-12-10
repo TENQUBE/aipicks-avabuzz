@@ -22,7 +22,7 @@ export enum ActivityNames {
 }
 
 export enum ActivityRoutes {
-  Detail = '/detail',
+  Detail = '/',
   AdvBestItems = '/adv-best-items',
   Error = '/error',
   Ad = '/ad'

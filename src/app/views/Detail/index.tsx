@@ -1,3 +1,4 @@
+import { sendGAEvent } from '@next/third-parties/google'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Confetti from 'react-confetti-boom'
@@ -48,7 +49,7 @@ export default function Detail() {
 
   const [isLoading, setIsLoading] = useState<boolean | null>(null)
   const [isShowInterstitialAd, setIsShowInterstitialAd] = useState<boolean>(false)
-  const [isShowPointConfetti, setIsShowPointConfetti] = useState<boolean>(false)
+  // const [isShowPointConfetti, setIsShowPointConfetti] = useState<boolean>(false)
   const [stockCode, setStockCode] = useState<string | null>(
     searchParams.get('stock_code') ? searchParams.get('stock_code') : null
   )
@@ -88,9 +89,9 @@ export default function Detail() {
   const interstitialAdCloseCallback = useCallback(() => {
     setIsShowInterstitialAd(false)
 
-    setTimeout(() => {
-      setIsShowPointConfetti(true)
-    }, ANIMATION_DURATION)
+    // setTimeout(() => {
+    //   setIsShowPointConfetti(true)
+    // }, ANIMATION_DURATION)
   }, [])
 
   function handleClickLoadingButton() {
@@ -194,13 +195,13 @@ export default function Detail() {
     []
   )
 
-  useEffect(() => {
-    if (!isLoading && !isShowInterstitialAd && isShowPointConfetti) {
-      setTimeout(() => {
-        setIsShowPointConfetti(false)
-      }, 2000)
-    }
-  }, [isLoading, isShowInterstitialAd, isShowPointConfetti])
+  // useEffect(() => {
+  //   if (!isLoading && !isShowInterstitialAd && isShowPointConfetti) {
+  //     setTimeout(() => {
+  //       setIsShowPointConfetti(false)
+  //     }, 2000)
+  //   }
+  // }, [isLoading, isShowInterstitialAd, isShowPointConfetti])
 
   useEffect(() => {
     if (isFetchedRef.current || !isRehydratedInactiveStock || !isRehydratedTodaysPickUpdateAt)
@@ -234,6 +235,10 @@ export default function Detail() {
     switch (activityParams.from) {
       case ActivityNames.Ad:
         if (activityParams.params.isSeenAd) {
+          if (process.env.NODE_ENV === 'production') {
+            sendGAEvent('event', '추천종목_참여_complete')
+          }
+
           setInactiveStocks(stockCode, pmsCode)
 
           setIsLoading(false)
@@ -262,7 +267,7 @@ export default function Detail() {
     <AppScreen>
       {isShowInterstitialAd && <InterstitialAd closeCallback={interstitialAdCloseCallback} />}
 
-      <>
+      {/* <>
         {isShowPointConfetti && (
           <div className={styles.confettiArea}>
             <Confetti
@@ -281,7 +286,7 @@ export default function Detail() {
           </figure>
           <span className={styles.confettiTextContent}>1 포인트 적립 완료!</span>
         </div>
-      </>
+      </> */}
 
       {typeof isLoading === 'boolean' && isLoading && (
         <div className={styles.loadingArea}>
@@ -454,7 +459,7 @@ export default function Detail() {
                             </span>
                             <div className={styles.activeButtonArea}>
                               <button className={styles.activeButton}>확인하기</button>
-                              <span className={styles.pointLabel}>5P</span>
+                              {/* <span className={styles.pointLabel}>5P</span> */}
                             </div>
                           </>
                         ) : (

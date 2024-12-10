@@ -1,4 +1,9 @@
 /**
+ * GA ID
+ */
+export const GA_ID = 'G-G28JQ8DPDP'
+
+/**
  * stackflow
  */
 export const ANIMATION_DURATION = 400

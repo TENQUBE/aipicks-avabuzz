@@ -1,6 +1,8 @@
+import { GoogleAnalytics } from '@next/third-parties/google'
 import localFont from 'next/font/local'
 import 'swiper/css'
 
+import { GA_ID } from './shared/config'
 import GoogleAdScript from '@/app/shared/components/GoogleAdScript'
 import AdpopcornAdScript from './shared/components/AdpopcornAdScript'
 import '@/app/global.css'
@@ -36,6 +38,7 @@ export default function RootLayout({
     <html className={`${pretandard.className} ${pretandard.variable}`} lang="ko">
       <body>
         <main>
+          <GoogleAnalytics gaId={GA_ID} />
           <GoogleAdScript />
           <AdpopcornAdScript />
           {children}
