@@ -14,6 +14,7 @@
     "release": "changeset tag"
   },
   "dependencies": {
+    "@next/third-parties": "^15.0.4",
     "@stackflow/core": "^1.1.0",
     "@stackflow/plugin-renderer-basic": "^1.1.13",
     "@stackflow/react": "^1.4.1",
