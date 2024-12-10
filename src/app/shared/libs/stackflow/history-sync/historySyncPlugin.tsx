@@ -130,7 +130,7 @@ export function historySyncPlugin<
           makeEvent('Pushed', {
             activityId: fallbackActivityId,
             activityName: fallbackActivityName,
-            activityParams: {},
+            activityParams: initialContext.req.params ? initialContext.req.params : {},
             eventDate: new Date().getTime() - MINUTE,
             activityContext: {
               path: fallbackActivityPath

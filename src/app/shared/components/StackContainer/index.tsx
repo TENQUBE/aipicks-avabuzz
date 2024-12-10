@@ -22,8 +22,9 @@ export default async function StackContainer({ path, searchParams }: StackContai
       <Stack
         initialContext={{
           req: {
-            path: `/${path}/?${queryString}`,
-            noAnimate
+            path: `${path}/?${queryString}`,
+            noAnimate,
+            params: searchParamsObj
           }
         }}
       />

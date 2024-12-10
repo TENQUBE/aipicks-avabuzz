@@ -36,6 +36,25 @@ export default function RootLayout({
 }>) {
   return (
     <html className={`${pretandard.className} ${pretandard.variable}`} lang="ko">
+      <head>
+        <script
+          type="text/javascript"
+          src={
+            process.env.NODE_ENV === 'development'
+              ? 'https://s.avatye.com/rc/test/tenqube/rclib_timer.min.js'
+              : 'https://s.avatye.com/rc/tenqube/rclib_timer.min.js'
+          }
+        />
+        <link
+          rel="stylesheet"
+          type="text/css"
+          href={
+            process.env.NODE_ENV === 'development'
+              ? 'https://s.avatye.com/rc/test/tenqube/rclib_timer.min.css'
+              : 'https://s.avatye.com/rc/tenqube/rclib_timer.min.css'
+          }
+        />
+      </head>
       <body>
         <main>
           <GoogleAnalytics gaId={GA_ID} />

@@ -72,6 +72,24 @@ const getStackflowParams = () => {
   }
 }
 
+function parseQueryString(queryString: string) {
+  let params: { [key: string]: string } = {}
+
+  if (queryString) {
+    const pairs = queryString.split('?')[1].split('&')
+
+    pairs.forEach((pair) => {
+      const [key, value] = pair.split('=')
+
+      if (value !== undefined) {
+        params[key] = value
+      }
+    })
+  }
+
+  return params
+}
+
 export const { Stack, useFlow: useOriginFlow } = stackflow(getStackflowParams())
 
 export const useFlow = () => {
@@ -79,11 +97,19 @@ export const useFlow = () => {
 
   return {
     push: (activityName: ActivityNames, params: {}, options?: { animate?: boolean }) =>
-      originPush(activityName, params, { animate: isIos() ? false : options?.animate }),
+      originPush(
+        activityName,
+        { ...params, ...parseQueryString(window.joinRCQuery('')) },
+        { animate: isIos() ? false : options?.animate }
+      ),
     pop: (count?: number, options?: { animate?: boolean }) =>
       originPop(count ? count : 1, { animate: isIos() ? false : options?.animate }),
     replace: (activityName: ActivityNames, params: {}, options?: { animate?: boolean }) =>
-      originReplace(activityName, params, { animate: isIos() ? false : options?.animate })
+      originReplace(
+        activityName,
+        { ...params, ...parseQueryString(window.joinRCQuery('')) },
+        { animate: isIos() ? false : options?.animate }
+      )
   }
 }
 
