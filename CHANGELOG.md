@@ -1,5 +1,11 @@
 # buzzvil-thinkpool-webview
 
+## 0.0.16
+
+### Patch Changes
+
+- [#49](https://github.com/TENQUBE/aipicks-avabuzz/pull/49) [`3a806e0`](https://github.com/TENQUBE/aipicks-avabuzz/commit/3a806e062cb26a4d7576a34f48f3a443dda16b3f) Thanks [@8dong](https://github.com/8dong)! - feat: avatye postback 요청을 추가합니다.
+
 ## 0.0.15
 
 ### Patch Changes
