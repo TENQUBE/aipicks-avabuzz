@@ -1,5 +1,11 @@
 # buzzvil-thinkpool-webview
 
+## 0.0.15
+
+### Patch Changes
+
+- [#46](https://github.com/TENQUBE/aipicks-avabuzz/pull/46) [`f4c5092`](https://github.com/TENQUBE/aipicks-avabuzz/commit/f4c5092d5c5a336b175f4fd0e1de4b7116638cb0) Thanks [@8dong](https://github.com/8dong)! - feat: 구글 애널리틱스를 연동합니다.
+
 ## 0.0.14
 
 ### Patch Changes
