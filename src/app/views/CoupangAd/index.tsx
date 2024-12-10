@@ -48,10 +48,12 @@ const CoupangAd: ActivityComponentType = () => {
   }
 
   function handleMouseOverAdArea() {
+    console.log('handleMouseOverAdArea')
     setIsMouseOverAdArea(true)
   }
 
   function handleMouseOutAdArea() {
+    console.log('handleMouseOutAdArea')
     setIsMouseOverAdArea(false)
   }
 
