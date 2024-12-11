@@ -1,5 +1,11 @@
 # buzzvil-thinkpool-webview
 
+## 0.0.17
+
+### Patch Changes
+
+- [#52](https://github.com/TENQUBE/aipicks-avabuzz/pull/52) [`18a7a30`](https://github.com/TENQUBE/aipicks-avabuzz/commit/18a7a30bb19ccc25729597ec26bde012cdde483b) Thanks [@8dong](https://github.com/8dong)! - fix: 광고 클릭 콜백 이슈를 수정합니다.
+
 ## 0.0.16
 
 ### Patch Changes
