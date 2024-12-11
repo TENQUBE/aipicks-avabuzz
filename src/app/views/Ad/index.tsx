@@ -30,7 +30,7 @@ const Ad: ActivityComponentType = () => {
 
   const [coupangData, setCoupangData] = useState<CoupangData | null>(null)
   const [skipSeconds, setSkipSeconds] = useState<number>(5)
-  const [isMouseOverAdArea, setIsMouseOverAdArea] = useState<boolean>(false)
+  const [isClickedAd, setIsClickedAd] = useState<boolean>(false)
   const [isSeenAd, setIsSeenAd] = useState<boolean>(false)
   const [isVisibleWindow, setIsVisibleWindow] = useState<boolean>(false)
 
@@ -54,9 +54,8 @@ const Ad: ActivityComponentType = () => {
       sendGAEvent('event', '추천종목_참여_play')
     }
 
-    setActivityParams(ActivityNames.Ad, ActivityNames.Detail, { isSeenAd: true })
-
-    pop()
+    setIsClickedAd(true)
+    setIsSeenAd(true)
   }
 
   function handleClickCloseButton() {
@@ -65,38 +64,27 @@ const Ad: ActivityComponentType = () => {
     pop()
   }
 
-  function handleMouseOverAdArea() {
-    if (isShowCoupangAdRef.current) return
-
-    console.log('handleMouseOverAdArea')
-
+  const adpopcornAdClickCallback = useCallback(() => {
     if (process.env.NODE_ENV === 'production') {
       sendGAEvent('event', '추천종목_참여_play')
     }
 
-    setIsMouseOverAdArea(true)
-  }
+    setIsClickedAd(true)
 
-  function handleMouseOutAdArea() {
-    if (isShowCoupangAdRef.current) return
-
-    console.log('handleMouseOutAdArea')
-    setIsMouseOverAdArea(false)
-  }
+    timerIdRef.current = setTimeout(() => {
+      setIsSeenAd(true)
+    }, 3000)
+  }, [])
 
   const handleVisibleChangeWindow = useCallback(() => {
-    if (document.visibilityState === 'hidden') {
-      setIsVisibleWindow(false)
-
-      timerIdRef.current = setTimeout(() => {
-        setIsSeenAd(true)
-      }, 3000)
-    } else if (document.visibilityState === 'visible') {
+    if (document.visibilityState === 'visible') {
       setIsVisibleWindow(true)
 
       if (timerIdRef.current) {
         clearTimeout(timerIdRef.current)
       }
+    } else {
+      setIsVisibleWindow(false)
     }
   }, [])
 
@@ -152,12 +140,14 @@ const Ad: ActivityComponentType = () => {
   }, [handleVisibleChangeWindow])
 
   useEffect(() => {
-    if (!isMouseOverAdArea || !isVisibleWindow) return
+    if (!isClickedAd) return
 
-    setActivityParams(ActivityNames.Ad, ActivityNames.Detail, { isSeenAd })
+    if (isShowCoupangAdRef.current || (!isShowCoupangAdRef.current && isVisibleWindow)) {
+      setActivityParams(ActivityNames.Ad, ActivityNames.Detail, { isSeenAd })
 
-    pop()
-  }, [isMouseOverAdArea, isVisibleWindow, isSeenAd])
+      pop()
+    }
+  }, [isClickedAd, isVisibleWindow, isSeenAd])
 
   return (
     <Modal isShowCloseButton={!isShowCoupangAdRef.current}>
@@ -165,11 +155,7 @@ const Ad: ActivityComponentType = () => {
         {isShowCoupangAdRef.current && (
           <p className={styles.productName}>{coupangData?.productName}</p>
         )}
-        <div
-          className={styles.adArea}
-          onMouseOver={handleMouseOverAdArea}
-          onMouseOut={handleMouseOutAdArea}
-        >
+        <div className={styles.adArea}>
           {isShowCoupangAdRef.current ? (
             <>
               <img src={coupangData?.productImage} alt={coupangData?.productName} />
@@ -181,6 +167,7 @@ const Ad: ActivityComponentType = () => {
               type={adpopcornAdCode.type}
               appKey={adpopcornAppKey}
               placementId={adpopcornAdCode.placementId}
+              adClickCallback={adpopcornAdClickCallback}
             />
           )}
         </div>
