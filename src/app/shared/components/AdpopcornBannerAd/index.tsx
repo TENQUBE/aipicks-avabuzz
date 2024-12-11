@@ -11,6 +11,7 @@ interface AdpopcornBannerAdProps {
   slotId?: string
   appKey: string
   placementId: string
+  adClickCallback?: () => void
 }
 
 export default function AdpopcornBannerAd({
@@ -18,7 +19,8 @@ export default function AdpopcornBannerAd({
   type,
   slotId,
   appKey,
-  placementId
+  placementId,
+  adClickCallback
 }: AdpopcornBannerAdProps) {
   const isLoaded = useIsLoadedAdpopcornScriptValue()
   const isAdBlock = useIsAdBlock()
@@ -29,7 +31,6 @@ export default function AdpopcornBannerAd({
   const isSetupGptRef = useRef<boolean>(false)
   const isSetupAdpopcornRef = useRef<boolean>(false)
   const slotRef = useRef<googletag.Slot | null>(null)
-
   const adElIdRef = useRef<string>(`${id}-${new Date().toISOString()}`)
 
   function getAdSize(type: string) {
@@ -99,15 +100,13 @@ export default function AdpopcornBannerAd({
           // TODO: no ad 처리
           console.log('no ad', id)
           setIsShowGoogleAdSense(true)
-        } else {
-          console.log('rendered', id)
         }
       })
 
       // 광고 클릭
       banner.addEventListener('adClicked', () => {
         // 광고 클릭시, 이벤트 처리
-        console.log('adClicked')
+        // console.log('adClicked')
       })
 
       banner.display(id)
@@ -201,11 +200,23 @@ export default function AdpopcornBannerAd({
     }
   }, [])
 
+  useEffect(() => {
+    window.addEventListener('blur', () => {
+      setTimeout(() => {
+        if (document.activeElement?.tagName === 'IFRAME' && typeof adClickCallback === 'function') {
+          console.log('adClicked')
+          adClickCallback()
+        }
+      })
+    })
+  }, [adClickCallback])
+
   return (
     <div className={styles.area}>
       {!isShowGoogleAdSense ? (
         <div
           id={adElIdRef.current}
+          ref={adAreaElRef}
           style={{
             minWidth: `${getAdSize(type).width}px`,
             minHeight: `${getAdSize(type).height}px`
