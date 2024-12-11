@@ -20,7 +20,7 @@ const Error: ActivityComponentType = () => {
   }
 
   return (
-    <Modal>
+    <Modal isShowCloseButton={false}>
       <div className={styles.area}>
         {titleRef.current && <h2 className={styles.title}>{titleRef.current}</h2>}
         {desc.current && (

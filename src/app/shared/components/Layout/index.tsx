@@ -82,7 +82,7 @@ export default function Layout({
     <div className={styles.area} style={{ backgroundColor }}>
       {title && hasTopBar && (
         <div className={styles.topBar} style={{ backgroundColor }}>
-          {activeActivies.length > 0 && (
+          {activeActivies.length > 1 && (
             <button className={styles.backButton} onClick={handleClickBackButton}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"

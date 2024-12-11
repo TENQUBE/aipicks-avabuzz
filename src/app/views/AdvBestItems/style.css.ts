@@ -119,8 +119,8 @@ export const totalRate = style({
 })
 
 export const adArea = style({
-  height: '150px',
-  marginBottom: '1.2rem'
+  height: '120px',
+  padding: '0 2rem 1.2rem'
 })
 
 export const button = style({

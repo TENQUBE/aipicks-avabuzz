@@ -1,17 +1,27 @@
 import { AppScreen } from '@/app/shared/libs/stackflow/basic-ui'
 import { useCallback, useEffect, useState } from 'react'
 
+import isIos from '@/app/shared/utils/isIos'
+import {
+  ADPOPCORN_AOS_APP_KEY,
+  ADPOPCORN_AOS_BANNER_320X100_1,
+  ADPOPCORN_IOS_APP_KEY,
+  ADPOPCORN_IOS_BANNER_320X100_1
+} from '@/app/shared/config'
 import { ActivityNames, useFlow } from '@/app/shared/libs/stackflow'
 import { AdvBestItemVM } from '@/modules/stock/adaptor/in/ui/vm/AdvBestItemVM'
 import modules from '@/modules'
 import Layout from '@/app/shared/components/Layout'
-import GoogleAdsense from '@/app/shared/components/GoogleAdsense'
+import AdpopcornBannerAd from '@/app/shared/components/AdpopcornBannerAd'
 import * as styles from '@/app/views/AdvBestItems/style.css'
 
 export default function AdvBestItems() {
   const { push } = useFlow()
 
   const [advBestItems, setAdvBestItems] = useState<AdvBestItemVM[]>([])
+
+  const adpopcornAppKey = isIos() ? ADPOPCORN_IOS_APP_KEY : ADPOPCORN_AOS_APP_KEY
+  const adpopcornAdCode = isIos() ? ADPOPCORN_IOS_BANNER_320X100_1 : ADPOPCORN_AOS_BANNER_320X100_1
 
   function getUpOrDown(value: number) {
     if (value === 0) return 'none'
@@ -108,7 +118,12 @@ export default function AdvBestItems() {
           </ul>
         </section>
         <div className={styles.adArea}>
-          <GoogleAdsense type="banner" />
+          <AdpopcornBannerAd
+            appKey={adpopcornAppKey}
+            id={adpopcornAdCode.id}
+            placementId={adpopcornAdCode.placementId}
+            type={adpopcornAdCode.type}
+          />
         </div>
         {/* <button className={styles.button} onClick={handleClickMoreButton}>
           추천 종목 더보기
