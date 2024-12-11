@@ -32,6 +32,7 @@ export default function AdpopcornBannerAd({
   const isSetupAdpopcornRef = useRef<boolean>(false)
   const slotRef = useRef<googletag.Slot | null>(null)
   const adElIdRef = useRef<string>(`${id}-${new Date().toISOString()}`)
+  const iframeIdRef = useRef<string | null>(null)
 
   function getAdSize(type: string) {
     switch (type) {
@@ -56,6 +57,22 @@ export default function AdpopcornBannerAd({
         return 'modal'
     }
   }
+
+  const handleBlurWindow = useCallback(() => {
+    setTimeout(() => {
+      const activeEl = document.activeElement
+
+      if (
+        activeEl &&
+        activeEl.tagName === 'IFRAME' &&
+        activeEl.getAttribute('id') === iframeIdRef.current
+      ) {
+        console.log('adClicked', (activeEl as HTMLIFrameElement).dataset.clicked)
+
+        adClickCallback?.()
+      }
+    })
+  }, [adClickCallback])
 
   const setupAdpopcornBannerdAd = useCallback(
     (type: string, appKey: string, placementId: string, id: string) => {
@@ -100,6 +117,12 @@ export default function AdpopcornBannerAd({
           // TODO: no ad 처리
           console.log('no ad', id)
           setIsShowGoogleAdSense(true)
+        } else {
+          const iframeEl = adAreaElRef.current?.querySelector('iframe')
+
+          if (iframeEl) {
+            iframeIdRef.current = iframeEl.getAttribute('id')
+          }
         }
       })
 
@@ -155,6 +178,12 @@ export default function AdpopcornBannerAd({
                 }
 
                 setupAdpopcornBannerdAd(type, appKey, placementId, id)
+              } else {
+                const iframeEl = adAreaElRef.current?.querySelector('iframe')
+
+                if (iframeEl) {
+                  iframeIdRef.current = iframeEl.getAttribute('id')
+                }
               }
             })
 
@@ -201,15 +230,12 @@ export default function AdpopcornBannerAd({
   }, [])
 
   useEffect(() => {
-    window.addEventListener('blur', () => {
-      setTimeout(() => {
-        if (document.activeElement?.tagName === 'IFRAME' && typeof adClickCallback === 'function') {
-          console.log('adClicked')
-          adClickCallback()
-        }
-      })
-    })
-  }, [adClickCallback])
+    window.addEventListener('blur', handleBlurWindow)
+
+    return () => {
+      window.removeEventListener('blur', handleBlurWindow)
+    }
+  }, [handleBlurWindow])
 
   return (
     <div className={styles.area}>
@@ -223,7 +249,7 @@ export default function AdpopcornBannerAd({
           }}
         />
       ) : (
-        <GoogleAdsense type={getGoogleAdSenseType(type)} />
+        <GoogleAdsense type={getGoogleAdSenseType(type)} adClickCallback={adClickCallback} />
       )}
     </div>
   )

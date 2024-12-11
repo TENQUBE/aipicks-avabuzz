@@ -15,6 +15,7 @@ declare global {
 
 interface GoogleAdsenseProps {
   type: 'floating' | 'banner' | 'modal' | 'interstitial'
+  adClickCallback?: () => void
 }
 
 function getDefaultAdInfo(type: 'floating' | 'banner' | 'modal' | 'interstitial') {
@@ -31,7 +32,7 @@ function getDefaultAdInfo(type: 'floating' | 'banner' | 'modal' | 'interstitial'
   }
 }
 
-export default function GoogleAdsense({ type }: GoogleAdsenseProps) {
+export default function GoogleAdsense({ type, adClickCallback }: GoogleAdsenseProps) {
   const isLoaded = useIsLoadedGoogleAdsenseScriptValue()
   const isAdBlock = useIsAdBlock()
 
@@ -59,6 +60,10 @@ export default function GoogleAdsense({ type }: GoogleAdsenseProps) {
       if (googleAdElRef.current && defaultAdElRef.current) {
         if (googleAdElRef.current.dataset.adStatus === 'unfilled') {
           defaultAdElRef.current.style.display = 'block'
+
+          defaultAdElRef.current.addEventListener('click', () => {
+            adClickCallback?.()
+          })
         } else {
           defaultAdElRef.current.style.display = 'none'
         }
@@ -71,7 +76,7 @@ export default function GoogleAdsense({ type }: GoogleAdsenseProps) {
         attributeFilter: ['data-ad-status']
       })
     }
-  }, [])
+  }, [adClickCallback])
 
   return (
     <div className={styles.area}>
