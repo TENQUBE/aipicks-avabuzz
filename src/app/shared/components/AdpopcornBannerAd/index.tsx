@@ -11,7 +11,7 @@ interface AdpopcornBannerAdProps {
   appKey: string
   adCode: AdCode
   defaultAdType?: 'googleAdsense' | 'fortuneCookie'
-  adClickCallback?: () => void
+  adClickCallback?: Function
 }
 
 export default function AdpopcornBannerAd({
@@ -23,6 +23,16 @@ export default function AdpopcornBannerAd({
   const isLoaded = useIsLoadedAdpopcornScriptValue()
   const isAdBlock = useIsAdBlock()
 
+  const [nativeAdData, setNativeAdData] = useState<{
+    ctaText: string
+    desc: string
+    iconImageURL: string
+    landingURL: string
+    mainImageURL: string
+    privacyPolicyImageURL: string
+    privacyPolicyURL: string
+    title: string
+  } | null>(null)
   const [isShowDefaultAd, setIsShowDefaultAd] = useState<boolean>(false)
 
   const adAreaElRef = useRef<HTMLDivElement>(null)
@@ -157,10 +167,12 @@ export default function AdpopcornBannerAd({
             banner.addEventListener('adLoadCompleted', (event: any) => {
               console.log('adLoadCompleted', placementIds[i], event)
 
-              if (event.isNoAd) {
+              if (event.isNoAd && !event.adData) {
                 resolve(false)
               } else {
                 // 네이티브 광고 노출 시점에 호출
+                setNativeAdData(event.adData)
+
                 banner.reportImpression()
 
                 resolve(true)
@@ -286,10 +298,26 @@ export default function AdpopcornBannerAd({
           id={adElIdRef.current}
           ref={adAreaElRef}
           style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
             minWidth: `${getAdSize(adCode.type)[0]}px`,
             minHeight: `${getAdSize(adCode.type)[1]}px`
           }}
-        />
+        >
+          {nativeAdData && (
+            <img
+              onClick={() => {
+                window.open(nativeAdData.landingURL)
+
+                adClickCallback?.()
+              }}
+              className={styles.adImg}
+              src={nativeAdData.mainImageURL}
+              alt={nativeAdData.title}
+            />
+          )}
+        </div>
       )}
       {isShowDefaultAd && defaultAdType === 'googleAdsense' && (
         <GoogleAdsense type={getGoogleAdSenseType(adCode.type)} adClickCallback={adClickCallback} />

@@ -13,20 +13,25 @@ import { ActivityNames, useFlow } from '@/app/shared/libs/stackflow'
 import isIos from '@/app/shared/utils/isIos'
 import { AppScreen } from '@/app/shared/libs/stackflow/basic-ui'
 import AdpopcornRewardAd from '@/app/shared/components/AdpopcornRewardAd'
-import FortuneCookieClick from './FortuneCookieClick'
-import FortuneCookieResult from './FortuneCookieResult'
+import FortuneCookieClick from './components/FortuneCookieClick'
+import FortuneCookieResult from './components/FortuneCookieResult'
+import InterstitialAd from '@/app/shared/components/InterstitialAd'
 import { useSetActivityParams } from '@/app/shared/hooks/useActivityParams'
+import { useGetIsShowCoupangAd } from '@/app/shared/hooks/useCoupangAd'
 import * as styles from './style.css'
 
 const FortuneCookie: ActivityComponentType = () => {
   const { pop } = useFlow()
 
+  const getIsShowCoupang = useGetIsShowCoupangAd()
   const setActivityParams = useSetActivityParams()
 
   const [clickNum, setClickNum] = useState<number>(0)
   const [isShowRewardedAd, setIsShowRewardedAd] = useState<boolean>(false)
   const [fortuneCookieResult, setFortuneCookieResult] = useState<string>('')
   const [isSeenAd, setIsSeenAd] = useState<boolean>(false)
+
+  const isShowRV = getIsShowCoupang()
 
   const adpopcornAppKey = isIos() ? ADPOPCORN_IOS_APP_KEY : ADPOPCORN_AOS_APP_KEY
   const adpopcornRewardAdCode = isIos() ? ADPOPCORN_IOS_RV_1 : ADPOPCORN_AOS_RV_1
@@ -88,13 +93,14 @@ const FortuneCookie: ActivityComponentType = () => {
   return (
     <AppScreen>
       <div className={styles.arae}>
-        {isShowRewardedAd && adpopcornRewardAdCode && (
+        {isShowRewardedAd && isShowRV && (
           <AdpopcornRewardAd
             appKey={adpopcornAppKey}
             adCode={adpopcornRewardAdCode}
             closedSlotCallback={closedSlotCallback}
           />
         )}
+        {isShowRewardedAd && !isShowRV && <InterstitialAd closeCallback={closedSlotCallback} />}
         <div className={styles.topBar}>
           <svg
             className={styles.closeButton}

@@ -13,6 +13,8 @@ import {
 import LoadingModal from '../LoadingModal'
 import AdpopcornRewardAd from '@/app/shared/components/AdpopcornRewardAd'
 import AdpopcornBannerAd from '@/app/shared/components/AdpopcornBannerAd'
+import InterstitialAd from '@/app/shared/components/InterstitialAd'
+import { useGetIsShowCoupangAd } from '@/app/shared/hooks/useCoupangAd'
 import * as styles from './style.css'
 
 interface FortuneCookieResultProps {
@@ -24,8 +26,12 @@ export default function FortuneCookieResult({
   fortuneCookieResult,
   handleClickRetryButton
 }: FortuneCookieResultProps) {
+  const getIsShowCoupangAd = useGetIsShowCoupangAd()
+
   const [isShowLoading, setIsShowLoading] = useState<boolean>(true)
   const [isShowResult, setIsShowResult] = useState<boolean>(false)
+
+  const isShowRV = getIsShowCoupangAd()
 
   const adpopcornAppKey = isIos() ? ADPOPCORN_IOS_APP_KEY : ADPOPCORN_AOS_APP_KEY
   const adpopcornRewardAdCode = isIos() ? ADPOPCORN_IOS_RV_2 : ADPOPCORN_AOS_RV_2
@@ -45,7 +51,7 @@ export default function FortuneCookieResult({
   return (
     <>
       {isShowLoading && <LoadingModal />}
-      {!isShowResult && (
+      {!isShowResult && isShowRV && (
         <AdpopcornRewardAd
           appKey={adpopcornAppKey}
           adCode={adpopcornRewardAdCode}
@@ -53,6 +59,7 @@ export default function FortuneCookieResult({
           rewardGrantedCallback={rewardGrantedCallback}
         />
       )}
+      {!isShowResult && !isShowRV && <InterstitialAd closeCallback={closedSlotCallback} />}
       <div className={styles.area}>
         <div className={styles.imgArea}>
           <img

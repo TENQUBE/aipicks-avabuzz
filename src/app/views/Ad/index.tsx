@@ -34,6 +34,9 @@ const Ad: ActivityComponentType = () => {
   const getIsShowCoupangAd = useGetIsShowCoupangAd()
   const setActivityParams = useSetActivityParams()
 
+  const [clickedAdType, setClickedAdType] = useState<
+    'coupang' | 'adpopcorn' | 'fortuneCookie' | 'googleAdsense' | null
+  >(null)
   const [coupangData, setCoupangData] = useState<CoupangData | null>(null)
   const [skipSeconds, setSkipSeconds] = useState<number>(5)
   const [isClickedAd, setIsClickedAd] = useState<boolean>(false)
@@ -70,20 +73,25 @@ const Ad: ActivityComponentType = () => {
     pop()
   }
 
-  const adpopcornAdClickCallback = useCallback(() => {
-    if (process.env.NODE_ENV === 'production') {
-      sendGAEvent('event', '추천종목_참여_play')
-    }
+  const adpopcornAdClickCallback = useCallback(
+    (clickedAdType: 'coupang' | 'adpopcorn' | 'fortuneCookie' | 'googleAdsense') => {
+      setClickedAdType(clickedAdType)
 
-    setIsClickedAd(true)
+      if (process.env.NODE_ENV === 'production') {
+        sendGAEvent('event', '추천종목_참여_play')
+      }
 
-    timerIdRef.current = setTimeout(() => {
-      setIsSeenAd(true)
-    }, 3000)
-  }, [])
+      setIsClickedAd(true)
+
+      timerIdRef.current = setTimeout(() => {
+        setIsSeenAd(true)
+      }, 3000)
+    },
+    []
+  )
 
   const handleVisibleChangeWindow = useCallback(() => {
-    if (defaultAdType === 'fortuneCookie') return
+    if (clickedAdType === 'fortuneCookie') return
 
     if (document.visibilityState === 'visible') {
       setIsVisibleWindow(true)
@@ -94,7 +102,7 @@ const Ad: ActivityComponentType = () => {
     } else {
       setIsVisibleWindow(false)
     }
-  }, [defaultAdType])
+  }, [clickedAdType])
 
   const fetchData = useCallback(async () => {
     try {
