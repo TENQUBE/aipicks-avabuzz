@@ -63,7 +63,7 @@ export const content = style({
   left: '50%',
   zIndex: '999',
   width: '300px',
-  height: '450px',
+  height: '250px',
   opacity: '0',
   transform: 'translate(-50%, -45%)',
   animation: `${toTop} ${MODAL_ANIMATION_DURATION / 1000}s forwards, ${fadeIn} ${

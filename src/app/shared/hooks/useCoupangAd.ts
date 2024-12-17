@@ -6,12 +6,22 @@ import { COUPANG_AD_WATCHED_AT_KEY, MINIMUM_COUPANG_AD_EXPOSURE_TIME } from '@/a
 const coupangAdStore = create(
   persist<{
     watchedAt: string | null
+    isSeeCoupang: boolean | null
+    defaultAdType: 'googleAdsense' | 'fortuneCookie' | null
     getIsShowCoupangAd: () => boolean
     setWatchedAt: (date: string) => void
+    setIsSeeCoupang: (isSeeCoupang: boolean) => void
+    setDefaultAdType: (defaultAdType: 'googleAdsense' | 'fortuneCookie') => void
   }>(
     (set, get) => ({
       watchedAt: null,
+      isSeeCoupang: null,
+      defaultAdType: null,
       getIsShowCoupangAd: () => {
+        const isSeeCoupang = get().isSeeCoupang
+
+        if (!isSeeCoupang) return false
+
         const watchedAt = get().watchedAt
 
         if (watchedAt) {
@@ -22,7 +32,10 @@ const coupangAdStore = create(
           return true
         }
       },
-      setWatchedAt: (date: string) => set(() => ({ watchedAt: date }))
+      setWatchedAt: (date: string) => set(() => ({ watchedAt: date })),
+      setIsSeeCoupang: (isSeeCoupang: boolean) => set(() => ({ isSeeCoupang })),
+      setDefaultAdType: (defaultAdType: 'googleAdsense' | 'fortuneCookie') =>
+        set(() => ({ defaultAdType }))
     }),
     { name: COUPANG_AD_WATCHED_AT_KEY }
   )
@@ -34,3 +47,9 @@ export const useSetCoupangAdWatchedAt = () => coupangAdStore(({ setWatchedAt }) 
 
 export const useGetIsShowCoupangAd = () =>
   coupangAdStore(({ getIsShowCoupangAd }) => getIsShowCoupangAd)
+
+export const useSetIsSeeCoupang = () => coupangAdStore(({ setIsSeeCoupang }) => setIsSeeCoupang)
+
+export const useDefaultAdTypeValue = () => coupangAdStore(({ defaultAdType }) => defaultAdType)
+
+export const useSetDefaultAdType = () => coupangAdStore(({ setDefaultAdType }) => setDefaultAdType)
