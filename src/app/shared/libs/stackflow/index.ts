@@ -13,33 +13,38 @@ import Detail from '@/app/views/Detail'
 import AdvBestItems from '@/app/views/AdvBestItems'
 import Error from '@/app/views/Error'
 import Ad from '@/app/views/Ad'
+import FortuneCookie from '@/app/views/FortuneCookie'
 
 export enum ActivityNames {
   Detail = 'Detail',
   AdvBestItems = 'AdvBestItems',
   Error = 'Error',
-  Ad = 'Ad'
+  Ad = 'Ad',
+  FortuneCookie = 'FortuneCookie'
 }
 
 export enum ActivityRoutes {
   Detail = '/',
   AdvBestItems = '/adv-best-items',
   Error = '/error',
-  Ad = '/ad'
+  Ad = '/ad',
+  FortuneCookie = '/fortune-cookie'
 }
 
 const activities = {
   Detail,
   AdvBestItems,
   Error,
-  Ad
+  Ad,
+  FortuneCookie
 }
 
 export const routes: { [key in ActivityNames]: ActivityRoutes } = {
   [ActivityNames.Detail]: ActivityRoutes[ActivityNames.Detail],
   [ActivityNames.AdvBestItems]: ActivityRoutes[ActivityNames.AdvBestItems],
   [ActivityNames.Error]: ActivityRoutes[ActivityNames.Error],
-  [ActivityNames.Ad]: ActivityRoutes[ActivityNames.Ad]
+  [ActivityNames.Ad]: ActivityRoutes[ActivityNames.Ad],
+  [ActivityNames.FortuneCookie]: ActivityRoutes[ActivityNames.FortuneCookie]
 }
 
 const stackWrapperPlugin: StackflowReactPlugin = () => {

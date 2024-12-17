@@ -9,6 +9,12 @@ export const area = style({
   height: '100%'
 })
 
+export const adImg = style({
+  width: '100%',
+  height: '100%',
+  objectFit: 'contain'
+})
+
 export const coupangBannerImg = style({
   width: '100%',
   height: '100%',

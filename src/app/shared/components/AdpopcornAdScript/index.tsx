@@ -51,11 +51,13 @@ export default function AdpopcornAdScript() {
 
     window.AdPopcornSSPWebSDK.cmd.push(() => {
       if (isIos()) {
-        ADPOPCORN_IOS_AD_CODE_LIST.forEach(({ placementId }) => {
-          window.AdPopcornSSPWebSDK.init({
-            app_key: ADPOPCORN_IOS_APP_KEY,
-            placement_id: placementId,
-            log_enabled: true
+        ADPOPCORN_IOS_AD_CODE_LIST.forEach(({ placementIds }) => {
+          placementIds.forEach((placementId) => {
+            window.AdPopcornSSPWebSDK.init({
+              app_key: ADPOPCORN_IOS_APP_KEY,
+              placement_id: placementId,
+              log_enabled: true
+            })
           })
         })
 
@@ -63,11 +65,13 @@ export default function AdpopcornAdScript() {
           idfa: deviceId
         })
       } else {
-        ADPOPCORN_AOS_AD_CODE_LIST.forEach(({ placementId }) => {
-          window.AdPopcornSSPWebSDK.init({
-            app_key: ADPOPCORN_AOS_APP_KEY,
-            placement_id: placementId,
-            log_enabled: true
+        ADPOPCORN_AOS_AD_CODE_LIST.forEach(({ placementIds }) => {
+          placementIds.forEach((placementId) => {
+            window.AdPopcornSSPWebSDK.init({
+              app_key: ADPOPCORN_AOS_APP_KEY,
+              placement_id: placementId,
+              log_enabled: true
+            })
           })
         })
 

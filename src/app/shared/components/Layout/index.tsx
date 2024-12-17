@@ -58,23 +58,27 @@ export default function Layout({
     if (!toastContent) return
 
     setTimeout(() => {
-      if (!toastAreaElRef.current) return
+      if (!toastAreaElRef.current || !toastContent) return
 
       toastAreaElRef.current.classList.remove('close')
       toastAreaElRef.current.classList.add('open')
     }, ANIMATION_DURATION)
 
     setTimeout(() => {
-      if (!toastAreaElRef.current) return
+      if (!toastAreaElRef.current || !toastContent) return
 
       toastAreaElRef.current.classList.remove('open')
       toastAreaElRef.current.classList.add('close')
 
-      toastAreaElRef.current.addEventListener('animationend', (event: AnimationEvent) => {
-        if (event.animationName === styles.toastClose) {
-          setToastContent('')
-        }
-      })
+      toastAreaElRef.current.addEventListener(
+        'animationend',
+        (event: AnimationEvent) => {
+          if (event.animationName === styles.toastClose && toastContent) {
+            setToastContent('')
+          }
+        },
+        { once: true }
+      )
     }, ANIMATION_DURATION + 2000)
   }, [toastContent])
 
@@ -107,12 +111,7 @@ export default function Layout({
       </div>
       <div className={styles.bottomAdBannerArea}>
         {isLoadedAdpopcornScript !== null && adpopcornAdCode && adpopcornAppkey && (
-          <AdpopcornBannerAd
-            id={adpopcornAdCode.id}
-            type={adpopcornAdCode.type}
-            appKey={adpopcornAppkey}
-            placementId={adpopcornAdCode.placementId}
-          />
+          <AdpopcornBannerAd appKey={adpopcornAppkey} adCode={adpopcornAdCode} />
         )}
       </div>
     </div>

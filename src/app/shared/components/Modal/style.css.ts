@@ -2,6 +2,14 @@ import { keyframes, style, globalStyle } from '@vanilla-extract/css'
 
 import { MODAL_ANIMATION_DURATION } from '@/app/shared/config'
 
+export const area = style({
+  position: 'fixed',
+  top: '0',
+  zIndex: '10',
+  width: '100%',
+  height: '100%'
+})
+
 const fadeIn = keyframes({
   '0%': {
     opacity: '0'
@@ -21,9 +29,9 @@ export const fadeOut = keyframes({
 })
 
 export const dim = style({
-  position: 'fixed',
+  position: 'absolute',
   top: '0',
-  zIndex: '100',
+  zIndex: '1',
   width: '100%',
   height: '100%',
   backgroundColor: '#00000075',
@@ -41,7 +49,7 @@ export const button = style({
   position: 'absolute',
   top: '-30px',
   right: '0',
-  zIndex: '999',
+  zIndex: '1',
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
@@ -78,7 +86,7 @@ export const contentArea = style({
   position: 'absolute',
   top: '50%',
   left: '50%',
-  zIndex: '101',
+  zIndex: '1',
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
@@ -102,7 +110,7 @@ export const bottomAdBannerArea = style({
   position: 'absolute',
   bottom: '0',
   left: '50%',
-  zIndex: '101',
+  zIndex: '1',
   transform: 'translateX(-50%)',
   width: '100%',
   height: '52px',

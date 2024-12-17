@@ -1,48 +1,56 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
+import { AdCode } from '../../config'
 import GoogleAdsense from '../GoogleAdsense'
+import FortuneCookieAd from '../FortuneCookieAd'
 import { useIsAdBlock } from '../../hooks/useIsAdBlock'
 import { useIsLoadedAdpopcornScriptValue } from '../../hooks/useIsLoadedAdpopcornScript'
 import * as styles from './style.css'
 
 interface AdpopcornBannerAdProps {
-  id: string
-  type: string
-  slotId?: string
   appKey: string
-  placementId: string
-  adClickCallback?: () => void
+  adCode: AdCode
+  defaultAdType?: 'googleAdsense' | 'fortuneCookie'
+  adClickCallback?: Function
 }
 
 export default function AdpopcornBannerAd({
-  id,
-  type,
-  slotId,
   appKey,
-  placementId,
+  adCode,
+  defaultAdType = 'googleAdsense',
   adClickCallback
 }: AdpopcornBannerAdProps) {
   const isLoaded = useIsLoadedAdpopcornScriptValue()
   const isAdBlock = useIsAdBlock()
 
-  const [isShowGoogleAdSense, setIsShowGoogleAdSense] = useState<boolean>(false)
+  const [nativeAdData, setNativeAdData] = useState<{
+    ctaText: string
+    desc: string
+    iconImageURL: string
+    landingURL: string
+    mainImageURL: string
+    privacyPolicyImageURL: string
+    privacyPolicyURL: string
+    title: string
+  } | null>(null)
+  const [isShowDefaultAd, setIsShowDefaultAd] = useState<boolean>(false)
 
   const adAreaElRef = useRef<HTMLDivElement>(null)
   const isSetupGptRef = useRef<boolean>(false)
   const isSetupAdpopcornRef = useRef<boolean>(false)
   const slotRef = useRef<googletag.Slot | null>(null)
-  const adElIdRef = useRef<string>(`${id}-${new Date().toISOString()}`)
+  const adElIdRef = useRef<string>(`${adCode.id}-${new Date().toISOString()}`)
   const iframeIdRef = useRef<string | null>(null)
 
   function getAdSize(type: string) {
     switch (type) {
       case 'banner_320X50':
-        return { width: 320, height: 50 }
+        return [320, 50]
       case 'banner_320X100':
-        return { width: 320, height: 100 }
+        return [320, 100]
       default:
-        // banner_320X250
-        return { width: 320, height: 250 }
+        // native_300X250
+        return [300, 250]
     }
   }
 
@@ -53,8 +61,19 @@ export default function AdpopcornBannerAd({
       case 'banner_320X100':
         return 'banner'
       default:
-        // banner_320X250
+        // native_300X250
         return 'modal'
+    }
+  }
+
+  function getFortuneCookieAdType(type: string) {
+    switch (type) {
+      case 'native_300X250':
+        return 'modal'
+      default:
+        // banner_320X50
+        // banner_320X100
+        return 'banner'
     }
   }
 
@@ -75,70 +94,108 @@ export default function AdpopcornBannerAd({
   }, [adClickCallback])
 
   const setupAdpopcornBannerdAd = useCallback(
-    (type: string, appKey: string, placementId: string, id: string) => {
+    async (type: string, appKey: string, placementIds: string[], id: string) => {
       if (isSetupAdpopcornRef.current) return
 
       isSetupAdpopcornRef.current = true
 
       let banner: any
 
-      switch (type) {
-        case 'banner_320X50':
-          banner = window.AdPopcornSSPWebSDK.createBannerSize320x50({
-            app_key: appKey,
-            placement_id: placementId
-          })
-          break
-        case 'banner_300X250':
-          banner = window.AdPopcornSSPWebSDK.createBannerSize300x250({
-            app_key: appKey,
-            placement_id: placementId
-          })
-          break
-        default:
-          // banner_320X100
-          banner = window.AdPopcornSSPWebSDK.createBannerSize320x100({
-            app_key: appKey,
-            placement_id: placementId
-          })
-      }
-
-      // SDK 연동 실패
-      banner.addEventListener('sdkError', (event: any) => {
-        // SDK 연동 실패시, 이벤트 처리
-        console.log('sdkError', event.message)
-        setIsShowGoogleAdSense(true)
-      })
-
-      // 광고 렌더링 결과
-      banner.addEventListener('adInventoryRendered', (event: any) => {
-        // 광고 렌더링 결과에 따른 이벤트 처리
-        if (event.isNoAd) {
-          // TODO: no ad 처리
-          console.log('no ad', id)
-          setIsShowGoogleAdSense(true)
-        } else {
-          const iframeEl = adAreaElRef.current?.querySelector('iframe')
-
-          if (iframeEl) {
-            iframeIdRef.current = iframeEl.getAttribute('id')
+      for (let i = 0; i < placementIds.length; i++) {
+        const result = await new Promise<boolean>((resolve) => {
+          switch (type) {
+            case 'banner_320X50':
+              banner = window.AdPopcornSSPWebSDK.createBannerSize320x50({
+                app_key: appKey,
+                placement_id: placementIds[i]
+              })
+              break
+            case 'banner_300X250':
+              banner = window.AdPopcornSSPWebSDK.createBannerSize300x250({
+                app_key: appKey,
+                placement_id: placementIds[i]
+              })
+              break
+            case 'banner_320X100':
+              banner = window.AdPopcornSSPWebSDK.createBannerSize320x100({
+                app_key: appKey,
+                placement_id: placementIds[i]
+              })
+              break
+            default:
+              // native_300X250
+              banner = window.AdPopcornSSPWebSDK.createNative({
+                app_key: appKey,
+                placement_id: placementIds[i]
+              })
           }
+
+          if (type !== 'native_300X250') {
+            // SDK 연동 실패
+            banner.addEventListener('sdkError', (event: any) => {
+              // SDK 연동 실패시, 이벤트 처리
+              console.log('sdkError', event.message)
+              resolve(false)
+            })
+
+            // 광고 렌더링 결과
+            banner.addEventListener('adInventoryRendered', (event: any) => {
+              // 광고 렌더링 결과에 따른 이벤트 처리
+              if (event.isNoAd) {
+                console.log('no ad', id)
+                resolve(false)
+              } else {
+                const iframeEl = adAreaElRef.current?.querySelector('iframe')
+
+                if (iframeEl) {
+                  iframeIdRef.current = iframeEl.getAttribute('id')
+                }
+
+                resolve(true)
+              }
+            })
+
+            // 광고 클릭
+            banner.addEventListener('adClicked', () => {
+              // 광고 클릭시, 이벤트 처리
+              // console.log('adClicked')
+            })
+
+            banner.display(id)
+          } else {
+            // 광고 로드 결과
+            banner.addEventListener('adLoadCompleted', (event: any) => {
+              console.log('adLoadCompleted', placementIds[i], event)
+
+              if (event.isNoAd && !event.adData) {
+                resolve(false)
+              } else {
+                // 네이티브 광고 노출 시점에 호출
+                setNativeAdData(event.adData)
+
+                banner.reportImpression()
+
+                resolve(true)
+              }
+            })
+
+            //  네이티브 광고 호출
+            banner.loadAd()
+          }
+        })
+
+        if (result) break
+        else if (i === placementIds.length - 1) {
+          console.log('show default ad')
+          setIsShowDefaultAd(true)
         }
-      })
-
-      // 광고 클릭
-      banner.addEventListener('adClicked', () => {
-        // 광고 클릭시, 이벤트 처리
-        // console.log('adClicked')
-      })
-
-      banner.display(id)
+      }
     },
     []
   )
 
   const setupGoogleBannerAd = useCallback(
-    (type: string, id: string, slotId: string, appKey: string, placementId: string) => {
+    (type: string, id: string, slotId: string, appKey: string, placementIds: string[]) => {
       if (isSetupGptRef.current) return
 
       isSetupGptRef.current = true
@@ -146,7 +203,7 @@ export default function AdpopcornBannerAd({
       if (!(window.googletag as any)._loaded_) {
         // ad block
         console.log('ad block')
-        setIsShowGoogleAdSense(true)
+        setIsShowDefaultAd(true)
       } else {
         googletag.cmd.push(function () {
           let size: googletag.GeneralSize
@@ -177,7 +234,7 @@ export default function AdpopcornBannerAd({
                   adAreaElRef.current.replaceChildren()
                 }
 
-                setupAdpopcornBannerdAd(type, appKey, placementId, id)
+                setupAdpopcornBannerdAd(type, appKey, placementIds, id)
               } else {
                 const iframeEl = adAreaElRef.current?.querySelector('iframe')
 
@@ -190,7 +247,7 @@ export default function AdpopcornBannerAd({
             googletag.enableServices()
             googletag.display(slotRef.current)
           } else {
-            setIsShowGoogleAdSense(true)
+            setIsShowDefaultAd(true)
           }
         })
       }
@@ -202,24 +259,21 @@ export default function AdpopcornBannerAd({
     if (isAdBlock === null || isLoaded === null) return
 
     if (isLoaded && !isAdBlock) {
-      if (slotId) {
-        setupGoogleBannerAd(type, adElIdRef.current, slotId, appKey, placementId)
+      if (adCode.slotId) {
+        setupGoogleBannerAd(
+          adCode.type,
+          adElIdRef.current,
+          adCode.slotId,
+          appKey,
+          adCode.placementIds
+        )
       } else {
-        setupAdpopcornBannerdAd(type, appKey, placementId, adElIdRef.current)
+        setupAdpopcornBannerdAd(adCode.type, appKey, adCode.placementIds, adElIdRef.current)
       }
     } else {
-      setIsShowGoogleAdSense(true)
+      setIsShowDefaultAd(true)
     }
-  }, [
-    isAdBlock,
-    isLoaded,
-    setupGoogleBannerAd,
-    setupAdpopcornBannerdAd,
-    slotId,
-    type,
-    appKey,
-    placementId
-  ])
+  }, [isAdBlock, isLoaded, setupGoogleBannerAd, setupAdpopcornBannerdAd, adCode, appKey])
 
   useEffect(() => {
     return () => {
@@ -239,17 +293,40 @@ export default function AdpopcornBannerAd({
 
   return (
     <div className={styles.area}>
-      {!isShowGoogleAdSense ? (
+      {!isShowDefaultAd && (
         <div
           id={adElIdRef.current}
           ref={adAreaElRef}
           style={{
-            minWidth: `${getAdSize(type).width}px`,
-            minHeight: `${getAdSize(type).height}px`
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            minWidth: `${getAdSize(adCode.type)[0]}px`,
+            minHeight: `${getAdSize(adCode.type)[1]}px`
           }}
+        >
+          {nativeAdData && (
+            <img
+              onClick={() => {
+                window.open(nativeAdData.landingURL)
+
+                adClickCallback?.()
+              }}
+              className={styles.adImg}
+              src={nativeAdData.mainImageURL}
+              alt={nativeAdData.title}
+            />
+          )}
+        </div>
+      )}
+      {isShowDefaultAd && defaultAdType === 'googleAdsense' && (
+        <GoogleAdsense type={getGoogleAdSenseType(adCode.type)} adClickCallback={adClickCallback} />
+      )}
+      {isShowDefaultAd && defaultAdType === 'fortuneCookie' && (
+        <FortuneCookieAd
+          type={getFortuneCookieAdType(adCode.type)}
+          adClickCallback={adClickCallback}
         />
-      ) : (
-        <GoogleAdsense type={getGoogleAdSenseType(type)} adClickCallback={adClickCallback} />
       )}
     </div>
   )
