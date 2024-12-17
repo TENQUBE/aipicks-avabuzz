@@ -4,6 +4,7 @@ import { Activity } from '@stackflow/core'
 
 import { useSetDeviceId } from '../../hooks/useDeviceId'
 import { useIsAdBlock, useSetIsAdBlock } from '../../hooks/useIsAdBlock'
+import { useSetDefaultAdType, useSetIsSeeCoupang } from '../../hooks/useCoupangAd'
 import * as styles from './style.css'
 
 interface StackWrapperProps {
@@ -16,6 +17,8 @@ export default function StackWrapper({ children }: PropsWithChildren<StackWrappe
   const setDeviceId = useSetDeviceId()
   const isAdBlock = useIsAdBlock()
   const setIsAdBlock = useSetIsAdBlock()
+  const setIsSeeCoupang = useSetIsSeeCoupang()
+  const setDefaultAdType = useSetDefaultAdType()
 
   const checkIsAdBlock = useCallback(async () => {
     try {
@@ -38,10 +41,17 @@ export default function StackWrapper({ children }: PropsWithChildren<StackWrappe
 
   useEffect(() => {
     const deviceId = searchParams.get('deviceId')
+    const isSeeCoupang = searchParams.get('isSeeCoupang')
+      ? searchParams.get('isSeeCoupang') === 'true'
+      : true
+    const isSeeFortuneCookie = searchParams.get('isSeeFortuneCookie')
+      ? searchParams.get('isSeeFortuneCookie') === 'true'
+      : true
 
-    if (deviceId) {
-      setDeviceId(deviceId)
-    }
+    if (deviceId) setDeviceId(deviceId)
+
+    setIsSeeCoupang(isSeeCoupang)
+    setDefaultAdType(isSeeFortuneCookie ? 'fortuneCookie' : 'googleAdsense')
   }, [])
 
   useEffect(() => {

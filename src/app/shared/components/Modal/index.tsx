@@ -64,7 +64,7 @@ export default function Modal({
   useEffect(() => {
     if (isLoadedAdpopcornScript) {
       const appKey = isIos() ? ADPOPCORN_IOS_APP_KEY : ADPOPCORN_AOS_APP_KEY
-      const adCode = isIos() ? ADPOPCORN_IOS_BANNER_320X50_1 : ADPOPCORN_AOS_BANNER_320X50_1
+      const adCode = isIos() ? ADPOPCORN_IOS_BANNER_320X50_1 : ADPOPCORN_IOS_BANNER_320X50_1
 
       setAdpopcornAppKey(appKey)
       setAdpopcornAdCode(adCode)
@@ -85,7 +85,7 @@ export default function Modal({
   }, [activity])
 
   return (
-    <>
+    <div className={styles.area}>
       <div className={styles.dim} ref={dimElRef} onAnimationEnd={handleAnimationEndDimEl} />
 
       <section
@@ -117,14 +117,9 @@ export default function Modal({
 
       <div className={styles.bottomAdBannerArea}>
         {isLoadedAdpopcornScript !== null && adpopcornAdCode && adpopcornAppkey && (
-          <AdpopcornBannerAd
-            id={adpopcornAdCode.id}
-            type={adpopcornAdCode.type}
-            appKey={adpopcornAppkey}
-            placementId={adpopcornAdCode.placementId}
-          />
+          <AdpopcornBannerAd appKey={adpopcornAppkey} adCode={adpopcornAdCode} />
         )}
       </div>
-    </>
+    </div>
   )
 }

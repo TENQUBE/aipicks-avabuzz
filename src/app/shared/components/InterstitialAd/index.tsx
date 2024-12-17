@@ -2,8 +2,8 @@ import { useRef, AnimationEvent } from 'react'
 
 import {
   ADPOPCORN_AOS_APP_KEY,
-  ADPOPCORN_AOS_BANNER_320X100_1,
   ADPOPCORN_IOS_APP_KEY,
+  ADPOPCORN_AOS_BANNER_300X250_1,
   ADPOPCORN_IOS_BANNER_300X250_1
 } from '../../config'
 import isIos from '../../utils/isIos'
@@ -19,7 +19,7 @@ export default function InterstitialAd({ closeCallback }: InterstitialAdProps) {
   const contentElRef = useRef<HTMLDivElement>(null)
 
   const adpopcornAppkey = isIos() ? ADPOPCORN_IOS_APP_KEY : ADPOPCORN_AOS_APP_KEY
-  const adpopcornAdCode = isIos() ? ADPOPCORN_IOS_BANNER_300X250_1 : ADPOPCORN_AOS_BANNER_320X100_1
+  const adpopcornAdCode = isIos() ? ADPOPCORN_IOS_BANNER_300X250_1 : ADPOPCORN_AOS_BANNER_300X250_1
 
   function handleAnimationEndDimEl(event: AnimationEvent) {
     if (event.animationName.includes(styles.fadeOut)) {
@@ -53,12 +53,7 @@ export default function InterstitialAd({ closeCallback }: InterstitialAdProps) {
           </svg>
           닫기
         </button>
-        <AdpopcornBannerAd
-          id={adpopcornAdCode.id}
-          type={adpopcornAdCode.type}
-          appKey={adpopcornAppkey}
-          placementId={adpopcornAdCode.placementId}
-        />
+        <AdpopcornBannerAd appKey={adpopcornAppkey} adCode={adpopcornAdCode} />
       </div>
     </>
   )

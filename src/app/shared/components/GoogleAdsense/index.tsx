@@ -15,7 +15,7 @@ declare global {
 
 interface GoogleAdsenseProps {
   type: 'floating' | 'banner' | 'modal' | 'interstitial'
-  adClickCallback?: () => void
+  adClickCallback?: Function
 }
 
 function getDefaultAdInfo(type: 'floating' | 'banner' | 'modal' | 'interstitial') {
