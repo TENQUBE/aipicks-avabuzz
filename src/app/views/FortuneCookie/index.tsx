@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { ActivityComponentType } from '@stackflow/react'
+import { ActivityComponentType, useActivity, useEnterDoneEffect } from '@stackflow/react'
 
 import {
   ADPOPCORN_AOS_APP_KEY,
@@ -21,6 +21,7 @@ import { useGetIsShowCoupangAd } from '@/app/shared/hooks/useCoupangAd'
 import * as styles from './style.css'
 
 const FortuneCookie: ActivityComponentType = () => {
+  const activity = useActivity()
   const { pop } = useFlow()
 
   const getIsShowCoupang = useGetIsShowCoupangAd()
@@ -89,6 +90,12 @@ const FortuneCookie: ActivityComponentType = () => {
       clearTimeout(timerId)
     }
   }, [])
+
+  useEffect(() => {
+    if (activity.transitionState === 'exit-active') {
+      setActivityParams(ActivityNames.FortuneCookie, ActivityNames.Ad, { isSeenAd })
+    }
+  }, [activity, isSeenAd])
 
   return (
     <AppScreen>
