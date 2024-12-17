@@ -1,5 +1,11 @@
 # buzzvil-thinkpool-webview
 
+## 0.0.20
+
+### Patch Changes
+
+- [#61](https://github.com/TENQUBE/aipicks-avabuzz/pull/61) [`dfd3704`](https://github.com/TENQUBE/aipicks-avabuzz/commit/dfd3704462cb7432a41c104890e00bac4794e947) Thanks [@8dong](https://github.com/8dong)! - fix: 포춘쿠키 광고 백키 이슈를 수정합니다.
+
 ## 0.0.19
 
 ### Patch Changes
