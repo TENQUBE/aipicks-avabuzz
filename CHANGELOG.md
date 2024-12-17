@@ -1,5 +1,11 @@
 # buzzvil-thinkpool-webview
 
+## 0.0.19
+
+### Patch Changes
+
+- [#58](https://github.com/TENQUBE/aipicks-avabuzz/pull/58) [`8cea845`](https://github.com/TENQUBE/aipicks-avabuzz/commit/8cea845880f0d9c0d473ea5ec7f3becd2b6c5ab9) Thanks [@8dong](https://github.com/8dong)! - feat: 광고 코드 및 포춘쿠키 뷰를 추가합니다.
+
 ## 0.0.18
 
 ### Patch Changes
