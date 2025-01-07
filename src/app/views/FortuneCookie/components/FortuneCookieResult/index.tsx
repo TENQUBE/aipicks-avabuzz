@@ -1,7 +1,5 @@
 import { MouseEventHandler, useState } from 'react'
 
-import isIos from '@/app/shared/utils/isIos'
-
 import {
   ADPOPCORN_AOS_APP_KEY,
   ADPOPCORN_AOS_BANNER_320X100_1,
@@ -10,10 +8,12 @@ import {
   ADPOPCORN_IOS_BANNER_320X100_1,
   ADPOPCORN_IOS_RV_2
 } from '@/app/shared/config'
+import isIos from '@/app/shared/utils/isIos'
 import LoadingModal from '../LoadingModal'
 import AdpopcornRewardAd from '@/app/shared/components/AdpopcornRewardAd'
 import AdpopcornBannerAd from '@/app/shared/components/AdpopcornBannerAd'
 import InterstitialAd from '@/app/shared/components/InterstitialAd'
+import GoogleAdsense from '@/app/shared/components/GoogleAdsense'
 import { useGetIsShowCoupangAd } from '@/app/shared/hooks/useCoupangAd'
 import * as styles from './style.css'
 
@@ -55,6 +55,7 @@ export default function FortuneCookieResult({
         <AdpopcornRewardAd
           appKey={adpopcornAppKey}
           adCode={adpopcornRewardAdCode}
+          defaultAd={<InterstitialAd closeCallback={closedSlotCallback} />}
           closedSlotCallback={closedSlotCallback}
           rewardGrantedCallback={rewardGrantedCallback}
         />
@@ -122,7 +123,11 @@ export default function FortuneCookieResult({
         </button>
       </div>
       <div className={styles.adArea}>
-        <AdpopcornBannerAd appKey={adpopcornAppKey} adCode={adpopcornBannerAdCode} />
+        <AdpopcornBannerAd
+          appKey={adpopcornAppKey}
+          adCode={adpopcornBannerAdCode}
+          defaultAd={<GoogleAdsense type="banner" />}
+        />
       </div>
     </>
   )

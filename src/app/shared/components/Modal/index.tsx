@@ -20,6 +20,7 @@ import {
 import isIos from '../../utils/isIos'
 import { useFlow } from '@/app/shared/libs/stackflow'
 import AdpopcornBannerAd from '../AdpopcornBannerAd'
+import GoogleAdsense from '../GoogleAdsense'
 import { useIsLoadedAdpopcornScriptValue } from '../../hooks/useIsLoadedAdpopcornScript'
 import * as styles from '@/app/shared/components/Modal/style.css'
 
@@ -64,7 +65,7 @@ export default function Modal({
   useEffect(() => {
     if (isLoadedAdpopcornScript) {
       const appKey = isIos() ? ADPOPCORN_IOS_APP_KEY : ADPOPCORN_AOS_APP_KEY
-      const adCode = isIos() ? ADPOPCORN_IOS_BANNER_320X50_1 : ADPOPCORN_IOS_BANNER_320X50_1
+      const adCode = isIos() ? ADPOPCORN_IOS_BANNER_320X50_1 : ADPOPCORN_AOS_BANNER_320X50_1
 
       setAdpopcornAppKey(appKey)
       setAdpopcornAdCode(adCode)
@@ -117,7 +118,11 @@ export default function Modal({
 
       <div className={styles.bottomAdBannerArea}>
         {isLoadedAdpopcornScript !== null && adpopcornAdCode && adpopcornAppkey && (
-          <AdpopcornBannerAd appKey={adpopcornAppkey} adCode={adpopcornAdCode} />
+          <AdpopcornBannerAd
+            appKey={adpopcornAppkey}
+            adCode={adpopcornAdCode}
+            defaultAd={<GoogleAdsense type="floating" />}
+          />
         )}
       </div>
     </div>
