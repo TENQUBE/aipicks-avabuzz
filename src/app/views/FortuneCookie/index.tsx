@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { ActivityComponentType, useActivity, useEnterDoneEffect } from '@stackflow/react'
+import { ActivityComponentType, useActivity } from '@stackflow/react'
 
 import {
   ADPOPCORN_AOS_APP_KEY,
@@ -54,8 +54,6 @@ const FortuneCookie: ActivityComponentType = () => {
   }
 
   function handleClickCloseButton() {
-    setActivityParams(ActivityNames.FortuneCookie, ActivityNames.Ad, { isSeenAd })
-
     pop()
   }
 
