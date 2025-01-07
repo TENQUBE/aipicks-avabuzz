@@ -1,5 +1,11 @@
 # buzzvil-thinkpool-webview
 
+## 0.0.21
+
+### Patch Changes
+
+- [#64](https://github.com/TENQUBE/aipicks-avabuzz/pull/64) [`64c4342`](https://github.com/TENQUBE/aipicks-avabuzz/commit/64c4342ced92a6a38f8bd4d2ba39818225800b5d) Thanks [@8dong](https://github.com/8dong)! - fix: 광고 액티비티 플로우 이슈를 수정합니다.
+
 ## 0.0.20
 
 ### Patch Changes
