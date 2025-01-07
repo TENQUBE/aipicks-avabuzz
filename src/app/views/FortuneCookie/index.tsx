@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState } from 'react'
-import { ActivityComponentType, useActivity } from '@stackflow/react'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { ActivityComponentType } from '@stackflow/react'
 
 import {
   ADPOPCORN_AOS_APP_KEY,
@@ -21,7 +21,6 @@ import { useGetIsShowCoupangAd } from '@/app/shared/hooks/useCoupangAd'
 import * as styles from './style.css'
 
 const FortuneCookie: ActivityComponentType = () => {
-  const activity = useActivity()
   const { pop } = useFlow()
 
   const getIsShowCoupang = useGetIsShowCoupangAd()
@@ -30,7 +29,8 @@ const FortuneCookie: ActivityComponentType = () => {
   const [clickNum, setClickNum] = useState<number>(0)
   const [isShowRewardedAd, setIsShowRewardedAd] = useState<boolean>(false)
   const [fortuneCookieResult, setFortuneCookieResult] = useState<string>('')
-  const [isSeenAd, setIsSeenAd] = useState<boolean>(false)
+
+  const isSeenAdRef = useRef<boolean>(false)
 
   const isShowRV = getIsShowCoupang()
 
@@ -81,7 +81,7 @@ const FortuneCookie: ActivityComponentType = () => {
 
   useEffect(() => {
     const timerId = setTimeout(() => {
-      setIsSeenAd(true)
+      isSeenAdRef.current = true
     }, 3000)
 
     return () => {
@@ -90,10 +90,12 @@ const FortuneCookie: ActivityComponentType = () => {
   }, [])
 
   useEffect(() => {
-    if (activity.transitionState === 'exit-active') {
-      setActivityParams(ActivityNames.FortuneCookie, ActivityNames.Ad, { isSeenAd })
+    return () => {
+      setActivityParams(ActivityNames.FortuneCookie, ActivityNames.Ad, {
+        isSeenAd: isSeenAdRef.current
+      })
     }
-  }, [activity, isSeenAd])
+  }, [])
 
   return (
     <AppScreen>
