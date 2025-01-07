@@ -1,5 +1,11 @@
 # buzzvil-thinkpool-webview
 
+## 0.0.23
+
+### Patch Changes
+
+- [#69](https://github.com/TENQUBE/aipicks-avabuzz/pull/69) [`c7087db`](https://github.com/TENQUBE/aipicks-avabuzz/commit/c7087db2fac379101f6b1f6f5ec941ed2d44c244) Thanks [@8dong](https://github.com/8dong)! - fix: iOS 뒤로가기 이슈를 수정합니다.
+
 ## 0.0.22
 
 ### Patch Changes
