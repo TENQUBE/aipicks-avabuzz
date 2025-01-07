@@ -15,6 +15,8 @@ import modules from '@/modules'
 import { CoupangData } from '@/modules/ad/domain/Coupang'
 import AdpopcornBannerAd from '@/app/shared/components/AdpopcornBannerAd'
 import Modal from '@/app/shared/components/Modal'
+import GoogleAdsense from '@/app/shared/components/GoogleAdsense'
+import FortuneCookieAd from '@/app/shared/components/FortuneCookieAd'
 import {
   useDefaultAdTypeValue,
   useGetIsShowCoupangAd,
@@ -41,7 +43,6 @@ const Ad: ActivityComponentType = () => {
   const [skipSeconds, setSkipSeconds] = useState<number>(5)
   const [isClickedAd, setIsClickedAd] = useState<boolean>(false)
   const [isSeenAd, setIsSeenAd] = useState<boolean>(false)
-  const [isVisibleWindow, setIsVisibleWindow] = useState<boolean>(false)
 
   const isShowCoupangAd = getIsShowCoupangAd()
 
@@ -73,8 +74,8 @@ const Ad: ActivityComponentType = () => {
     pop()
   }
 
-  const adpopcornAdClickCallback = useCallback(
-    (clickedAdType: 'coupang' | 'adpopcorn' | 'fortuneCookie' | 'googleAdsense') => {
+  const adClickCallback = useCallback(
+    (clickedAdType: 'adpopcorn' | 'fortuneCookie' | 'googleAdsense') => {
       setClickedAdType(clickedAdType)
 
       if (process.env.NODE_ENV === 'production') {
@@ -91,18 +92,22 @@ const Ad: ActivityComponentType = () => {
   )
 
   const handleVisibleChangeWindow = useCallback(() => {
-    if (clickedAdType === 'fortuneCookie') return
+    if (clickedAdType === 'fortuneCookie' || isShowCoupangAdRef.current || !isClickedAd) return
 
     if (document.visibilityState === 'visible') {
-      setIsVisibleWindow(true)
-
       if (timerIdRef.current) {
         clearTimeout(timerIdRef.current)
       }
-    } else {
-      setIsVisibleWindow(false)
+
+      if (isSeenAd) {
+        setActivityParams(ActivityNames.Ad, ActivityNames.Detail, { isSeenAd })
+
+        pop()
+      } else {
+        setIsClickedAd(false)
+      }
     }
-  }, [clickedAdType])
+  }, [clickedAdType, isSeenAd])
 
   const fetchData = useCallback(async () => {
     try {
@@ -157,19 +162,11 @@ const Ad: ActivityComponentType = () => {
   }, [handleVisibleChangeWindow])
 
   useEffect(() => {
-    if (!isClickedAd) return
-
-    if (isShowCoupangAdRef.current || (!isShowCoupangAdRef.current && isVisibleWindow)) {
-      setActivityParams(ActivityNames.Ad, ActivityNames.Detail, { isSeenAd })
-
-      pop()
-    }
-  }, [isClickedAd, isVisibleWindow, isSeenAd])
-
-  useEffect(() => {
+    // FortuneCookie
     if (
       activityParams.to === ActivityNames.Ad &&
-      activityParams.from === ActivityNames.FortuneCookie
+      activityParams.from === ActivityNames.FortuneCookie &&
+      defaultAdType === 'fortuneCookie'
     ) {
       setActivityParams(ActivityNames.Ad, ActivityNames.Detail, {
         isSeenAd: activityParams.params.isSeenAd
@@ -177,7 +174,7 @@ const Ad: ActivityComponentType = () => {
 
       pop()
     }
-  }, [activityParams])
+  }, [activityParams, defaultAdType])
 
   return (
     <Modal isShowCloseButton={!isShowCoupangAdRef.current}>
@@ -195,8 +192,26 @@ const Ad: ActivityComponentType = () => {
             <AdpopcornBannerAd
               appKey={adpopcornAppKey}
               adCode={adpopcornAdCode}
-              defaultAdType={defaultAdType ? defaultAdType : 'googleAdsense'}
-              adClickCallback={adpopcornAdClickCallback}
+              defaultAd={
+                defaultAdType === 'fortuneCookie' ? (
+                  <FortuneCookieAd
+                    type="modal"
+                    adClickCallback={() => {
+                      adClickCallback('fortuneCookie')
+                    }}
+                  />
+                ) : (
+                  <GoogleAdsense
+                    type="modal"
+                    adClickCallback={() => {
+                      adClickCallback('googleAdsense')
+                    }}
+                  />
+                )
+              }
+              adClickCallback={() => {
+                adClickCallback('adpopcorn')
+              }}
             />
           )}
         </div>

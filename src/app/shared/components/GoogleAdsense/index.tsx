@@ -4,8 +4,8 @@ import { useEffect, useRef } from 'react'
 
 import { CLIENT_ID, GOLDBOX_URL, SLOT } from '@/app/shared/config'
 import { useIsLoadedGoogleAdsenseScriptValue } from '@/app/shared/hooks/useIsLoadedGoogleAdSenseScript'
-import * as styles from '@/app/shared/components/GoogleAdsense/style.css'
 import { useIsAdBlock } from '../../hooks/useIsAdBlock'
+import * as styles from '@/app/shared/components/GoogleAdsense/style.css'
 
 declare global {
   interface Window {
@@ -20,11 +20,10 @@ interface GoogleAdsenseProps {
 
 function getDefaultAdInfo(type: 'floating' | 'banner' | 'modal' | 'interstitial') {
   switch (type) {
-    case 'interstitial':
-      return { src: '/images/ad/coupang-interstitial.png', width: 600, height: 960 }
     case 'floating':
       return { src: '/images/ad/coupang-floating.png', width: 1125, height: 156 }
     case 'modal':
+    case 'interstitial':
       return { src: '/images/ad/coupang-modal.png', width: 240, height: 220 }
     default:
       // banner

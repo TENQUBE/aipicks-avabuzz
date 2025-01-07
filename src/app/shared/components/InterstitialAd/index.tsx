@@ -8,6 +8,7 @@ import {
 } from '../../config'
 import isIos from '../../utils/isIos'
 import AdpopcornBannerAd from '../AdpopcornBannerAd'
+import GoogleAdsense from '../GoogleAdsense'
 import * as styles from './style.css'
 
 interface InterstitialAdProps {
@@ -53,7 +54,11 @@ export default function InterstitialAd({ closeCallback }: InterstitialAdProps) {
           </svg>
           닫기
         </button>
-        <AdpopcornBannerAd appKey={adpopcornAppkey} adCode={adpopcornAdCode} />
+        <AdpopcornBannerAd
+          appKey={adpopcornAppkey}
+          adCode={adpopcornAdCode}
+          defaultAd={<GoogleAdsense type="interstitial" />}
+        />
       </div>
     </>
   )

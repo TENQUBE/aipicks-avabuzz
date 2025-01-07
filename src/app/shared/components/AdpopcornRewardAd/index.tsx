@@ -1,7 +1,6 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { ReactElement, useCallback, useEffect, useRef, useState } from 'react'
 
 import { AdCode } from '../../config'
-import InterstitialAd from '../InterstitialAd'
 import { useIsLoadedAdpopcornScriptValue } from '../../hooks/useIsLoadedAdpopcornScript'
 import { useIsAdBlock } from '../../hooks/useIsAdBlock'
 import * as styles from './style.css'
@@ -9,6 +8,7 @@ import * as styles from './style.css'
 interface AdpopcornRewardAdProps {
   appKey: string
   adCode: AdCode
+  defaultAd: ReactElement
   rewardGrantedCallback?: (type?: string, amount?: number) => void
   closedSlotCallback: () => void
 }
@@ -16,6 +16,7 @@ interface AdpopcornRewardAdProps {
 export default function AdpopcornRewardAd({
   appKey,
   adCode,
+  defaultAd,
   rewardGrantedCallback,
   closedSlotCallback
 }: AdpopcornRewardAdProps) {
@@ -30,22 +31,18 @@ export default function AdpopcornRewardAd({
   const slotRef = useRef<googletag.Slot | null>(null)
   const adElIdRef = useRef<string>(`${adCode.id}-${new Date().toISOString()}`)
 
-  function handleClickDefaultAdCloseButton() {
-    closedSlotCallback()
-  }
-
   const setupAdpopcornRewardedAd = useCallback(
-    async (appKey: string, placementIds: string[], id: string) => {
+    async (appKey: string, id: string, adCode: AdCode) => {
       if (isSetupAdpopcornRef.current) return
 
       isSetupAdpopcornRef.current = true
 
-      for (let i = 0; i < placementIds.length; i++) {
+      for (let i = 0; i < adCode.placementIds.length; i++) {
         const result = await new Promise<boolean>((resolve) => {
           window.AdPopcornSSPWebSDK.cmd.push(() => {
             const rewardVideo = window.AdPopcornSSPWebSDK.createRewardVideo({
               app_key: appKey,
-              placement_id: placementIds[i]
+              placement_id: adCode.placementIds[i]
             })
 
             // SDK 연동 실패
@@ -86,7 +83,7 @@ export default function AdpopcornRewardAd({
         })
 
         if (result) break
-        else if (i === placementIds.length - 1) {
+        else if (i === adCode.placementIds.length - 1) {
           console.log('show default ad')
           setIsShowDefaultAd(true)
         }
@@ -96,7 +93,7 @@ export default function AdpopcornRewardAd({
   )
 
   const setupGoogleRewardedAd = useCallback(
-    (slotId: string, appKey: string, placementIds: string[], id: string) => {
+    (appKey: string, id: string, adCode: AdCode) => {
       if (isSetupGptRef.current) return
 
       isSetupGptRef.current = true
@@ -107,56 +104,60 @@ export default function AdpopcornRewardAd({
         setIsShowDefaultAd(true)
       } else {
         googletag.cmd.push(() => {
-          slotRef.current = googletag.defineOutOfPageSlot(
-            slotId,
-            googletag.enums.OutOfPageFormat.REWARDED
-          )
-
-          // Slot returns null if the page or device does not support rewarded ads.
-          if (slotRef.current) {
-            slotRef.current.addService(googletag.pubads())
-
-            googletag.pubads().addEventListener('slotRenderEnded', (event) => {
-              if (event.slot !== slotRef.current) return
-
-              if (!event.isEmpty) {
-                // 구글 스크립트 실행 결과, 광고가 없을 경우 애드팝콘 패스백 처리
-                if (adAreaElRef.current) {
-                  adAreaElRef.current.replaceChildren()
-                }
-
-                setupAdpopcornRewardedAd(appKey, placementIds, id)
-              }
-            })
-
-            googletag.pubads().addEventListener('rewardedSlotReady', (event) => {
-              if (event.slot !== slotRef.current) return
-
-              event.makeRewardedVisible()
-            })
-
-            googletag.pubads().addEventListener('rewardedSlotClosed', (event) => {
-              if (event.slot !== slotRef.current) return
-
-              closedSlotCallback()
-
-              if (slotRef.current) {
-                googletag.destroySlots([slotRef.current])
-              }
-            })
-
-            googletag.pubads().addEventListener('rewardedSlotGranted', (event) => {
-              if (event.slot !== slotRef.current) return
-
-              // Automatically close the ad by destroying the slot.
-              // Remove this to force the user to close the ad themselves.
-              rewardGrantedCallback?.(event.payload?.type, event.payload?.amount)
-            })
-
-            googletag.enableServices()
-            googletag.display(slotRef.current)
-          } else {
+          if (!adCode.slotId) {
             setIsShowDefaultAd(true)
+          } else {
+            slotRef.current = googletag.defineOutOfPageSlot(
+              adCode.slotId,
+              googletag.enums.OutOfPageFormat.REWARDED
+            )
+
+            // Slot returns null if the page or device does not support rewarded ads.
+            if (slotRef.current) {
+              slotRef.current.addService(googletag.pubads())
+
+              googletag.pubads().addEventListener('slotRenderEnded', (event) => {
+                if (event.slot !== slotRef.current) return
+
+                if (!event.isEmpty) {
+                  // 구글 스크립트 실행 결과, 광고가 없을 경우 애드팝콘 패스백 처리
+                  if (adAreaElRef.current) {
+                    adAreaElRef.current.replaceChildren()
+                  }
+
+                  setupAdpopcornRewardedAd(appKey, id, adCode)
+                }
+              })
+
+              googletag.pubads().addEventListener('rewardedSlotReady', (event) => {
+                if (event.slot !== slotRef.current) return
+
+                event.makeRewardedVisible()
+              })
+
+              googletag.pubads().addEventListener('rewardedSlotClosed', (event) => {
+                if (event.slot !== slotRef.current) return
+
+                closedSlotCallback()
+
+                if (slotRef.current) {
+                  googletag.destroySlots([slotRef.current])
+                }
+              })
+
+              googletag.pubads().addEventListener('rewardedSlotGranted', (event) => {
+                if (event.slot !== slotRef.current) return
+
+                // Automatically close the ad by destroying the slot.
+                // Remove this to force the user to close the ad themselves.
+                rewardGrantedCallback?.(event.payload?.type, event.payload?.amount)
+              })
+
+              googletag.enableServices()
+              googletag.display(slotRef.current)
+            } else {
+              setIsShowDefaultAd(true)
+            }
           }
         })
       }
@@ -169,9 +170,9 @@ export default function AdpopcornRewardAd({
 
     if (isLoaded && !isAdBlock) {
       if (adCode.slotId) {
-        setupGoogleRewardedAd(adCode.slotId, appKey, adCode.placementIds, adElIdRef.current)
+        setupGoogleRewardedAd(appKey, adElIdRef.current, adCode)
       } else {
-        setupAdpopcornRewardedAd(appKey, adCode.placementIds, adElIdRef.current)
+        setupAdpopcornRewardedAd(appKey, adElIdRef.current, adCode)
       }
     } else {
       setIsShowDefaultAd(true)
@@ -189,7 +190,7 @@ export default function AdpopcornRewardAd({
   return (
     <>
       {isShowDefaultAd ? (
-        <InterstitialAd closeCallback={handleClickDefaultAdCloseButton} />
+        defaultAd
       ) : (
         <div className={styles.adArea} ref={adAreaElRef} id={adElIdRef.current} />
       )}
