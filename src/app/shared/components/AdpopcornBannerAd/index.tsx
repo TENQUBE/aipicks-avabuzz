@@ -40,29 +40,6 @@ export default function AdpopcornBannerAd({
   const iframeIdRef = useRef<string | null>(null)
   const adAreaElRef = useRef<HTMLDivElement>(null)
 
-  function getGoogleAdSenseType(type: string) {
-    switch (type) {
-      case 'banner_320X50':
-        return 'floating'
-      case 'banner_320X100':
-        return 'banner'
-      default:
-        // native_300X250
-        return 'modal'
-    }
-  }
-
-  function getFortuneCookieAdType(type: string) {
-    switch (type) {
-      case 'native_300X250':
-        return 'modal'
-      default:
-        // banner_320X50
-        // banner_320X100
-        return 'banner'
-    }
-  }
-
   const handleBlurWindow = useCallback(() => {
     setTimeout(() => {
       const activeEl = document.activeElement

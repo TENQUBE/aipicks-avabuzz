@@ -64,8 +64,9 @@ const Ad: ActivityComponentType = () => {
       sendGAEvent('event', '추천종목_참여_play')
     }
 
-    setIsClickedAd(true)
-    setIsSeenAd(true)
+    setActivityParams(ActivityNames.Ad, ActivityNames.Detail, { isSeenAd: true })
+
+    pop()
   }
 
   function handleClickCloseButton() {
@@ -99,13 +100,9 @@ const Ad: ActivityComponentType = () => {
         clearTimeout(timerIdRef.current)
       }
 
-      if (isSeenAd) {
-        setActivityParams(ActivityNames.Ad, ActivityNames.Detail, { isSeenAd })
+      setActivityParams(ActivityNames.Ad, ActivityNames.Detail, { isSeenAd })
 
-        pop()
-      } else {
-        setIsClickedAd(false)
-      }
+      pop()
     }
   }, [clickedAdType, isSeenAd])
 
