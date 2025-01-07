@@ -11,6 +11,7 @@ import {
 import isIos from '../../utils/isIos'
 import { useFlow } from '@/app/shared/libs/stackflow'
 import AdpopcornBannerAd from '../AdpopcornBannerAd'
+import GoogleAdsense from '../GoogleAdsense'
 import { useActiveActivities } from '@/app/shared/hooks/useActiveActivities'
 import { useSetToastContent, useToastContentValue } from '../../hooks/useToastContent'
 import { useIsLoadedAdpopcornScriptValue } from '../../hooks/useIsLoadedAdpopcornScript'
@@ -111,7 +112,11 @@ export default function Layout({
       </div>
       <div className={styles.bottomAdBannerArea}>
         {isLoadedAdpopcornScript !== null && adpopcornAdCode && adpopcornAppkey && (
-          <AdpopcornBannerAd appKey={adpopcornAppkey} adCode={adpopcornAdCode} />
+          <AdpopcornBannerAd
+            appKey={adpopcornAppkey}
+            adCode={adpopcornAdCode}
+            defaultAd={<GoogleAdsense type="floating" />}
+          />
         )}
       </div>
     </div>

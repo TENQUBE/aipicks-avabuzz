@@ -42,83 +42,98 @@ export const CLIENT_ID = 'ca-pub-4440358116924496'
 export const ADPOPCORN_AOS_APP_KEY = '978466726'
 export const ADPOPCORN_IOS_APP_KEY = '437598221'
 
+export enum AdpopcornType {
+  BANNER,
+  NATIVE,
+  RV
+}
+
 /**
  * Adpopcorn ad code
  */
 export interface AdCode {
   id: string
-  type: string
+  type: AdpopcornType
+  size?: { width: number; height: number }
   slotId?: string
   placementIds: string[]
 }
 
 export const ADPOPCORN_AOS_BANNER_320X50_1 = {
   id: 'banner_320X50_1',
-  type: 'banner_320X50',
+  type: AdpopcornType.BANNER,
+  size: { width: 320, height: 50 },
   slotId: '/5932629/adpopcorn/tenqube/ga03/mo/AI_fortune_m_320x501-1_Android',
   placementIds: ['RmkOny9twJiUciQ']
 }
 export const ADPOPCORN_AOS_BANNER_300X250_1 = {
   id: 'native_300X250_1',
-  type: 'native_300X250',
+  type: AdpopcornType.NATIVE,
+  size: { width: 300, height: 250 },
   placementIds: ['f2syYbiyQCMWANS', '9aaa0aUuuppaAwY', 'RafFPjotDRu50gn']
 }
 export const ADPOPCORN_AOS_RV_1 = {
   id: 'RV_1',
-  type: 'RV',
+  type: AdpopcornType.RV,
   slotId: '/5932629,22108591289/adpopcorn/tenqube/ga03/mo/AI_fortune_m_Reward1-1_Android',
   placementIds: ['QuFJcs0zzpPFuiB']
 }
 export const ADPOPCORN_AOS_RV_2 = {
   id: 'RV_2',
-  type: 'RV',
+  type: AdpopcornType.RV,
   slotId: '/5932629,22108591289/adpopcorn/tenqube/ga03/mo/AI_fortune_m_Reward1-2_Android',
   placementIds: ['NcZ4XMuNriQlzYU']
 }
 export const ADPOPCORN_AOS_BANNER_320X100_1 = {
   id: 'banner_320X100_1',
-  type: 'banner_320X100',
+  type: AdpopcornType.BANNER,
+  size: { width: 320, height: 100 },
   slotId: '/5932629,22108591289/adpopcorn/tenqube/ga03/mo/AI_fortune_m_320x1001-1_Android',
   placementIds: ['d1C7ChpjNtTWyfV']
 }
 export const ADPOPCORN_AOS_BANNER_320X100_2 = {
   id: 'banner_320X100_2',
-  type: 'banner_320X100',
+  type: AdpopcornType.BANNER,
+  size: { width: 320, height: 100 },
   slotId: '/5932629,22108591289/adpopcorn/tenqube/ga03/mo/AI_fortune_m_320x1001-2_Android',
   placementIds: ['nt2th8ssArXffn1']
 }
 export const ADPOPCORN_IOS_BANNER_320X50_1 = {
   id: 'banner_320X50_1',
-  type: 'banner_320X50',
+  type: AdpopcornType.BANNER,
+  size: { width: 320, height: 50 },
   slotId: '/5932629/adpopcorn/tenqube/ga03/mo/AI_fortune_m_320x501-1_iOS',
   placementIds: ['jMOdqZktia6CHZq']
 }
 export const ADPOPCORN_IOS_BANNER_300X250_1 = {
   id: 'native_300X250_1',
-  type: 'native_300X250',
+  type: AdpopcornType.NATIVE,
+  size: { width: 300, height: 250 },
   placementIds: ['vcN809grv9GV89t', 'Cep7n9jKlwtS3NJ', 'hJlR2oyP7FiS06u']
 }
 export const ADPOPCORN_IOS_RV_1 = {
   id: 'RV_1',
-  type: 'RV',
+  type: AdpopcornType.RV,
   slotId: '/5932629,22108591289/adpopcorn/tenqube/ga03/mo/AI_fortune_m_Reward1-1_iOS',
   placementIds: ['hAcUi4wYjN3PT9h']
 }
 export const ADPOPCORN_IOS_RV_2 = {
   id: 'RV_2',
-  type: 'RV',
+  type: AdpopcornType.RV,
   slotId: '/5932629,22108591289/adpopcorn/tenqube/ga03/mo/AI_fortune_m_Reward1-2_iOS',
   placementIds: ['Ik4HppviuSiltmj']
 }
 export const ADPOPCORN_IOS_BANNER_320X100_1 = {
   id: 'banner_320X100_1',
-  type: 'banner_320X100',
+  type: AdpopcornType.BANNER,
+  size: { width: 320, height: 100 },
   slotId: '/5932629,22108591289/adpopcorn/tenqube/ga03/mo/AI_fortune_m_320x1001-1_iOS',
   placementIds: ['vGIUpdnEbvNAso8']
 }
 export const ADPOPCORN_IOS_BANNER_320X100_2 = {
   id: 'banner_320X100_2',
-  type: 'banner_320X100',
+  type: AdpopcornType.BANNER,
+  size: { width: 320, height: 100 },
   slotId: '/5932629,22108591289/adpopcorn/tenqube/ga03/mo/AI_fortune_m_320x1001-2_iOS',
   placementIds: ['VO7VruKu2xSsEYe']
 }

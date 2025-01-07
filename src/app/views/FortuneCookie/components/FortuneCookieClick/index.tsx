@@ -8,6 +8,7 @@ import {
 } from '@/app/shared/config'
 import isIos from '@/app/shared/utils/isIos'
 import AdpopcornBannerAd from '@/app/shared/components/AdpopcornBannerAd'
+import GoogleAdsense from '@/app/shared/components/GoogleAdsense'
 import * as styles from './style.css'
 
 interface FortuneCookieClickProps {
@@ -46,7 +47,11 @@ export default function FortuneCookieClick({
         )}
       </div>
       <div className={styles.adArea}>
-        <AdpopcornBannerAd appKey={adpopcornAppKey} adCode={adpopcornBannerAdCode} />
+        <AdpopcornBannerAd
+          appKey={adpopcornAppKey}
+          adCode={adpopcornBannerAdCode}
+          defaultAd={<GoogleAdsense type="banner" />}
+        />
       </div>
     </>
   )

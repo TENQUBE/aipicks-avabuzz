@@ -104,6 +104,7 @@ const FortuneCookie: ActivityComponentType = () => {
           <AdpopcornRewardAd
             appKey={adpopcornAppKey}
             adCode={adpopcornRewardAdCode}
+            defaultAd={<InterstitialAd closeCallback={closedSlotCallback} />}
             closedSlotCallback={closedSlotCallback}
           />
         )}
