@@ -37,7 +37,7 @@ const Ad: ActivityComponentType = () => {
   const setActivityParams = useSetActivityParams()
 
   const [clickedAdType, setClickedAdType] = useState<
-    'coupang' | 'adpopcorn' | 'fortuneCookie' | 'googleAdsense' | null
+    'adpopcorn' | 'fortuneCookie' | 'googleAdsense' | null
   >(null)
   const [coupangData, setCoupangData] = useState<CoupangData | null>(null)
   const [skipSeconds, setSkipSeconds] = useState<number>(5)
