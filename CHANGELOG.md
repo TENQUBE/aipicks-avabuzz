@@ -1,5 +1,11 @@
 # buzzvil-thinkpool-webview
 
+## 0.0.22
+
+### Patch Changes
+
+- [#67](https://github.com/TENQUBE/aipicks-avabuzz/pull/67) [`c016d32`](https://github.com/TENQUBE/aipicks-avabuzz/commit/c016d32cdb3e5f8a9a8dcab2f642e2c33a316be4) Thanks [@8dong](https://github.com/8dong)! - fix: 포춘쿠키 뒤로가기 이슈를 수정합니다.
+
 ## 0.0.21
 
 ### Patch Changes
