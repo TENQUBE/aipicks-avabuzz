@@ -24,6 +24,7 @@ import {
 } from '@/app/shared/hooks/useCoupangAd'
 import { useActivityParamsValue, useSetActivityParams } from '@/app/shared/hooks/useActivityParams'
 import { useDeviceIdValue } from '@/app/shared/hooks/useDeviceId'
+import { skeleton } from '@/app/shared/styles/skeleton.css'
 import * as styles from './style.css'
 
 const Ad: ActivityComponentType = () => {
@@ -54,11 +55,11 @@ const Ad: ActivityComponentType = () => {
   const adpopcornAdCode = isIos() ? ADPOPCORN_IOS_BANNER_300X250_1 : ADPOPCORN_AOS_BANNER_300X250_1
 
   function handleClickConfirmButton() {
-    if (isShowCoupangAdRef.current && coupangData) {
-      window.open(coupangData.productUrl)
+    if (!isShowCoupangAdRef.current || !coupangData) return
 
-      setCoupangAdWatchedAt(new Date().toISOString())
-    }
+    window.open(coupangData.productUrl)
+
+    setCoupangAdWatchedAt(new Date().toISOString())
 
     if (process.env.NODE_ENV === 'production') {
       sendGAEvent('event', '추천종목_참여_play')
@@ -104,7 +105,7 @@ const Ad: ActivityComponentType = () => {
 
       pop()
     }
-  }, [clickedAdType, isSeenAd])
+  }, [clickedAdType, isClickedAd, isSeenAd])
 
   const fetchData = useCallback(async () => {
     try {
@@ -177,14 +178,16 @@ const Ad: ActivityComponentType = () => {
     <Modal isShowCloseButton={!isShowCoupangAdRef.current}>
       <div className={styles.area}>
         {isShowCoupangAdRef.current && (
-          <p className={styles.productName}>{coupangData?.productName}</p>
+          <p className={`${styles.productName} ${coupangData === null ? skeleton : ''}`}>
+            {coupangData?.productName}
+          </p>
         )}
         <div className={styles.adArea}>
           {isShowCoupangAdRef.current ? (
-            <>
+            <div className={`${styles.coupangImgArea} ${coupangData === null ? skeleton : ''}`}>
               <img src={coupangData?.productImage} alt={coupangData?.productName} />
               <span className={styles.adText}>AD</span>
-            </>
+            </div>
           ) : (
             <AdpopcornBannerAd
               appKey={adpopcornAppKey}

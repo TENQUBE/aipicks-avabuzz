@@ -11,7 +11,10 @@ interface StackWrapperProps {
   activities: Activity[]
 }
 
-export default function StackWrapper({ children }: PropsWithChildren<StackWrapperProps>) {
+export default function StackWrapper({
+  activities,
+  children
+}: PropsWithChildren<StackWrapperProps>) {
   const searchParams = useSearchParams()
 
   const setDeviceId = useSetDeviceId()

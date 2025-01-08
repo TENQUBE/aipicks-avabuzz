@@ -15,6 +15,6 @@ const skeletonGradientAnimation = keyframes({
 })
 
 export const skeleton = style({
-  borderRadius: 6,
+  borderRadius: '16px',
   animation: `${skeletonGradientAnimation} 1.8s infinite ease-in-out`
 })

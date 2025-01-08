@@ -5,14 +5,11 @@ const vanillaExtractPlugin = createVanillaExtractPlugin()
 const nextConfig = {
   reactStrictMode: false,
   images: {
+    // unoptimized: true,
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'webchart.thinkpool.com'
-      },
-      {
-        protocol: 'https',
-        hostname: 'ads-partners.coupang.com'
+        hostname: '*'
       }
     ]
   }
