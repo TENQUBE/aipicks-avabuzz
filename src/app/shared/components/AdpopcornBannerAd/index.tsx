@@ -246,7 +246,7 @@ export default function AdpopcornBannerAd({
   return (
     <div
       className={`${styles.area} ${
-        isSetupAdpopcornRef.current && isSetupAdpopcornRef.current ? '' : skeleton
+        isSetupAdpopcornRef.current && isSetupGptRef.current ? '' : skeleton
       }`}
     >
       {!isShowDefaultAd ? (
