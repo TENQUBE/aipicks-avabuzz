@@ -1,5 +1,11 @@
 # buzzvil-thinkpool-webview
 
+## 0.0.24
+
+### Patch Changes
+
+- [#72](https://github.com/TENQUBE/aipicks-avabuzz/pull/72) [`506bca0`](https://github.com/TENQUBE/aipicks-avabuzz/commit/506bca0317f549d23d98fead3ee1c358bad33378) Thanks [@8dong](https://github.com/8dong)! - feat: 광고 컴포넌트 스켈레톤 UI를 적용합니다.
+
 ## 0.0.23
 
 ### Patch Changes
