@@ -45,11 +45,14 @@ export default function GoogleAdsense({ type, adClickCallback }: GoogleAdsensePr
 
     if (isLoaded && !isAdBlock) {
       if (typeof window.adsbygoogle === 'undefined' && defaultAdElRef.current) {
+        console.log('default ad display block because adsbygoogle is undefined')
         defaultAdElRef.current!.style.display = 'block'
       } else {
+        console.log('adsbygoogle push')
         ;(window.adsbygoogle = window.adsbygoogle || []).push({})
       }
     } else {
+      console.log('default ad display block because ad blocked')
       defaultAdElRef.current!.style.display = 'block'
     }
   }, [isLoaded, isAdBlock])
@@ -57,6 +60,10 @@ export default function GoogleAdsense({ type, adClickCallback }: GoogleAdsensePr
   useEffect(() => {
     const observer = new MutationObserver(() => {
       if (googleAdElRef.current && defaultAdElRef.current) {
+        console.log(
+          'googleAdElRef.current.dataset.adStatus: ',
+          googleAdElRef.current.dataset.adStatus
+        )
         if (googleAdElRef.current.dataset.adStatus === 'unfilled') {
           defaultAdElRef.current.style.display = 'block'
 

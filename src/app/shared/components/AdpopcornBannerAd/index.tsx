@@ -218,11 +218,14 @@ export default function AdpopcornBannerAd({
 
     if (isLoaded && !isAdBlock) {
       if (adCode.slotId) {
+        console.log('setupGoogleBannerAd')
         setupGoogleBannerAd(appKey, adElIdRef.current, adCode)
       } else {
+        console.log('setupAdpopcornBannerdAd')
         setupAdpopcornBannerdAd(appKey, adElIdRef.current, adCode)
       }
     } else {
+      console.log('setIsShowDefaultAd')
       setIsShowDefaultAd(true)
     }
   }, [isAdBlock, isLoaded, setupGoogleBannerAd, setupAdpopcornBannerdAd, appKey, adCode])
@@ -246,7 +249,7 @@ export default function AdpopcornBannerAd({
   return (
     <div
       className={`${styles.area} ${
-        isSetupAdpopcornRef.current && isSetupGptRef.current ? '' : skeleton
+        isSetupAdpopcornRef.current || isSetupGptRef.current ? '' : skeleton
       }`}
     >
       {!isShowDefaultAd ? (
