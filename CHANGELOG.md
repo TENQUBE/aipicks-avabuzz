@@ -1,5 +1,11 @@
 # buzzvil-thinkpool-webview
 
+## 0.0.25
+
+### Patch Changes
+
+- [#75](https://github.com/TENQUBE/aipicks-avabuzz/pull/75) [`4b45b5c`](https://github.com/TENQUBE/aipicks-avabuzz/commit/4b45b5cf5c13e37cc7bde63d2c3e16e001cd4842) Thanks [@wansiklee](https://github.com/wansiklee)! - fix: 쿠팡 광고 뒤로가기 이슈를 수정합니다.
+
 ## 0.0.24
 
 ### Patch Changes
