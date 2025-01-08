@@ -36,6 +36,14 @@ export const adArea = style({
   overflow: 'hidden'
 })
 
+export const coupangImgArea = style({
+  width: '100%',
+  height: '100%',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center'
+})
+
 export const adText = style({
   position: 'absolute',
   top: '12px',

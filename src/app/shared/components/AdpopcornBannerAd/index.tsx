@@ -3,6 +3,7 @@ import { ReactElement, useCallback, useEffect, useRef, useState } from 'react'
 import { AdCode, AdpopcornType } from '../../config'
 import { useIsAdBlock } from '../../hooks/useIsAdBlock'
 import { useIsLoadedAdpopcornScriptValue } from '../../hooks/useIsLoadedAdpopcornScript'
+import { skeleton } from '../../styles/skeleton.css'
 import * as styles from './style.css'
 
 interface AdpopcornBannerAdProps {
@@ -243,7 +244,11 @@ export default function AdpopcornBannerAd({
   }, [handleBlurWindow])
 
   return (
-    <div className={styles.area}>
+    <div
+      className={`${styles.area} ${
+        isSetupAdpopcornRef.current && isSetupAdpopcornRef.current ? '' : skeleton
+      }`}
+    >
       {!isShowDefaultAd ? (
         <div
           id={adElIdRef.current}
