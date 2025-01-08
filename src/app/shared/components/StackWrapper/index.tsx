@@ -30,14 +30,16 @@ export default function StackWrapper({
         controller.abort()
       }, 3000)
 
-      await fetch('https://securepubads.g.doubleclick.net/tag', {
+      await fetch('https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js', {
         mode: 'no-cors',
         signal: controller.signal
       })
 
+      console.log('can show ad')
       clearTimeout(timerId)
       setIsAdBlock(false)
     } catch (error) {
+      console.log('ad blocked')
       setIsAdBlock(true)
     }
   }, [])
