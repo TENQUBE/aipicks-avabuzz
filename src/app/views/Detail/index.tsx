@@ -1,3 +1,4 @@
+import { useStepFlow } from '@stackflow/react/future'
 import { sendGAEvent } from '@next/third-parties/google'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
@@ -34,6 +35,7 @@ import * as styles from '@/app/views/Detail/style.css'
 
 export default function Detail() {
   const { push } = useFlow()
+  const { pushStep } = useStepFlow(ActivityNames.Detail)
   const searchParams = useSearchParams()
 
   const activityParams = useActivityParamsValue()
@@ -240,6 +242,8 @@ export default function Detail() {
 
     switch (activityParams.from) {
       case ActivityNames.Ad:
+        pushStep({})
+
         if (activityParams.params.isSeenAd) {
           if (process.env.NODE_ENV === 'production') {
             sendGAEvent('event', '추천종목_참여_complete')
