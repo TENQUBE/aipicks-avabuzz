@@ -1,5 +1,13 @@
 # buzzvil-thinkpool-webview
 
+## 0.0.26
+
+### Patch Changes
+
+- [#78](https://github.com/TENQUBE/aipicks-avabuzz/pull/78) [`2985dd1`](https://github.com/TENQUBE/aipicks-avabuzz/commit/2985dd1d4ca3579ae71fbb6fdd3cddf3dbde9f56) Thanks [@wansiklee](https://github.com/wansiklee)! - fix: AD Block 체크용 URL을 수정합니다.
+  fix: 광고 스켈레톤이 없어지지 않는 이슈를 수정합니다.
+  feat: 애드센스 광고 플로우 로그를 추가합니다.
+
 ## 0.0.25
 
 ### Patch Changes
