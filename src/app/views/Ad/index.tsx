@@ -164,8 +164,6 @@ const Ad: ActivityComponentType = () => {
       clearTimeout(timerIdRef.current)
     }
 
-    console.log('effect')
-
     setActivityParams(ActivityNames.Ad, ActivityNames.Detail, { isSeenAd })
 
     pop(activeActivities[activeActivities.length - 1].name === ActivityNames.Empty ? 2 : 1)

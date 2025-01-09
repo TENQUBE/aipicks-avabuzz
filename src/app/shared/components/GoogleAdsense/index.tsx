@@ -48,14 +48,14 @@ export default function GoogleAdsense({ type, adClickCallback }: GoogleAdsensePr
   const handleVisibilityChangeWindow = useCallback(() => {
     const activeEl = document.activeElement
 
-    if (
-      activity.isTop &&
-      document.visibilityState === 'hidden' &&
+    const isCurActivityHidden = activity.isTop && document.visibilityState === 'hidden'
+    const isClickedAdIframe =
       activeEl &&
       activeEl.tagName === 'IFRAME' &&
       areaElRef.current &&
       areaElRef.current.contains(activeEl)
-    ) {
+
+    if (isCurActivityHidden && isClickedAdIframe) {
       push(ActivityNames.Empty, {}, { animate: false })
 
       adClickCallback?.()

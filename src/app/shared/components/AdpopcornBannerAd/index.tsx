@@ -50,13 +50,13 @@ export default function AdpopcornBannerAd({
   const handleVisibilityChangeWindow = useCallback(() => {
     const activeEl = document.activeElement
 
-    if (
-      activity.isTop &&
-      document.visibilityState === 'hidden' &&
+    const isCurActivityHidden = activity.isTop && document.visibilityState === 'hidden'
+    const isClickedAdIframe =
       activeEl &&
       activeEl.tagName === 'IFRAME' &&
       activeEl.getAttribute('id') === iframeIdRef.current
-    ) {
+
+    if (isCurActivityHidden && isClickedAdIframe) {
       console.log('adClicked', iframeIdRef.current)
 
       if (!isIos()) {
