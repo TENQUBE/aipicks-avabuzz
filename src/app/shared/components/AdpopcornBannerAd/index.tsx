@@ -1,6 +1,9 @@
+import { useActivity } from '@stackflow/react'
 import { ReactElement, useCallback, useEffect, useRef, useState } from 'react'
 
 import { AdCode, AdpopcornType } from '../../config'
+import { ActivityNames, useFlow } from '../../libs/stackflow'
+import isIos from '../../utils/isIos'
 import { useIsAdBlock } from '../../hooks/useIsAdBlock'
 import { useIsLoadedAdpopcornScriptValue } from '../../hooks/useIsLoadedAdpopcornScript'
 import { skeleton } from '../../styles/skeleton.css'
@@ -19,6 +22,8 @@ export default function AdpopcornBannerAd({
   defaultAd,
   adClickCallback
 }: AdpopcornBannerAdProps) {
+  const activity = useActivity()
+  const { push } = useFlow()
   const isLoaded = useIsLoadedAdpopcornScriptValue()
   const isAdBlock = useIsAdBlock()
 
@@ -39,27 +44,34 @@ export default function AdpopcornBannerAd({
   const slotRef = useRef<googletag.Slot | null>(null)
   const adElIdRef = useRef<string>(`${adCode.id}-${new Date().toISOString()}`)
   const iframeIdRef = useRef<string | null>(null)
+  const areaElRef = useRef<HTMLDivElement>(null)
   const adAreaElRef = useRef<HTMLDivElement>(null)
 
-  const handleBlurWindow = useCallback(() => {
-    setTimeout(() => {
-      const activeEl = document.activeElement
+  const handleVisibilityChangeWindow = useCallback(() => {
+    const activeEl = document.activeElement
 
-      if (
-        activeEl &&
-        activeEl.tagName === 'IFRAME' &&
-        activeEl.getAttribute('id') === iframeIdRef.current
-      ) {
-        console.log('adClicked', (activeEl as HTMLIFrameElement).dataset.clicked)
+    if (
+      activity.isTop &&
+      document.visibilityState === 'hidden' &&
+      activeEl &&
+      activeEl.tagName === 'IFRAME' &&
+      activeEl.getAttribute('id') === iframeIdRef.current
+    ) {
+      console.log('adClicked', iframeIdRef.current)
 
-        adClickCallback?.()
+      if (!isIos()) {
+        push(ActivityNames.Empty, {}, { animate: false })
       }
-    })
-  }, [adClickCallback])
+
+      adClickCallback?.()
+    }
+  }, [adClickCallback, activity])
 
   const setupAdpopcornBannerdAd = useCallback(
     async (appKey: string, id: string, adCode: AdCode) => {
       if (isSetupAdpopcornRef.current) return
+
+      console.log('setupAdpopcornBannerdAd')
 
       isSetupAdpopcornRef.current = true
 
@@ -156,7 +168,7 @@ export default function AdpopcornBannerAd({
 
         if (result) break
         else if (i === adCode.placementIds.length - 1) {
-          console.log('show default ad')
+          console.log('setIsShowDefaultAd')
           setIsShowDefaultAd(true)
         }
       }
@@ -168,11 +180,13 @@ export default function AdpopcornBannerAd({
     (appKey: string, id: string, adCode: AdCode) => {
       if (isSetupGptRef.current) return
 
+      console.log('setupGoogleBannerAd')
+
       isSetupGptRef.current = true
 
       if (!(window.googletag as any)._loaded_) {
         // ad block
-        console.log('ad block')
+        console.log('setIsShowDefaultAd')
         setIsShowDefaultAd(true)
       } else {
         googletag.cmd.push(function () {
@@ -205,6 +219,7 @@ export default function AdpopcornBannerAd({
             googletag.enableServices()
             googletag.display(slotRef.current)
           } else {
+            console.log('setIsShowDefaultAd')
             setIsShowDefaultAd(true)
           }
         })
@@ -218,10 +233,8 @@ export default function AdpopcornBannerAd({
 
     if (isLoaded && !isAdBlock) {
       if (adCode.slotId) {
-        console.log('setupGoogleBannerAd')
         setupGoogleBannerAd(appKey, adElIdRef.current, adCode)
       } else {
-        console.log('setupAdpopcornBannerdAd')
         setupAdpopcornBannerdAd(appKey, adElIdRef.current, adCode)
       }
     } else {
@@ -239,18 +252,19 @@ export default function AdpopcornBannerAd({
   }, [])
 
   useEffect(() => {
-    window.addEventListener('blur', handleBlurWindow)
+    window.addEventListener('visibilitychange', handleVisibilityChangeWindow)
 
     return () => {
-      window.removeEventListener('blur', handleBlurWindow)
+      window.removeEventListener('visibilitychange', handleVisibilityChangeWindow)
     }
-  }, [handleBlurWindow])
+  }, [handleVisibilityChangeWindow])
 
   return (
     <div
       className={`${styles.area} ${
         isSetupAdpopcornRef.current || isSetupGptRef.current ? '' : skeleton
       }`}
+      ref={areaElRef}
     >
       {!isShowDefaultAd ? (
         <div
@@ -269,7 +283,9 @@ export default function AdpopcornBannerAd({
               onClick={() => {
                 window.open(nativeAdData.landingURL)
 
-                console.log('adClicked')
+                if (!isIos()) {
+                  push(ActivityNames.Empty, {}, { animate: false })
+                }
 
                 adClickCallback?.()
               }}

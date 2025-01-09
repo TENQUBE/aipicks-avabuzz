@@ -1,6 +1,6 @@
 import { sendGAEvent } from '@next/third-parties/google'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { ActivityComponentType } from '@stackflow/react'
+import { ActivityComponentType, useActiveEffect } from '@stackflow/react'
 import { useFlow } from '@stackflow/react/future'
 
 import {
@@ -24,12 +24,14 @@ import {
 } from '@/app/shared/hooks/useCoupangAd'
 import { useActivityParamsValue, useSetActivityParams } from '@/app/shared/hooks/useActivityParams'
 import { useDeviceIdValue } from '@/app/shared/hooks/useDeviceId'
+import { useActiveActivities } from '@/app/shared/hooks/useActiveActivities'
 import { skeleton } from '@/app/shared/styles/skeleton.css'
 import * as styles from './style.css'
 
 const Ad: ActivityComponentType = () => {
-  const { replace, pop } = useFlow()
+  const { push, replace, pop } = useFlow()
 
+  const activeActivities = useActiveActivities()
   const deviceId = useDeviceIdValue()
   const defaultAdType = useDefaultAdTypeValue()
   const activityParams = useActivityParamsValue()
@@ -67,7 +69,11 @@ const Ad: ActivityComponentType = () => {
 
     setActivityParams(ActivityNames.Ad, ActivityNames.Detail, { isSeenAd: true })
 
-    pop()
+    pop() // Ad Activity pop
+
+    if (!isIos()) {
+      push(ActivityNames.Empty, {}, { animate: false }) // Empty Activity push
+    }
   }
 
   function handleClickCloseButton() {
@@ -92,20 +98,6 @@ const Ad: ActivityComponentType = () => {
     },
     []
   )
-
-  const handleVisibleChangeWindow = useCallback(() => {
-    if (clickedAdType === 'fortuneCookie' || isShowCoupangAdRef.current || !isClickedAd) return
-
-    if (document.visibilityState === 'visible') {
-      if (timerIdRef.current) {
-        clearTimeout(timerIdRef.current)
-      }
-
-      setActivityParams(ActivityNames.Ad, ActivityNames.Detail, { isSeenAd })
-
-      pop()
-    }
-  }, [clickedAdType, isClickedAd, isSeenAd])
 
   const fetchData = useCallback(async () => {
     try {
@@ -150,16 +142,6 @@ const Ad: ActivityComponentType = () => {
   }, [coupangData])
 
   useEffect(() => {
-    if (isShowCoupangAdRef.current) return
-
-    window.addEventListener('visibilitychange', handleVisibleChangeWindow)
-
-    return () => {
-      window.removeEventListener('visibilitychange', handleVisibleChangeWindow)
-    }
-  }, [handleVisibleChangeWindow])
-
-  useEffect(() => {
     // FortuneCookie
     if (
       activityParams.to === ActivityNames.Ad &&
@@ -173,6 +155,21 @@ const Ad: ActivityComponentType = () => {
       pop()
     }
   }, [activityParams, defaultAdType])
+
+  useActiveEffect(() => {
+    // Adpopcorn, Adsense
+    if (clickedAdType === 'fortuneCookie' || isShowCoupangAdRef.current || !isClickedAd) return
+
+    if (timerIdRef.current) {
+      clearTimeout(timerIdRef.current)
+    }
+
+    console.log('effect')
+
+    setActivityParams(ActivityNames.Ad, ActivityNames.Detail, { isSeenAd })
+
+    pop(activeActivities[activeActivities.length - 1].name === ActivityNames.Empty ? 2 : 1)
+  })
 
   return (
     <Modal isShowCloseButton={!isShowCoupangAdRef.current}>
