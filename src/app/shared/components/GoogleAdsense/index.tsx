@@ -1,8 +1,10 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useActivity } from '@stackflow/react'
+import { useCallback, useEffect, useRef } from 'react'
 
 import { CLIENT_ID, GOLDBOX_URL, SLOT } from '@/app/shared/config'
+import { ActivityNames, useFlow } from '../../libs/stackflow'
 import { useIsLoadedGoogleAdsenseScriptValue } from '@/app/shared/hooks/useIsLoadedGoogleAdSenseScript'
 import { useIsAdBlock } from '../../hooks/useIsAdBlock'
 import * as styles from '@/app/shared/components/GoogleAdsense/style.css'
@@ -32,13 +34,33 @@ function getDefaultAdInfo(type: 'floating' | 'banner' | 'modal' | 'interstitial'
 }
 
 export default function GoogleAdsense({ type, adClickCallback }: GoogleAdsenseProps) {
+  const { push } = useFlow()
+  const activity = useActivity()
   const isLoaded = useIsLoadedGoogleAdsenseScriptValue()
   const isAdBlock = useIsAdBlock()
 
+  const areaElRef = useRef<HTMLDivElement>(null)
   const googleAdElRef = useRef<HTMLModElement>(null)
   const defaultAdElRef = useRef<HTMLAnchorElement>(null)
 
   const { src: adImgSrc, width: adImgWidth, height: adImgHeight } = getDefaultAdInfo(type)
+
+  const handleVisibilityChangeWindow = useCallback(() => {
+    const activeEl = document.activeElement
+
+    const isCurActivityHidden = activity.isTop && document.visibilityState === 'hidden'
+    const isClickedAdIframe =
+      activeEl &&
+      activeEl.tagName === 'IFRAME' &&
+      areaElRef.current &&
+      areaElRef.current.contains(activeEl)
+
+    if (isCurActivityHidden && isClickedAdIframe) {
+      push(ActivityNames.Empty, {}, { animate: false })
+
+      adClickCallback?.()
+    }
+  }, [adClickCallback])
 
   useEffect(() => {
     if (isLoaded === null || isAdBlock === null || !defaultAdElRef.current) return
@@ -70,6 +92,8 @@ export default function GoogleAdsense({ type, adClickCallback }: GoogleAdsensePr
         defaultAdElRef.current!.style.display = 'block'
 
         defaultAdElRef.current!.addEventListener('click', () => {
+          push(ActivityNames.Empty, {}, { animate: false })
+
           adClickCallback?.()
         })
       } else {
@@ -83,8 +107,16 @@ export default function GoogleAdsense({ type, adClickCallback }: GoogleAdsensePr
     })
   }, [adClickCallback])
 
+  useEffect(() => {
+    window.addEventListener('visibilitychange', handleVisibilityChangeWindow)
+
+    return () => {
+      window.removeEventListener('visibilitychange', handleVisibilityChangeWindow)
+    }
+  }, [handleVisibilityChangeWindow])
+
   return (
-    <div className={styles.area}>
+    <div className={styles.area} ref={areaElRef}>
       <span className={styles.adText}>AD</span>
       <ins
         className={`adsbygoogle ${styles.googleAd} googleads`}

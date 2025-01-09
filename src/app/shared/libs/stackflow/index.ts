@@ -14,13 +14,15 @@ import AdvBestItems from '@/app/views/AdvBestItems'
 import Error from '@/app/views/Error'
 import Ad from '@/app/views/Ad'
 import FortuneCookie from '@/app/views/FortuneCookie'
+import Empty from '@/app/views/Empty'
 
 export enum ActivityNames {
   Detail = 'Detail',
   AdvBestItems = 'AdvBestItems',
   Error = 'Error',
   Ad = 'Ad',
-  FortuneCookie = 'FortuneCookie'
+  FortuneCookie = 'FortuneCookie',
+  Empty = 'Empty'
 }
 
 export enum ActivityRoutes {
@@ -28,7 +30,8 @@ export enum ActivityRoutes {
   AdvBestItems = '/adv-best-items',
   Error = '/error',
   Ad = '/ad',
-  FortuneCookie = '/fortune-cookie'
+  FortuneCookie = '/fortune-cookie',
+  Empty = '/empty'
 }
 
 const activities = {
@@ -36,7 +39,8 @@ const activities = {
   AdvBestItems,
   Error,
   Ad,
-  FortuneCookie
+  FortuneCookie,
+  Empty
 }
 
 export const routes: { [key in ActivityNames]: ActivityRoutes } = {
@@ -44,7 +48,8 @@ export const routes: { [key in ActivityNames]: ActivityRoutes } = {
   [ActivityNames.AdvBestItems]: ActivityRoutes[ActivityNames.AdvBestItems],
   [ActivityNames.Error]: ActivityRoutes[ActivityNames.Error],
   [ActivityNames.Ad]: ActivityRoutes[ActivityNames.Ad],
-  [ActivityNames.FortuneCookie]: ActivityRoutes[ActivityNames.FortuneCookie]
+  [ActivityNames.FortuneCookie]: ActivityRoutes[ActivityNames.FortuneCookie],
+  [ActivityNames.Empty]: ActivityRoutes[ActivityNames.Empty]
 }
 
 const stackWrapperPlugin: StackflowReactPlugin = () => {
