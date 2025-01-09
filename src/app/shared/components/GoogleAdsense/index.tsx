@@ -41,40 +41,46 @@ export default function GoogleAdsense({ type, adClickCallback }: GoogleAdsensePr
   const { src: adImgSrc, width: adImgWidth, height: adImgHeight } = getDefaultAdInfo(type)
 
   useEffect(() => {
-    if (isLoaded === null || isAdBlock === null) return
+    if (isLoaded === null || isAdBlock === null || !defaultAdElRef.current) return
 
     if (isLoaded && !isAdBlock) {
-      if (typeof window.adsbygoogle === 'undefined' && defaultAdElRef.current) {
-        defaultAdElRef.current!.style.display = 'block'
+      if (typeof window.adsbygoogle === 'undefined') {
+        console.log('default ad display block because adsbygoogle is undefined')
+        defaultAdElRef.current.style.display = 'block'
       } else {
+        console.log('adsbygoogle push')
         ;(window.adsbygoogle = window.adsbygoogle || []).push({})
       }
     } else {
+      console.log('default ad display block because ad blocked')
       defaultAdElRef.current!.style.display = 'block'
     }
   }, [isLoaded, isAdBlock])
 
   useEffect(() => {
-    const observer = new MutationObserver(() => {
-      if (googleAdElRef.current && defaultAdElRef.current) {
-        if (googleAdElRef.current.dataset.adStatus === 'unfilled') {
-          defaultAdElRef.current.style.display = 'block'
+    console.log(googleAdElRef.current, defaultAdElRef.current)
+    if (googleAdElRef.current === null || defaultAdElRef.current === null) return
 
-          defaultAdElRef.current.addEventListener('click', () => {
-            adClickCallback?.()
-          })
-        } else {
-          defaultAdElRef.current.style.display = 'none'
-        }
+    const observer = new MutationObserver(() => {
+      console.log(
+        'googleAdElRef.current.dataset.adStatus: ',
+        googleAdElRef.current!.dataset.adStatus
+      )
+      if (googleAdElRef.current!.dataset.adStatus === 'unfilled') {
+        defaultAdElRef.current!.style.display = 'block'
+
+        defaultAdElRef.current!.addEventListener('click', () => {
+          adClickCallback?.()
+        })
+      } else {
+        defaultAdElRef.current!.style.display = 'none'
       }
     })
 
-    if (googleAdElRef.current) {
-      observer.observe(googleAdElRef.current, {
-        attributes: true,
-        attributeFilter: ['data-ad-status']
-      })
-    }
+    observer.observe(googleAdElRef.current, {
+      attributes: true,
+      attributeFilter: ['data-ad-status']
+    })
   }, [adClickCallback])
 
   return (
