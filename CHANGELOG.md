@@ -1,5 +1,11 @@
 # buzzvil-thinkpool-webview
 
+## 0.0.27
+
+### Patch Changes
+
+- [#82](https://github.com/TENQUBE/aipicks-avabuzz/pull/82) [`c5f8f38`](https://github.com/TENQUBE/aipicks-avabuzz/commit/c5f8f38c81f235c5c880834ed31143a99fb7a262) Thanks [@8dong](https://github.com/8dong)! - fix: 쿠팡 광고 동작 이슈 대응합니다.
+
 ## 0.0.26
 
 ### Patch Changes
