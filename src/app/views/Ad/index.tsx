@@ -169,6 +169,12 @@ const Ad: ActivityComponentType = () => {
     pop(activeActivities[activeActivities.length - 1].name === ActivityNames.Empty ? 2 : 1)
   })
 
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'production') {
+      sendGAEvent('event', '로딩')
+    }
+  }, [])
+
   return (
     <Modal isShowCloseButton={!isShowCoupangAdRef.current}>
       <div className={styles.area}>

@@ -273,6 +273,16 @@ export default function Detail() {
     return value[0] + '*'.repeat(value.length - 1)
   }
 
+  useEffect(() => {
+    if (process.env.NODE_ENV !== 'production' || isLoading === null) return
+
+    if (isLoading) {
+      sendGAEvent('event', '랜딩')
+    } else {
+      sendGAEvent('event', '결과')
+    }
+  }, [isLoading])
+
   return (
     <AppScreen>
       {isShowInterstitialAd && <InterstitialAd closeCallback={interstitialAdCloseCallback} />}
