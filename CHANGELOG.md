@@ -1,5 +1,11 @@
 # buzzvil-thinkpool-webview
 
+## 0.0.28
+
+### Patch Changes
+
+- [#85](https://github.com/TENQUBE/aipicks-avabuzz/pull/85) [`d45c0ee`](https://github.com/TENQUBE/aipicks-avabuzz/commit/d45c0ee721738f9ee9019e4eedcbbd7fbd95d3e5) Thanks [@8dong](https://github.com/8dong)! - feat(aipicks-avabuzz): GA 이벤트를 추가합니다.
+
 ## 0.0.27
 
 ### Patch Changes
