@@ -1,5 +1,11 @@
 # buzzvil-thinkpool-webview
 
+## 1.0.0
+
+### Major Changes
+
+- [#88](https://github.com/TENQUBE/aipicks-avabuzz/pull/88) [`2b55fa7`](https://github.com/TENQUBE/aipicks-avabuzz/commit/2b55fa78afdcf52d0a11941bc255115484224332) Thanks [@8dong](https://github.com/8dong)! - feat: 아바티 요청사항을 반영합니다.
+
 ## 0.0.28
 
 ### Patch Changes
