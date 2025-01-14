@@ -1,5 +1,11 @@
 # buzzvil-thinkpool-webview
 
+## 1.0.1
+
+### Patch Changes
+
+- [#91](https://github.com/TENQUBE/aipicks-avabuzz/pull/91) [`61a57de`](https://github.com/TENQUBE/aipicks-avabuzz/commit/61a57de1397c02adf25640744b3d3bd5bbe7062c) Thanks [@8dong](https://github.com/8dong)! - feat: 안내문구 위치를 수정합니다.
+
 ## 1.0.0
 
 ### Major Changes
