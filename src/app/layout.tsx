@@ -42,7 +42,7 @@ export default function RootLayout({
           src={
             process.env.NODE_ENV === 'development'
               ? 'https://s.avatye.com/rc/test/tenqube/rclib_timer.min.js'
-              : 'https://s.avatye.com/rc/tenqube/rclib_timer.min.js'
+              : 'https://s.avatye.com/rc/tenqube/stock/rclib_timer.min.js'
           }
         />
         <link
