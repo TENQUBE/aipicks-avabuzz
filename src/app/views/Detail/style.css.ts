@@ -195,8 +195,7 @@ export const date = style({
 })
 
 export const priceList = style({
-  display: 'flex',
-  marginBottom: '1.2rem'
+  display: 'flex'
 })
 
 export const priceItem = style({
@@ -228,24 +227,6 @@ export const priceItemAmount = style({
   fontWeight: '500',
   lineHeight: '2.3rem',
   letterSpacing: '-0.02rem'
-})
-
-export const noticeArea = style({
-  display: 'flex',
-  justifyContent: 'center'
-})
-
-export const noticeIcon = style({
-  width: '16px',
-  flexShrink: '0',
-  height: '16px',
-  marginRight: '0.4rem'
-})
-
-export const noticeContent = style({
-  fontSize: '1.2rem',
-  lineHeight: '1.8rem',
-  color: '#6B7684'
 })
 
 export const contentTitle = style({
@@ -355,6 +336,7 @@ export const rassiTitle = style({
 
 export const contArea = style({
   padding: '2rem',
+  marginBottom: '1.2rem',
   backgroundColor: '#F3F6F9',
   borderRadius: '12px',
   fontSize: '1.6rem',
@@ -389,6 +371,24 @@ export const contItem = style({
       marginBottom: '0'
     }
   }
+})
+
+export const noticeArea = style({
+  display: 'flex',
+  justifyContent: 'center'
+})
+
+export const noticeIcon = style({
+  width: '16px',
+  flexShrink: '0',
+  height: '16px',
+  marginRight: '0.4rem'
+})
+
+export const noticeContent = style({
+  fontSize: '1.2rem',
+  lineHeight: '1.8rem',
+  color: '#6B7684'
 })
 
 export const todaysPickArea = style({
