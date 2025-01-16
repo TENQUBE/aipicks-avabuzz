@@ -69,6 +69,13 @@ export default function GoogleAdsense({ type, adClickCallback }: GoogleAdsensePr
       if (typeof window.adsbygoogle === 'undefined') {
         console.log('default ad display block because adsbygoogle is undefined')
         defaultAdElRef.current.style.display = 'block'
+
+        defaultAdElRef.current!.addEventListener('click', () => {
+          console.log('a')
+          push(ActivityNames.Empty, {}, { animate: false })
+
+          adClickCallback?.()
+        })
       } else {
         console.log('adsbygoogle push')
         ;(window.adsbygoogle = window.adsbygoogle || []).push({})
@@ -76,6 +83,13 @@ export default function GoogleAdsense({ type, adClickCallback }: GoogleAdsensePr
     } else {
       console.log('default ad display block because ad blocked')
       defaultAdElRef.current!.style.display = 'block'
+
+      defaultAdElRef.current!.addEventListener('click', () => {
+        console.log('a')
+        push(ActivityNames.Empty, {}, { animate: false })
+
+        adClickCallback?.()
+      })
     }
   }, [isLoaded, isAdBlock])
 
