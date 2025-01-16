@@ -1,5 +1,11 @@
 # buzzvil-thinkpool-webview
 
+## 1.0.2
+
+### Patch Changes
+
+- [#93](https://github.com/TENQUBE/aipicks-avabuzz/pull/93) [`abb4de0`](https://github.com/TENQUBE/aipicks-avabuzz/commit/abb4de0bc6574fa664a3ecccedb58885ef8ddba5) Thanks [@8dong](https://github.com/8dong)! - fix: 광고 체류 로직을 제거합니다.
+
 ## 1.0.1
 
 ### Patch Changes
