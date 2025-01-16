@@ -1,6 +1,6 @@
 import { sendGAEvent } from '@next/third-parties/google'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { ActivityComponentType, useActiveEffect } from '@stackflow/react'
+import { ActivityComponentType } from '@stackflow/react'
 import { useFlow } from '@stackflow/react/future'
 
 import {
@@ -39,23 +39,18 @@ const Ad: ActivityComponentType = () => {
   const getIsShowCoupangAd = useGetIsShowCoupangAd()
   const setActivityParams = useSetActivityParams()
 
-  const [clickedAdType, setClickedAdType] = useState<
-    'adpopcorn' | 'fortuneCookie' | 'googleAdsense' | null
-  >(null)
   const [coupangData, setCoupangData] = useState<CoupangData | null>(null)
   const [skipSeconds, setSkipSeconds] = useState<number>(5)
-  const [isClickedAd, setIsClickedAd] = useState<boolean>(false)
-  const [isSeenAd, setIsSeenAd] = useState<boolean>(false)
 
   const isShowCoupangAd = getIsShowCoupangAd()
 
   const isShowCoupangAdRef = useRef<boolean>(isShowCoupangAd)
   const isFetchedRef = useRef<boolean>(false)
-  const timerIdRef = useRef<NodeJS.Timeout | null>()
 
   const adpopcornAppKey = isIos() ? ADPOPCORN_IOS_APP_KEY : ADPOPCORN_AOS_APP_KEY
   const adpopcornAdCode = isIos() ? ADPOPCORN_IOS_BANNER_300X250_1 : ADPOPCORN_AOS_BANNER_300X250_1
 
+  // Coupang Ad
   function handleClickConfirmButton() {
     if (!isShowCoupangAdRef.current || !coupangData) return
 
@@ -82,21 +77,29 @@ const Ad: ActivityComponentType = () => {
     pop()
   }
 
+  // Adpopcorn , FortuneCookie, Adsense
   const adClickCallback = useCallback(
     (clickedAdType: 'adpopcorn' | 'fortuneCookie' | 'googleAdsense') => {
-      setClickedAdType(clickedAdType)
-
       if (process.env.NODE_ENV === 'production') {
         sendGAEvent('event', '추천종목_참여_play')
       }
 
-      setIsClickedAd(true)
+      if (!isIos()) {
+        if (clickedAdType === 'fortuneCookie') {
+          pop()
+        } else {
+          // adpopcorn, googleAdsense
+          if (activeActivities[activeActivities.length - 1].name === ActivityNames.Ad) {
+            pop(2)
+          } else {
+            pop(1)
+          }
+        }
+      }
 
-      timerIdRef.current = setTimeout(() => {
-        setIsSeenAd(true)
-      }, 3000)
+      setActivityParams(ActivityNames.Ad, ActivityNames.Detail, { isSeenAd: true })
     },
-    []
+    [activeActivities]
   )
 
   const fetchData = useCallback(async () => {
@@ -128,7 +131,6 @@ const Ad: ActivityComponentType = () => {
     const timerId = setInterval(() => {
       setSkipSeconds((prevState) => {
         if (prevState <= 0) {
-          setIsSeenAd(true)
           return 0
         } else {
           return prevState - 1
@@ -155,19 +157,6 @@ const Ad: ActivityComponentType = () => {
       pop()
     }
   }, [activityParams, defaultAdType])
-
-  useActiveEffect(() => {
-    // Adpopcorn, Adsense
-    if (clickedAdType === 'fortuneCookie' || isShowCoupangAdRef.current || !isClickedAd) return
-
-    if (timerIdRef.current) {
-      clearTimeout(timerIdRef.current)
-    }
-
-    setActivityParams(ActivityNames.Ad, ActivityNames.Detail, { isSeenAd })
-
-    pop(activeActivities[activeActivities.length - 1].name === ActivityNames.Empty ? 2 : 1)
-  })
 
   useEffect(() => {
     if (process.env.NODE_ENV === 'production') {
