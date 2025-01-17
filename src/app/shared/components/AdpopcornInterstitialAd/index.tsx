@@ -11,11 +11,11 @@ import AdpopcornBannerAd from '../AdpopcornBannerAd'
 import GoogleAdsense from '../GoogleAdsense'
 import * as styles from './style.css'
 
-interface InterstitialAdProps {
+interface AdpopcornInterstitialAdProps {
   closeCallback: Function
 }
 
-export default function InterstitialAd({ closeCallback }: InterstitialAdProps) {
+export default function AdpopcornInterstitialAd({ closeCallback }: AdpopcornInterstitialAdProps) {
   const dimElRef = useRef<HTMLDivElement>(null)
   const contentElRef = useRef<HTMLDivElement>(null)
 

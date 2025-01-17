@@ -2,7 +2,7 @@ import { ActivityNames, useFlow } from '../../libs/stackflow'
 
 interface FortuneCookieAdProps {
   type: 'banner' | 'modal'
-  adClickCallback?: Function
+  adClickCallback?: () => void
 }
 
 function getAdInfo(type: 'banner' | 'modal') {
@@ -21,9 +21,9 @@ export default function FortuneCookieAd({ type, adClickCallback }: FortuneCookie
   const { src, width, height } = getAdInfo(type)
 
   function handleClickAd() {
-    adClickCallback?.('fortuneCookie')
+    adClickCallback?.()
 
-    push(ActivityNames.FortuneCookie, {})
+    push(ActivityNames.FortuneCookie, {}, { animate: false })
   }
 
   return (
