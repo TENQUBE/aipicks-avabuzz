@@ -23,6 +23,7 @@ export default function AdpopcornBannerAd({
   adClickCallback
 }: AdpopcornBannerAdProps) {
   const activity = useActivity()
+
   const { push } = useFlow()
   const isLoaded = useIsLoadedAdpopcornScriptValue()
   const isAdBlock = useIsAdBlock()
@@ -47,6 +48,7 @@ export default function AdpopcornBannerAd({
   const areaElRef = useRef<HTMLDivElement>(null)
   const adAreaElRef = useRef<HTMLDivElement>(null)
 
+  // AdpopcornBannerAd, GooglePublisherTagAd Click (IFRAME)
   const handleVisibilityChangeWindow = useCallback(() => {
     const activeEl = document.activeElement
 
@@ -59,13 +61,26 @@ export default function AdpopcornBannerAd({
     if (isCurActivityHidden && isClickedAdIframe) {
       console.log('adClicked', iframeIdRef.current)
 
+      adClickCallback?.()
+
       if (!isIos()) {
         push(ActivityNames.Empty, {}, { animate: false })
       }
-
-      adClickCallback?.()
     }
   }, [adClickCallback, activity])
+
+  // AdpopcornNativeAd Click
+  function handleClickAdpopcornNativeAd() {
+    if (!nativeAdData) return
+
+    window.open(nativeAdData.landingURL)
+
+    adClickCallback?.()
+
+    if (!isIos()) {
+      push(ActivityNames.Empty, {}, { animate: false })
+    }
+  }
 
   const setupAdpopcornBannerdAd = useCallback(
     async (appKey: string, id: string, adCode: AdCode) => {
@@ -140,7 +155,6 @@ export default function AdpopcornBannerAd({
             // 광고 클릭
             banner.addEventListener('adClicked', () => {
               // 광고 클릭시, 이벤트 처리
-              // console.log('adClicked')
             })
 
             banner.display(id)
@@ -252,12 +266,14 @@ export default function AdpopcornBannerAd({
   }, [])
 
   useEffect(() => {
+    if (isShowDefaultAd) return
+
     window.addEventListener('visibilitychange', handleVisibilityChangeWindow)
 
     return () => {
       window.removeEventListener('visibilitychange', handleVisibilityChangeWindow)
     }
-  }, [handleVisibilityChangeWindow])
+  }, [isShowDefaultAd, handleVisibilityChangeWindow])
 
   return (
     <div
@@ -280,15 +296,7 @@ export default function AdpopcornBannerAd({
         >
           {nativeAdData && (
             <img
-              onClick={() => {
-                window.open(nativeAdData.landingURL)
-
-                if (!isIos()) {
-                  push(ActivityNames.Empty, {}, { animate: false })
-                }
-
-                adClickCallback?.()
-              }}
+              onClick={handleClickAdpopcornNativeAd}
               className={styles.adImg}
               src={nativeAdData.mainImageURL}
               alt={nativeAdData.title}

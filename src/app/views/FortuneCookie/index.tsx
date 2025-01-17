@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { ActivityComponentType } from '@stackflow/react'
 
 import {
@@ -9,14 +9,13 @@ import {
   ANIMATION_DURATION,
   FORTUNE_COOKIE_MESSAGES
 } from '@/app/shared/config'
-import { ActivityNames, useFlow } from '@/app/shared/libs/stackflow'
+import { useFlow } from '@/app/shared/libs/stackflow'
 import isIos from '@/app/shared/utils/isIos'
 import { AppScreen } from '@/app/shared/libs/stackflow/basic-ui'
 import AdpopcornRewardAd from '@/app/shared/components/AdpopcornRewardAd'
-import FortuneCookieClick from './components/FortuneCookieClick'
-import FortuneCookieResult from './components/FortuneCookieResult'
-import InterstitialAd from '@/app/shared/components/InterstitialAd'
-import { useSetActivityParams } from '@/app/shared/hooks/useActivityParams'
+import FortuneCookieClick from './FortuneCookieClick'
+import FortuneCookieResult from './FortuneCookieResult'
+import AdpopcornInterstitialAd from '@/app/shared/components/AdpopcornInterstitialAd'
 import { useGetIsShowCoupangAd } from '@/app/shared/hooks/useCoupangAd'
 import * as styles from './style.css'
 
@@ -24,13 +23,10 @@ const FortuneCookie: ActivityComponentType = () => {
   const { pop } = useFlow()
 
   const getIsShowCoupang = useGetIsShowCoupangAd()
-  const setActivityParams = useSetActivityParams()
 
   const [clickNum, setClickNum] = useState<number>(0)
   const [isShowRewardedAd, setIsShowRewardedAd] = useState<boolean>(false)
   const [fortuneCookieResult, setFortuneCookieResult] = useState<string>('')
-
-  const isSeenAdRef = useRef<boolean>(false)
 
   const isShowRV = getIsShowCoupang()
 
@@ -79,24 +75,6 @@ const FortuneCookie: ActivityComponentType = () => {
     }
   }, [])
 
-  useEffect(() => {
-    const timerId = setTimeout(() => {
-      isSeenAdRef.current = true
-    }, 3000)
-
-    return () => {
-      clearTimeout(timerId)
-    }
-  }, [])
-
-  useEffect(() => {
-    return () => {
-      setActivityParams(ActivityNames.FortuneCookie, ActivityNames.Ad, {
-        isSeenAd: isSeenAdRef.current
-      })
-    }
-  }, [])
-
   return (
     <AppScreen>
       <div className={styles.arae}>
@@ -104,11 +82,13 @@ const FortuneCookie: ActivityComponentType = () => {
           <AdpopcornRewardAd
             appKey={adpopcornAppKey}
             adCode={adpopcornRewardAdCode}
-            defaultAd={<InterstitialAd closeCallback={closedSlotCallback} />}
+            defaultAd={<AdpopcornInterstitialAd closeCallback={closedSlotCallback} />}
             closedSlotCallback={closedSlotCallback}
           />
         )}
-        {isShowRewardedAd && !isShowRV && <InterstitialAd closeCallback={closedSlotCallback} />}
+        {isShowRewardedAd && !isShowRV && (
+          <AdpopcornInterstitialAd closeCallback={closedSlotCallback} />
+        )}
         <div className={styles.topBar}>
           <svg
             className={styles.closeButton}
