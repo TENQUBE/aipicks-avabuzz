@@ -14,7 +14,7 @@ import { Signal1yChartVM } from '@/modules/stock/adaptor/in/ui/vm/Signal1yChartV
 import { TodayPickVM } from '@/modules/stock/adaptor/in/ui/vm/TodayPickVM'
 import modules from '@/modules'
 import Layout from '@/app/shared/components/Layout'
-import InterstitialAd from '@/app/shared/components/InterstitialAd'
+import InterstitialAd from '@/app/shared/components/AdpopcornInterstitialAd'
 import {
   useInactiveStocksValue,
   useClearInactiveStocks,

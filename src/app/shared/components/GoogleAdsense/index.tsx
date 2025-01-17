@@ -4,10 +4,11 @@ import { useActivity } from '@stackflow/react'
 import { useCallback, useEffect, useRef } from 'react'
 
 import { CLIENT_ID, GOLDBOX_URL, SLOT } from '@/app/shared/config'
+import isIos from '../../utils/isIos'
 import { ActivityNames, useFlow } from '../../libs/stackflow'
-import { useIsLoadedGoogleAdsenseScriptValue } from '@/app/shared/hooks/useIsLoadedGoogleAdSenseScript'
+import { useIsLoadedGoogleAdsenseScriptValue } from '../../hooks/useIsLoadedGoogleAdSenseScript'
 import { useIsAdBlock } from '../../hooks/useIsAdBlock'
-import * as styles from '@/app/shared/components/GoogleAdsense/style.css'
+import * as styles from './style.css'
 
 declare global {
   interface Window {
@@ -34,17 +35,19 @@ function getDefaultAdInfo(type: 'floating' | 'banner' | 'modal' | 'interstitial'
 }
 
 export default function GoogleAdsense({ type, adClickCallback }: GoogleAdsenseProps) {
-  const { push } = useFlow()
   const activity = useActivity()
+
+  const { push } = useFlow()
   const isLoaded = useIsLoadedGoogleAdsenseScriptValue()
   const isAdBlock = useIsAdBlock()
 
   const areaElRef = useRef<HTMLDivElement>(null)
   const googleAdElRef = useRef<HTMLModElement>(null)
-  const defaultAdElRef = useRef<HTMLAnchorElement>(null)
+  const defaultAdElRef = useRef<HTMLDivElement>(null)
 
   const { src: adImgSrc, width: adImgWidth, height: adImgHeight } = getDefaultAdInfo(type)
 
+  // GoogleAdSense Click (IFRAME)
   const handleVisibilityChangeWindow = useCallback(() => {
     const activeEl = document.activeElement
 
@@ -56,11 +59,24 @@ export default function GoogleAdsense({ type, adClickCallback }: GoogleAdsensePr
       areaElRef.current.contains(activeEl)
 
     if (isCurActivityHidden && isClickedAdIframe) {
-      push(ActivityNames.Empty, {}, { animate: false })
-
       adClickCallback?.()
+
+      if (!isIos()) {
+        push(ActivityNames.Empty, {}, { animate: false })
+      }
     }
-  }, [adClickCallback])
+  }, [activity, adClickCallback])
+
+  // DefaultAd Click
+  function handleClickDefaultAd() {
+    window.open(GOLDBOX_URL)
+
+    adClickCallback?.()
+
+    if (!isIos()) {
+      push(ActivityNames.Empty, {}, { animate: false })
+    }
+  }
 
   useEffect(() => {
     if (isLoaded === null || isAdBlock === null || !defaultAdElRef.current) return
@@ -69,49 +85,31 @@ export default function GoogleAdsense({ type, adClickCallback }: GoogleAdsensePr
       if (typeof window.adsbygoogle === 'undefined') {
         console.log('default ad display block because adsbygoogle is undefined')
         defaultAdElRef.current.style.display = 'block'
-
-        defaultAdElRef.current!.addEventListener('click', () => {
-          console.log('a')
-          push(ActivityNames.Empty, {}, { animate: false })
-
-          adClickCallback?.()
-        })
       } else {
         console.log('adsbygoogle push')
         ;(window.adsbygoogle = window.adsbygoogle || []).push({})
       }
     } else {
       console.log('default ad display block because ad blocked')
-      defaultAdElRef.current!.style.display = 'block'
-
-      defaultAdElRef.current!.addEventListener('click', () => {
-        console.log('a')
-        push(ActivityNames.Empty, {}, { animate: false })
-
-        adClickCallback?.()
-      })
+      defaultAdElRef.current.style.display = 'block'
     }
   }, [isLoaded, isAdBlock])
 
   useEffect(() => {
-    console.log(googleAdElRef.current, defaultAdElRef.current)
-    if (googleAdElRef.current === null || defaultAdElRef.current === null) return
+    if (googleAdElRef.current === null) return
 
     const observer = new MutationObserver(() => {
+      if (googleAdElRef.current === null || defaultAdElRef.current === null) return
+
       console.log(
         'googleAdElRef.current.dataset.adStatus: ',
-        googleAdElRef.current!.dataset.adStatus
+        googleAdElRef.current.dataset.adStatus
       )
-      if (googleAdElRef.current!.dataset.adStatus === 'unfilled') {
-        defaultAdElRef.current!.style.display = 'block'
 
-        defaultAdElRef.current!.addEventListener('click', () => {
-          push(ActivityNames.Empty, {}, { animate: false })
-
-          adClickCallback?.()
-        })
+      if (googleAdElRef.current.dataset.adStatus === 'unfilled') {
+        defaultAdElRef.current.style.display = 'block'
       } else {
-        defaultAdElRef.current!.style.display = 'none'
+        defaultAdElRef.current.style.display = 'none'
       }
     })
 
@@ -119,7 +117,7 @@ export default function GoogleAdsense({ type, adClickCallback }: GoogleAdsensePr
       attributes: true,
       attributeFilter: ['data-ad-status']
     })
-  }, [adClickCallback])
+  }, [])
 
   useEffect(() => {
     window.addEventListener('visibilitychange', handleVisibilityChangeWindow)
@@ -144,13 +142,7 @@ export default function GoogleAdsense({ type, adClickCallback }: GoogleAdsensePr
         data-ad-client={CLIENT_ID}
         data-ad-slot={SLOT}
       />
-      <a
-        className={styles.goldboxArea}
-        ref={defaultAdElRef}
-        href={GOLDBOX_URL}
-        target="_blank"
-        referrerPolicy="unsafe-url"
-      >
+      <div className={styles.goldboxArea} ref={defaultAdElRef} onClick={handleClickDefaultAd}>
         <img
           className={`${styles.goldbox} ${type === 'floating' ? 'overwrap' : ''}`}
           loading="eager"
@@ -159,7 +151,7 @@ export default function GoogleAdsense({ type, adClickCallback }: GoogleAdsensePr
           width={adImgWidth}
           height={adImgHeight}
         />
-      </a>
+      </div>
     </div>
   )
 }

@@ -1,7 +1,6 @@
 import { sendGAEvent } from '@next/third-parties/google'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { MouseEvent, useCallback, useEffect, useRef, useState } from 'react'
 import { ActivityComponentType } from '@stackflow/react'
-import { useFlow } from '@stackflow/react/future'
 
 import {
   ADPOPCORN_AOS_APP_KEY,
@@ -10,7 +9,7 @@ import {
   ADPOPCORN_IOS_BANNER_300X250_1
 } from '@/app/shared/config'
 import isIos from '@/app/shared/utils/isIos'
-import { ActivityNames } from '@/app/shared/libs/stackflow'
+import { ActivityNames, useFlow } from '@/app/shared/libs/stackflow'
 import modules from '@/modules'
 import { CoupangData } from '@/modules/ad/domain/Coupang'
 import AdpopcornBannerAd from '@/app/shared/components/AdpopcornBannerAd'
@@ -22,19 +21,16 @@ import {
   useGetIsShowCoupangAd,
   useSetCoupangAdWatchedAt
 } from '@/app/shared/hooks/useCoupangAd'
-import { useActivityParamsValue, useSetActivityParams } from '@/app/shared/hooks/useActivityParams'
+import { useSetActivityParams } from '@/app/shared/hooks/useActivityParams'
 import { useDeviceIdValue } from '@/app/shared/hooks/useDeviceId'
-import { useActiveActivities } from '@/app/shared/hooks/useActiveActivities'
 import { skeleton } from '@/app/shared/styles/skeleton.css'
 import * as styles from './style.css'
 
 const Ad: ActivityComponentType = () => {
   const { push, replace, pop } = useFlow()
 
-  const activeActivities = useActiveActivities()
   const deviceId = useDeviceIdValue()
   const defaultAdType = useDefaultAdTypeValue()
-  const activityParams = useActivityParamsValue()
   const setCoupangAdWatchedAt = useSetCoupangAdWatchedAt()
   const getIsShowCoupangAd = useGetIsShowCoupangAd()
   const setActivityParams = useSetActivityParams()
@@ -50,7 +46,7 @@ const Ad: ActivityComponentType = () => {
   const adpopcornAppKey = isIos() ? ADPOPCORN_IOS_APP_KEY : ADPOPCORN_AOS_APP_KEY
   const adpopcornAdCode = isIos() ? ADPOPCORN_IOS_BANNER_300X250_1 : ADPOPCORN_AOS_BANNER_300X250_1
 
-  // Coupang Ad
+  // CoupangAd Click
   function handleClickConfirmButton() {
     if (!isShowCoupangAdRef.current || !coupangData) return
 
@@ -64,43 +60,34 @@ const Ad: ActivityComponentType = () => {
 
     setActivityParams(ActivityNames.Ad, ActivityNames.Detail, { isSeenAd: true })
 
-    pop() // Ad Activity pop
+    pop()
 
     if (!isIos()) {
-      push(ActivityNames.Empty, {}, { animate: false }) // Empty Activity push
+      push(ActivityNames.Empty, {}, { animate: false })
     }
   }
 
-  function handleClickCloseButton() {
-    setCoupangAdWatchedAt(new Date().toISOString())
+  // CoupangAd Close Click
+  function handleClickCloseButton(event: MouseEvent) {
+    event.stopPropagation()
 
-    pop()
+    if (skipSeconds <= 0) {
+      setCoupangAdWatchedAt(new Date().toISOString())
+
+      pop()
+    }
   }
 
-  // Adpopcorn , FortuneCookie, Adsense
-  const adClickCallback = useCallback(
-    (clickedAdType: 'adpopcorn' | 'fortuneCookie' | 'googleAdsense') => {
-      if (process.env.NODE_ENV === 'production') {
-        sendGAEvent('event', '추천종목_참여_play')
-      }
+  // Adpopcorn, FortuneCookie, GoogleAdSense Click
+  const adClickCallback = useCallback(() => {
+    if (process.env.NODE_ENV === 'production') {
+      sendGAEvent('event', '추천종목_참여_play')
+    }
 
-      if (!isIos()) {
-        if (clickedAdType === 'fortuneCookie') {
-          pop()
-        } else {
-          // adpopcorn, googleAdsense
-          if (activeActivities[activeActivities.length - 1].name === ActivityNames.Ad) {
-            pop(2)
-          } else {
-            pop(1)
-          }
-        }
-      }
+    setActivityParams(ActivityNames.Ad, ActivityNames.Detail, { isSeenAd: true })
 
-      setActivityParams(ActivityNames.Ad, ActivityNames.Detail, { isSeenAd: true })
-    },
-    [activeActivities]
-  )
+    pop()
+  }, [])
 
   const fetchData = useCallback(async () => {
     try {
@@ -144,21 +131,6 @@ const Ad: ActivityComponentType = () => {
   }, [coupangData])
 
   useEffect(() => {
-    // FortuneCookie
-    if (
-      activityParams.to === ActivityNames.Ad &&
-      activityParams.from === ActivityNames.FortuneCookie &&
-      defaultAdType === 'fortuneCookie'
-    ) {
-      setActivityParams(ActivityNames.Ad, ActivityNames.Detail, {
-        isSeenAd: activityParams.params.isSeenAd
-      })
-
-      pop()
-    }
-  }, [activityParams, defaultAdType])
-
-  useEffect(() => {
     if (process.env.NODE_ENV === 'production') {
       sendGAEvent('event', '로딩')
     }
@@ -184,24 +156,12 @@ const Ad: ActivityComponentType = () => {
               adCode={adpopcornAdCode}
               defaultAd={
                 defaultAdType === 'fortuneCookie' ? (
-                  <FortuneCookieAd
-                    type="modal"
-                    adClickCallback={() => {
-                      adClickCallback('fortuneCookie')
-                    }}
-                  />
+                  <FortuneCookieAd type="modal" adClickCallback={adClickCallback} />
                 ) : (
-                  <GoogleAdsense
-                    type="modal"
-                    adClickCallback={() => {
-                      adClickCallback('googleAdsense')
-                    }}
-                  />
+                  <GoogleAdsense type="modal" adClickCallback={adClickCallback} />
                 )
               }
-              adClickCallback={() => {
-                adClickCallback('adpopcorn')
-              }}
+              adClickCallback={adClickCallback}
             />
           )}
         </div>
@@ -215,16 +175,7 @@ const Ad: ActivityComponentType = () => {
         />
         {isShowCoupangAdRef.current && (
           <button className={styles.confirmButton} onClick={handleClickConfirmButton}>
-            <span
-              className={styles.timer}
-              onClick={(event) => {
-                event.stopPropagation()
-
-                if (skipSeconds === 0) {
-                  handleClickCloseButton()
-                }
-              }}
-            >
+            <span className={styles.timer} onClick={handleClickCloseButton}>
               {skipSeconds === 0 ? (
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
