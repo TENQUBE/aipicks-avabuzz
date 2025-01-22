@@ -1,5 +1,11 @@
 # buzzvil-thinkpool-webview
 
+## 1.0.4
+
+### Patch Changes
+
+- [#99](https://github.com/TENQUBE/aipicks-avabuzz/pull/99) [`3dca54e`](https://github.com/TENQUBE/aipicks-avabuzz/commit/3dca54e8c56c14daa4e7d7f6068db3a58374bf1c) Thanks [@8dong](https://github.com/8dong)! - fix: empty Page 컴포넌트를 추가합니다.
+
 ## 1.0.3
 
 ### Patch Changes
