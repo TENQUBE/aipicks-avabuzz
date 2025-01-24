@@ -1,5 +1,11 @@
 # buzzvil-thinkpool-webview
 
+## 1.0.5
+
+### Patch Changes
+
+- [#102](https://github.com/TENQUBE/aipicks-avabuzz/pull/102) [`6d91641`](https://github.com/TENQUBE/aipicks-avabuzz/commit/6d9164135c090e12ed86ed6af6c1a2a81e10df63) Thanks [@8dong](https://github.com/8dong)! - feat: Empty stack push 로직 제거 후 stepPush로 변경합니다.
+
 ## 1.0.4
 
 ### Patch Changes
