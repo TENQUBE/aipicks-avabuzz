@@ -2,6 +2,7 @@
 
 import { stackflow, StackflowReactPlugin } from '@stackflow/react'
 import { basicRendererPlugin } from '@stackflow/plugin-renderer-basic'
+import { useStepFlow as useOriginStepFlow } from '@stackflow/react/future'
 import 'reflect-metadata'
 
 import { ANIMATION_DURATION } from '@/app/shared/config'
@@ -120,6 +121,36 @@ export const useFlow = () => {
         { ...params, ...parseQueryString(window.joinRCQuery('')) },
         { animate: isIos() ? false : options?.animate }
       )
+  }
+}
+
+export const useStepFlow = (activityName: string) => {
+  const {
+    pushStep: originPushStep,
+    popStep: originPopStep,
+    replaceStep: originReplaceStep
+  } = useOriginStepFlow(activityName)
+
+  return {
+    pushStep: (
+      params: Record<string, any>,
+      options?: {
+        targetActivityId?: string
+      }
+    ) => {
+      originPushStep({ ...parseQueryString(window.joinRCQuery('')), ...params }, options)
+    },
+    popStep: (options?: { targetActivityId?: string }) => {
+      originPopStep(options)
+    },
+    replaceStep: (
+      params: Record<string, any>,
+      options?: {
+        targetActivityId?: string
+      }
+    ) => {
+      originReplaceStep({ ...parseQueryString(window.joinRCQuery('')), ...params }, options)
+    }
   }
 }
 

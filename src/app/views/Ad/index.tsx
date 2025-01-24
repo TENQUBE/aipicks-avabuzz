@@ -1,6 +1,6 @@
 import { sendGAEvent } from '@next/third-parties/google'
 import { MouseEvent, useCallback, useEffect, useRef, useState } from 'react'
-import { ActivityComponentType } from '@stackflow/react'
+import { ActivityComponentType, useActivity } from '@stackflow/react'
 
 import {
   ADPOPCORN_AOS_APP_KEY,
@@ -9,7 +9,7 @@ import {
   ADPOPCORN_IOS_BANNER_300X250_1
 } from '@/app/shared/config'
 import isIos from '@/app/shared/utils/isIos'
-import { ActivityNames, useFlow } from '@/app/shared/libs/stackflow'
+import { ActivityNames, useFlow, useStepFlow } from '@/app/shared/libs/stackflow'
 import modules from '@/modules'
 import { CoupangData } from '@/modules/ad/domain/Coupang'
 import AdpopcornBannerAd from '@/app/shared/components/AdpopcornBannerAd'
@@ -27,8 +27,8 @@ import { skeleton } from '@/app/shared/styles/skeleton.css'
 import * as styles from './style.css'
 
 const Ad: ActivityComponentType = () => {
-  const { push, replace, pop } = useFlow()
-
+  const { replace, pop } = useFlow()
+  const { pushStep } = useStepFlow(ActivityNames.Detail)
   const deviceId = useDeviceIdValue()
   const defaultAdType = useDefaultAdTypeValue()
   const setCoupangAdWatchedAt = useSetCoupangAdWatchedAt()
@@ -63,7 +63,7 @@ const Ad: ActivityComponentType = () => {
     pop()
 
     if (!isIos()) {
-      push(ActivityNames.Empty, {}, { animate: false })
+      pushStep({ adClicked: true })
     }
   }
 
