@@ -1,6 +1,6 @@
 import { sendGAEvent } from '@next/third-parties/google'
 import { MouseEvent, useCallback, useEffect, useRef, useState } from 'react'
-import { ActivityComponentType, useActivity } from '@stackflow/react'
+import { ActivityComponentType } from '@stackflow/react'
 
 import {
   ADPOPCORN_AOS_APP_KEY,
