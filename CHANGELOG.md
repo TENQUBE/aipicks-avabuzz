@@ -1,5 +1,11 @@
 # buzzvil-thinkpool-webview
 
+## 1.0.6
+
+### Patch Changes
+
+- [#105](https://github.com/TENQUBE/aipicks-avabuzz/pull/105) [`a4d7bb8`](https://github.com/TENQUBE/aipicks-avabuzz/commit/a4d7bb8bd53da79cd4934795476a2d00e89b850e) Thanks [@8dong](https://github.com/8dong)! - fix: 불필요한 stepPush 호출을 제거합니다.
+
 ## 1.0.5
 
 ### Patch Changes
