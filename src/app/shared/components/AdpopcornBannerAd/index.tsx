@@ -2,7 +2,7 @@ import { useActivity } from '@stackflow/react'
 import { ReactElement, useCallback, useEffect, useRef, useState } from 'react'
 
 import { AdCode, AdpopcornType } from '../../config'
-import { ActivityNames, useFlow } from '../../libs/stackflow'
+import { useStepFlow } from '../../libs/stackflow'
 import isIos from '../../utils/isIos'
 import { useIsAdBlock } from '../../hooks/useIsAdBlock'
 import { useIsLoadedAdpopcornScriptValue } from '../../hooks/useIsLoadedAdpopcornScript'
@@ -24,7 +24,7 @@ export default function AdpopcornBannerAd({
 }: AdpopcornBannerAdProps) {
   const activity = useActivity()
 
-  const { push } = useFlow()
+  const { pushStep } = useStepFlow(activity.name)
   const isLoaded = useIsLoadedAdpopcornScriptValue()
   const isAdBlock = useIsAdBlock()
 
@@ -64,7 +64,7 @@ export default function AdpopcornBannerAd({
       adClickCallback?.()
 
       if (!isIos()) {
-        push(ActivityNames.Empty, {}, { animate: false })
+        pushStep({ adClicked: true })
       }
     }
   }, [adClickCallback, activity])
@@ -78,7 +78,7 @@ export default function AdpopcornBannerAd({
     adClickCallback?.()
 
     if (!isIos()) {
-      push(ActivityNames.Empty, {}, { animate: false })
+      pushStep({ adClicked: true })
     }
   }
 

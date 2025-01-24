@@ -5,7 +5,7 @@ import { useCallback, useEffect, useRef } from 'react'
 
 import { CLIENT_ID, GOLDBOX_URL, SLOT } from '@/app/shared/config'
 import isIos from '../../utils/isIos'
-import { ActivityNames, useFlow } from '../../libs/stackflow'
+import { useStepFlow } from '../../libs/stackflow'
 import { useIsLoadedGoogleAdsenseScriptValue } from '../../hooks/useIsLoadedGoogleAdSenseScript'
 import { useIsAdBlock } from '../../hooks/useIsAdBlock'
 import * as styles from './style.css'
@@ -37,7 +37,7 @@ function getDefaultAdInfo(type: 'floating' | 'banner' | 'modal' | 'interstitial'
 export default function GoogleAdsense({ type, adClickCallback }: GoogleAdsenseProps) {
   const activity = useActivity()
 
-  const { push } = useFlow()
+  const { pushStep } = useStepFlow(activity.name)
   const isLoaded = useIsLoadedGoogleAdsenseScriptValue()
   const isAdBlock = useIsAdBlock()
 
@@ -62,7 +62,7 @@ export default function GoogleAdsense({ type, adClickCallback }: GoogleAdsensePr
       adClickCallback?.()
 
       if (!isIos()) {
-        push(ActivityNames.Empty, {}, { animate: false })
+        pushStep({ adClicked: true })
       }
     }
   }, [activity, adClickCallback])
@@ -74,7 +74,7 @@ export default function GoogleAdsense({ type, adClickCallback }: GoogleAdsensePr
     adClickCallback?.()
 
     if (!isIos()) {
-      push(ActivityNames.Empty, {}, { animate: false })
+      pushStep({ adClicked: true })
     }
   }
 
